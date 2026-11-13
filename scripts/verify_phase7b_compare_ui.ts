@@ -1,3 +1,4 @@
+import { expectedSeriesCount } from './verificationExpectations';
 /**
  * Phase 7B Verification Script: Multi-Complex Compare UI Area Family Cutover
  *
@@ -435,7 +436,7 @@ async function runVerification() {
   const paMeta = await firestoreRepository.getAreaFamilyMetadata('banpo_xi');
   const paPoints = await firestoreRepository.getAreaFamilyMonthlyPrices('banpo_xi', 'banpo_xi_59');
   const priceAnalysisRegressionPass =
-    paMeta.length === 7 && paPoints.points.length === 151;
+    paMeta.length === 7 && paPoints.points.length === expectedSeriesCount('banpo_xi_59', 151);
   assertCheck(
     'PRICE_ANALYSIS_REGRESSION_PASS',
     priceAnalysisRegressionPass,
@@ -446,7 +447,7 @@ async function runVerification() {
   const mapPoints59 = await firestoreRepository.getStandardAreaMonthlyPrices('banpo_xi', '59');
   const mapPoints84 = await firestoreRepository.getStandardAreaMonthlyPrices('banpo_xi', '84');
   const mapRegressionPass =
-    mapPoints59.length === 151 && mapPoints84.length === 182;
+    mapPoints59.length === expectedSeriesCount('banpo_xi_59', 151) && mapPoints84.length === expectedSeriesCount('banpo_xi_84', 182);
   assertCheck(
     'MAP_REGRESSION_PASS',
     mapRegressionPass,

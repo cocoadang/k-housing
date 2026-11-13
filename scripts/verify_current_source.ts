@@ -1,11 +1,20 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import { Firestore } from '@google-cloud/firestore';
 import { collection, query, where, getDocs, getReaderDb } from '../src/server/firestoreReader';
 import { TARGET_COMPLEXES } from '../src/data/complexesData';
 import { weightedDealStats } from '../src/utils/transactionStatistics';
 const directory=process.env.COLLECTOR_OUTPUT || 'data/private/current-source';
 const plan=JSON.parse(fs.readFileSync(`${directory}/revision-plan.json`,'utf8'));
+function normalize(value:any):any {
+ if (value?.$timestamp) return Date.parse(value.$timestamp);
+ if (typeof value?.toMillis === 'function') return value.toMillis();
+ if (Array.isArray(value)) return value.map(normalize);
+ if (value && typeof value==='object') return Object.fromEntries(Object.keys(value).sort().map(k=>[k,normalize(value[k])]));
+ return value;
+}
+const digest=(rows:any[])=>createHash('sha256').update(JSON.stringify(rows.map(normalize).sort((a,b)=>a.id.localeCompare(b.id)))).digest('hex');
 async function main(){
  if (!process.env.FIRESTORE_EMULATOR_HOST) throw Error('ISOLATED_EMULATOR_REQUIRED');
  const db=getReaderDb();
@@ -27,10 +36,17 @@ async function main(){
  }
  const original=new Firestore({projectId:process.env.GOOGLE_CLOUD_PROJECT,databaseId:process.env.FIRESTORE_DATABASE_ID});
  const counts:Record<string,number>={};
+ const originalContentHashes:Record<string,string>={};
  for(const [name,expected]of Object.entries({transactions:48485,monthlyComplexPrices:5153,monthlyComplexPrices_v2:12633,monthlyStandardAreaPrices_v2:5757})){
   const result=await original.collection(name).count().get();counts[name]=result.data().count;assert.equal(counts[name],expected);checks++;
+  if (process.env.VERIFICATION_SNAPSHOT_DIR) {
+   const before=JSON.parse(fs.readFileSync(`${process.env.VERIFICATION_SNAPSHOT_DIR}/snapshot-${name}.json`,'utf8'));
+   const after=await original.collection(name).get();
+   const hash=digest(after.docs.map(d=>d.data()));
+   assert.equal(hash,digest(before));originalContentHashes[name]=hash;checks++;
+  }
  }
- const report={checkedAt:new Date().toISOString(),isolated:true,checks,passed:true,originalCounts:counts,sourceSha256:plan.manifest.sourceSha256,revisionCounts:plan.manifest.counts,unmappedAreas:plan.manifest.unknownAreas,limitations:['Unregistered exact areas remain unclassified; no area conversion was inferred.','Legacy collection counts are not by themselves a zero-write audit.']};
+ const report={checkedAt:new Date().toISOString(),isolated:true,checks,passed:true,originalCounts:counts,originalContentHashes,sourceSha256:plan.manifest.sourceSha256,revisionCounts:plan.manifest.counts,unmappedAreas:plan.manifest.unknownAreas,limitations:['Unregistered exact areas remain unclassified; no area conversion was inferred.','Isolated data comparisons do not assert that production has had zero writes.']};
  fs.writeFileSync('data/current-source-verification.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
  await original.terminate();
 }

@@ -1,3 +1,4 @@
+import { getReaderDb } from './src/server/firestoreReader';
 import express from 'express';
 import { requireOperator } from './src/server/apiSecurity';
 import path from 'path';
@@ -53,6 +54,16 @@ function getGeminiClient(): GoogleGenAI | null {
 let molitApiVerified = false;
 
 // 1. Health check & environment status
+app.get('/api/data-status', async (_req, res) => {
+  try {
+    const db=getReaderDb();
+    if (!db || typeof db.collection !== 'function') return res.json({revision:null});
+    const snapshot=await db.collection('priceRevisions').doc('active').get();
+    const data=snapshot.data();
+    return res.json(data?.status === 'READY' ? {revision:data.revision,fetchedAt:data.fetchedAt,months:data.months,unclassifiedCount:data.unknownAreas?.length || 0} : {revision:null});
+  } catch { return res.status(503).json({error:{code:'DATA_STATUS_UNAVAILABLE'}}); }
+});
+
 app.get('/api/health', (req, res) => {
   const hasMapsKey = Boolean(
     (process.env.GOOGLE_MAPS_API_KEY && process.env.GOOGLE_MAPS_API_KEY.trim().length > 0) ||

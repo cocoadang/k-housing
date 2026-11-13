@@ -154,7 +154,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
               <span className="text-[11px] text-slate-400">시장가격 비교</span>
               <div className="flex items-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>{lineageDetail?.readiness.nominalScenario.availability === 'AVAILABLE' ? '가능 (시나리오)' : '자료 부족'}</span>
+                <span>{(lineageDetail?.predecessors?.length || 0) > 0 && (lineageDetail?.successors?.length || 0) > 0 && lineageDetail?.readiness.nominalScenario.availability === 'AVAILABLE' ? '가능 (시나리오)' : '자료 부족'}</span>
               </div>
             </div>
 

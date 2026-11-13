@@ -51,13 +51,12 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
   apiError = null,
   onRetryFetch,
 }) => {
-  // 1. Custom Period state (Default 5Y: 2021.09 ~ 2026.09)
-  const [analysisPeriod, setAnalysisPeriod] = useState<AnalysisPeriod>({
-    startMonth: '2021.09',
-    endMonth: '2026.09',
-    startYmd: '202109',
-    endYmd: '202609',
-    presetId: '5Y',
+  // Default to the current month so new source revisions are immediately visible.
+  const [analysisPeriod, setAnalysisPeriod] = useState<AnalysisPeriod>(() => {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    return { startMonth:`${year-5}.${month}`, endMonth:`${year}.${month}`, startYmd:`${year-5}${month}`, endYmd:`${year}${month}`, presetId:'5Y' };
   });
 
   // 2. AreaFamily metadata state
@@ -427,9 +426,9 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
                     onClick={() =>
                       setAnalysisPeriod({
                         startMonth: '2006.01',
-                        endMonth: '2026.09',
+                        endMonth: `${new Date().getFullYear()}.${String(new Date().getMonth()+1).padStart(2,'0')}`,
                         startYmd: '200601',
-                        endYmd: '202609',
+                        endYmd: `${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}`,
                         presetId: 'ALL',
                       })
                     }

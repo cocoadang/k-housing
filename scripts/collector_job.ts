@@ -1,3 +1,4 @@
+import {randomBytes} from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
@@ -12,7 +13,7 @@ async function main() {
   await collectCurrentSource();
   const directory=process.env.COLLECTOR_OUTPUT;
   const manifest=JSON.parse(fs.readFileSync(path.join(directory,'manifest.json'),'utf8'));
-  const revision=`r${new Date().toISOString().replace(/\D/g,'').slice(0,14)}`;
+  const revision=`r${new Date().toISOString().replace(/\D/g,'').slice(0,14)}_${randomBytes(4).toString('hex')}`;
   if (!process.env.SOURCE_ARCHIVE_BUCKET) throw Error('SOURCE_ARCHIVE_BUCKET_REQUIRED');
   const destination=`khousing-source/${revision}/source.json.gz`;
   const files=Object.fromEntries(fs.readdirSync(directory).filter(f=>f.endsWith('.xml')||f.endsWith('.json')).map(f=>[f,fs.readFileSync(path.join(directory,f),'utf8')]));

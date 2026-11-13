@@ -1,3 +1,4 @@
+import { DataStatus } from './components/DataStatus';
 import { parseHousingRoute } from './utils/housingRoute';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { TARGET_COMPLEXES } from './data/complexesData';
@@ -387,6 +388,8 @@ export default function App() {
         onExportCsv={handleExportCsv}
         selectedCompareCount={selectedCompareIds.length}
       />
+
+      <DataStatus />
 
       {/* 2. View 1: Map-based Region & Complex Explorer */}
       {activeView === 'MAP' && (

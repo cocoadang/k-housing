@@ -49,6 +49,8 @@ async function runPhase5cVerification() {
   let SPARSE_SERIES_PASS = false;
   let API_CONTRACT_PASS = false;
 
+  const expectations = process.env.VERIFICATION_EXPECTATIONS ? JSON.parse(fs.readFileSync(process.env.VERIFICATION_EXPECTATIONS, 'utf8')).samick59 : { medianPrice:88600, latestMonth:'202608' };
+
   const startYmd = '201609';
   const endYmd = '202608';
 
@@ -205,8 +207,8 @@ async function runPhase5cVerification() {
     samick59 &&
     samick59.status === 'NORMAL' &&
     samick59.hasData === true &&
-    samick59.latestMedianPrice === 88600 &&
-    samick59.latestMonth === '202608' &&
+    samick59.latestMedianPrice === expectations.medianPrice &&
+    samick59.latestMonth === expectations.latestMonth &&
     (samick59.transactionCount || 0) > 400
   ) {
     SAMICK_BEACH_59_PASS = true;

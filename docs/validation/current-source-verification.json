@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-11-13T15:11:40.129Z",
+  "checkedAt": "2026-11-13T15:21:03.630Z",
   "isolated": true,
-  "checks": 381,
+  "checks": 385,
   "passed": true,
   "originalCounts": {
     "transactions": 48485,
@@ -9,7 +9,13 @@
     "monthlyComplexPrices_v2": 12633,
     "monthlyStandardAreaPrices_v2": 5757
   },
-  "sourceSha256": "b5a9082d3703055e2ecfdeb4f87ef9834678a842e82b0c65b49699c4963603c6",
+  "originalContentHashes": {
+    "transactions": "8b4dc48b1bf53ee05edab31f878286fead20b77a5afd1cb8e88e519c617cb41c",
+    "monthlyComplexPrices": "0c7be77fdd6723f51602b76335c98b4795f1464e8c9c01019337e79de8386cd0",
+    "monthlyComplexPrices_v2": "683f17fd8208dfcacb625c945b6ce6f19bba302d583fb7bd87490461ce61fd56",
+    "monthlyStandardAreaPrices_v2": "c8b6bf3e9c714962291426a1ede143749d0f7f5e903dabb3041f13230a5020c1"
+  },
+  "sourceSha256": "164fc0a3472b5433ecabecdd910e14e7e246a12df8e6f039208de3c7569b1fea",
   "revisionCounts": {
     "transactions": 801,
     "monthlyComplexPrices_v2": 346,
@@ -34,6 +40,6 @@
   ],
   "limitations": [
     "Unregistered exact areas remain unclassified; no area conversion was inferred.",
-    "Legacy collection counts are not by themselves a zero-write audit."
+    "Isolated data comparisons do not assert that production has had zero writes."
   ]
 }

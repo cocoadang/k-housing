@@ -1,3 +1,4 @@
+import { expectedSeriesCount } from './verificationExpectations';
 /**
  * Phase 7A Verification Script: Multi-Complex Compare Area Family Data & Calculation Layer
  *
@@ -184,7 +185,7 @@ async function runVerification() {
 
   assertCheck(
     'AREA_FAMILY_MONTHLY_V2_SOURCE_PASS',
-    banpoXi59Loaded.status === 'SUCCESS' && banpoXi59Loaded.series.length === 151,
+    banpoXi59Loaded.status === 'SUCCESS' && banpoXi59Loaded.series.length === expectedSeriesCount('banpo_xi_59', 151),
     `Loaded banpo_xi_59 directly from monthlyComplexPrices_v2 (151 sparse monthly points)`
   );
 
@@ -514,7 +515,7 @@ async function runVerification() {
     samickResolved.resolved?.areaFamilyButtonLabel === '61㎡형' &&
     !samickResolved.resolved?.areaFamilyButtonLabel.includes('59') &&
     samickResolved.resolved?.standardAreaCategory === '59' &&
-    samickCompare.targets[0].series.length === 223 &&
+    samickCompare.targets[0].series.length === expectedSeriesCount('samick_61', 223) &&
     samickCompare.targets[0].series[0].value > 0;
 
   assertCheck(
@@ -542,7 +543,7 @@ async function runVerification() {
 
   const partialFailurePass =
     banpoResult?.status === 'SUCCESS' &&
-    banpoResult.series.length === 151 &&
+    banpoResult.series.length === expectedSeriesCount('banpo_xi_59', 151) &&
     namcheonResult?.status === 'NO_MONTHLY_DATA' &&
     namcheonResult.series.length === 0;
 
@@ -626,7 +627,7 @@ async function runVerification() {
   const paPoints = await firestoreRepository.getAreaFamilyMonthlyPrices('banpo_xi', 'banpo_xi_59');
   assertCheck(
     'PRICE_ANALYSIS_REGRESSION_PASS',
-    paMeta.length === 7 && paPoints.points.length === 151,
+    paMeta.length === 7 && paPoints.points.length === expectedSeriesCount('banpo_xi_59', 151),
     'Price Analysis read paths intact (7 families, 151 monthly points)'
   );
 
@@ -637,7 +638,7 @@ async function runVerification() {
   const mapPoints84 = await firestoreRepository.getStandardAreaMonthlyPrices('banpo_xi', '84');
   assertCheck(
     'MAP_REGRESSION_PASS',
-    mapPoints59.length === 151 && mapPoints84.length === 182,
+    mapPoints59.length === expectedSeriesCount('banpo_xi_59', 151) && mapPoints84.length === expectedSeriesCount('banpo_xi_84', 182),
     'Map Explorer 59/84 read paths intact (59: 151 pts, 84: 182 pts)'
   );
 

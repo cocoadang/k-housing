@@ -29,3 +29,12 @@ set `ANALYSIS_INPUT` to the local JSON array path, and run `npx tsx scripts/gene
 Do not merge historical financial evidence with latest progress automatically. `chokjin-3` maps to a housing project/lineage; `samik-beach` maps to an existing apartment asset. No Gwacheon ID mapping is inferred.
 
 Local validation result: 6 focused tests passed; TypeScript and production build passed. Offline archived analysis reproduced 171 canonical ELS rows representing 172 active transactions. Server health, lineage list and direct-link document returned HTTP 200 with database connections disabled; unconfigured AI returned HTTP 503. The legacy 20-suite audit was not run against production.
+
+
+## 2026-11-14 implementation
+- Dedicated reader and collector identities have database-scoped IAM conditions. Collector-only Secret Manager access and archive-prefix object creation are configured; no account key file is created.
+- The current MOLIT key was connected from the existing AI Studio Secrets. Raw recent six-month responses for 13 districts are independently parsed and checked (801 canonical groups), and source revisions are validated in an isolated Firestore emulator.
+- New price collections are immutable; the active pointer is published only after all revision counts match. Original collections are retained for rollback. Unknown exact areas remain explicitly unclassified.
+- Latest-source comparisons execute 385 checks, including original dataset content hashes. Historical probes confirmed the 2012 ELS 35000만원, 2012 Sur 40000만원 and 2010 Banpo 77400만원 rows exist in upstream records; they were not removed as presumed errors.
+- Chokjin/Jeungsan no longer show Dunchon contribution data. Header counts and construction-cost descriptions are project-specific. Analysis defaults to the current month.
+- Old verification literals represented the September source snapshot. Source-aware runs use exact frozen counts from an independent baseline/source merge: Banpo Xi 59=153 months, 84=184, Samick 61=225. Samick August 2026 median is 88200만원 from seven valid raw rows. Assertions remain exact; no tolerance or bypass is added. Source hashes and independent evidence are in docs/validation/source-expectations.json.

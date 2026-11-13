@@ -9,7 +9,7 @@ import { getAreaCategory } from '../src/utils/areaUtils';
 
 const normalize = (s: unknown) => String(s || '').replace(/[\s()_.\-·]/g, '').replace(/아파트/g, '').toLowerCase();
 const parser = new XMLParser({ trimValues: true });
-const now = new Date();
+const now = new Date(Date.now() + 9 * 60 * 60 * 1000); // Korean reporting month
 const months = process.env.COLLECTOR_MONTHS?.split(',') || Array.from({ length: 6 }, (_, i) => {
   const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
   return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
@@ -62,7 +62,7 @@ export async function collectCurrentSource() {
         if (!(price > 0 && exclusiveArea > 0 && Number.isInteger(floor)) || !Number.isFinite(price) || new Date(`${dealDate}T00:00:00Z`).toISOString().slice(0,10) !== dealDate) throw Error('INVALID_MATCHED_SOURCE_ROW');
         const family = AREA_FAMILIES_REGISTRY[complex.id]?.find(f => f.exactAreas.some(a => Math.round(a*100) === Math.round(exclusiveArea*100)));
         const id = generateDeterministicTransactionId(complex.id, { dealYmd: job.month, dealDay: day, floor, price, exclusiveArea });
-        const row = grouped.get(id) || { id, transactionId:id, complexId:complex.id, complexName:r.aptNm, dealYear:year,dealMonth:month,dealDay:day,dealDate,dealYmd:job.month,price,exclusiveArea,floor,areaFamilyId:family?.id || null,standardAreaCategory:family?.standardCategory || 'OTHER',areaCategory:getAreaCategory(exclusiveArea,complex.id),normalRowCount:0,cancellationRowCount:0,activeCount:0,cancelDates:[],sourceRawComplexNames:[],sourceAptSeqs:[],dataSource:'MOLIT_OPENAPI',source:'MOLIT_APT_TRADE',schemaVersion:'SOURCE_STATUS_V2',pyeong:exclusiveArea/3.305785,pricePerSqm:price/exclusiveArea,pricePerPyeong:price/(exclusiveArea/3.305785),isOutlier:false };
+        const row = grouped.get(id) || { id, transactionId:id, complexId:complex.id, complexName:r.aptNm, dealYear:year,dealMonth:month,dealDay:day,dealDate,dealYmd:job.month,price,exclusiveArea,floor,areaFamilyId:family?.id || null,standardAreaCategory:family?.standardCategory || 'OTHER',areaCategory:getAreaCategory(exclusiveArea,complex.id),normalRowCount:0,cancellationRowCount:0,activeCount:0,cancelDates:[],sourceRawComplexNames:[],sourceAptSeqs:[],dataSource:'MOLIT_OPENAPI',source:'MOLIT_APT_TRADE',schemaVersion:'SOURCE_STATUS_V2',pyeong:exclusiveArea/3.305785,pricePerSqm:price/exclusiveArea,pricePerPyeong:price/(exclusiveArea/3.305785),isOutlier:false,dealType:String(r.dealingGbn || '').trim() || '확인불가',registrationDate:String(r.rgstDate || '').trim() };
         if (row.exclusiveArea !== exclusiveArea || `${year}${String(month).padStart(2,'0')}` !== job.month) throw Error('AMBIGUOUS_SOURCE_GROUP');
         if (!row.sourceRawComplexNames.includes(r.aptNm)) row.sourceRawComplexNames.push(r.aptNm);
         if (r.aptSeq && !row.sourceAptSeqs.includes(String(r.aptSeq))) row.sourceAptSeqs.push(String(r.aptSeq));
