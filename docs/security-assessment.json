@@ -1,0 +1,8 @@
+{
+  "score": 8,
+  "assessedAt": "2026-11-14",
+  "summary": "Reviewed replacement rules were deployed to the explicitly named housing database and exact content was read back. Anonymous REST writes return 403. Runtime reader and collector identities are separated; real reader identity tests deny writes and other database access.",
+  "historicalFinding": "On 2026-11-13 the former deployed recursive wildcard allowed unauthenticated writes. It has been replaced; historical assessment is preserved in git history.",
+  "findings": [],
+  "limitations": ["Admin/server IAM bypasses client rules and must be reviewed independently; current application identities are scoped to the named database.", "This assessment does not certify unrelated projects or databases."]
+}

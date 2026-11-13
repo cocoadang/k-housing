@@ -1,3 +1,5 @@
+import { DataStatus } from './components/DataStatus';
+import { parseHousingRoute } from './utils/housingRoute';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { TARGET_COMPLEXES } from './data/complexesData';
 import {
@@ -42,11 +44,11 @@ export default function App() {
   const initialDates = useMemo(() => getInitialDates(5), []);
 
   // 1. Navigation View State: 'MAP' | 'ANALYSIS' | 'COMPARE'
-  const [activeView, setActiveView] = useState<MainNavTab>('MAP');
+  const [activeView, setActiveView] = useState<MainNavTab>(() => parseHousingRoute(window.location.search).view);
 
   // 2. Sidebar & Filter States (Default: Banpo Xi, 59㎡, 5Y)
   const [selectedRegion, setSelectedRegion] = useState<'ALL' | 'SEOUL_METRO' | 'BUSAN'>('SEOUL_METRO');
-  const [selectedComplexId, setSelectedComplexId] = useState<string>('banpo_xi');
+  const [selectedComplexId, setSelectedComplexId] = useState<string>(() => parseHousingRoute(window.location.search).complexId);
   const [selectedArea, setSelectedArea] = useState<AreaCategory>('59');
   const [selectedPeriod, setSelectedPeriod] = useState<'1Y' | '3Y' | '5Y' | '10Y' | 'ALL'>('5Y');
   const [startDate, setStartDate] = useState<string>(initialDates.startStr);
@@ -386,6 +388,8 @@ export default function App() {
         onExportCsv={handleExportCsv}
         selectedCompareCount={selectedCompareIds.length}
       />
+
+      <DataStatus />
 
       {/* 2. View 1: Map-based Region & Complex Explorer */}
       {activeView === 'MAP' && (

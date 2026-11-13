@@ -1,40 +1,11 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Complexes master registry
-    match /complexes/{complexId} {
-      allow read: if true;
-      allow write: if true;
+    // Query-only service. Ingestion must use a dedicated server identity and IAM.
+    match /{collection}/{document} {
+      allow read: if collection in ['complexes', 'transactions', 'monthlyComplexPrices', 'monthlyComplexPrices_v2', 'monthlyStandardAreaPrices_v2'];
+      allow write: if false;
     }
-
-    // Transactions records
-    match /transactions/{transactionId} {
-      allow read: if true;
-      allow write: if true;
-    }
-
-    // Monthly aggregated prices
-    match /monthlyComplexPrices/{monthlyPriceId} {
-      allow read: if true;
-      allow write: if true;
-    }
-
-    // Internal settings
-    match /settings/{settingId} {
-      allow read: if true;
-      allow write: if true;
-    }
-
-    // Historical backfill job progress
-    match /backfillJobs/{jobId} {
-      allow read: if true;
-      allow write: if true;
-    }
-
-    // Global fallback rule for backend services
-    match /{document=**} {
-      allow read, write: if true;
-    }
+    match /{document=**} { allow read, write: if false; }
   }
 }

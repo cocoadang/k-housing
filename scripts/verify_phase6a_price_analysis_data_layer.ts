@@ -1,3 +1,4 @@
+import { expectedSeriesCount } from './verificationExpectations';
 /**
  * Phase 6A Verification Script: Price Analysis Area Family Data Layer
  *
@@ -236,7 +237,7 @@ async function runVerification() {
     samick61.metadata.standardAreaCategory === '59' &&
       samick61.metadata.representativeExclusiveArea === 60.83 &&
       samick61.metadata.exactAreas?.includes(61.09) === true &&
-      samick61.points.length === 223 &&
+      samick61.points.length === expectedSeriesCount('samick_61', 223) &&
       samick61.metadata.tradeCount > 0,
     `representativeExclusiveArea: 60.83 (exactAreas include 61.09), standardAreaCategory: '59', points: ${samick61.points.length}/223`
   );

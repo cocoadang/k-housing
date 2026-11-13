@@ -220,7 +220,7 @@ async function main() {
     console.log(`   Script: ${suite.scriptPath}`);
 
     const sTime = Date.now();
-    const res = spawnSync('npx', ['tsx', suite.scriptPath], {
+    const res = spawnSync(process.execPath, ['--import', 'tsx', suite.scriptPath], {
       encoding: 'utf-8',
       env: { ...process.env },
       maxBuffer: 20 * 1024 * 1024,
@@ -258,22 +258,22 @@ async function main() {
 
   // 2. Final Firestore Baseline Check (Zero Mutations Rule)
   console.log('\n================================================================');
-  console.log('[Section 8: Verifying Zero Firestore Mutations]');
+  console.log('[Section 8: Comparing Firestore Document Counts (not a write audit)]');
   console.log('================================================================');
-  let zeroMutationsPassed = true;
+  let documentCountsUnchanged = true;
   const finalCounts: Record<string, number> = {};
   for (const collName of collectionsToCheck) {
     const collRef = collection(db, collName);
     const snap = await getCountFromServer(collRef);
     finalCounts[collName] = snap.data().count;
     const match = initialCounts[collName] === finalCounts[collName];
-    if (!match) zeroMutationsPassed = false;
-    const status = match ? '✅ OK' : '❌ MUTATION DETECTED';
+    if (!match) documentCountsUnchanged = false;
+    const status = match ? '✅ OK' : '❌ DOCUMENT COUNT CHANGED';
     console.log(`  ${status} - ${collName}: Initial=${initialCounts[collName]} -> Final=${finalCounts[collName]}`);
   }
 
   const allSuitesPassed = suiteResults.every((s) => s.passed);
-  const totalAuditPassed = allSuitesPassed && zeroMutationsPassed;
+  const totalAuditPassed = allSuitesPassed && documentCountsUnchanged;
   const totalDurationSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
 
   // 3. Compile Section Breakdown
@@ -291,23 +291,26 @@ async function main() {
   const finalReport = {
     auditName: 'PHASE_8M_FULL_REGRESSION_AND_RELEASE_AUDIT',
     verifiedAt: new Date().toISOString(),
-    overallStatus: totalAuditPassed ? 'RELEASE_AUDIT_SUCCESS' : 'RELEASE_AUDIT_FAILED',
+    overallStatus: totalAuditPassed ? 'REGRESSION_SUITES_PASSED_RELEASE_NOT_CERTIFIED' : 'RELEASE_AUDIT_FAILED',
     allPassed: totalAuditPassed,
     totalSuites: suiteResults.length,
     passedSuitesCount: suiteResults.filter((s) => s.passed).length,
     failedSuitesCount: suiteResults.filter((s) => !s.passed).length,
     durationSeconds: totalDurationSeconds,
-    corePrinciples: {
+    limitations: ['Document counts do not prove zero writes', 'UI source checks are not browser interaction tests'],
+    databaseWriteAudit: 'NOT_VERIFIED',
+    criticalInvariants: null,
+    declaredCorePrinciples: {
       calculateWhenJustifiedRefuseWhenNotJustified: true,
       strictlyNoArbitraryInterpolation: true,
       strictlyNoContinuousYieldAcrossRedevelopmentBoundary: true,
       strictlyNoUnverifiedSuccessorPredecessorMapping: true,
       strictlyNo0WonFallbacks: true,
       strictlyNoFabricatedCashFlowDates: true,
-      zeroFirestoreMutations: zeroMutationsPassed,
+      databaseDocumentCountsUnchanged: documentCountsUnchanged,
     },
-    firestoreBaselineIntegrity: {
-      verified: zeroMutationsPassed,
+    firestoreCountIntegrity: {
+      verified: documentCountsUnchanged,
       initialCounts,
       finalCounts,
     },
@@ -327,7 +330,7 @@ async function main() {
   console.log('================================================================');
   console.log(`Overall Status:   ${finalReport.overallStatus}`);
   console.log(`Suites Passed:    ${finalReport.passedSuitesCount} / ${finalReport.totalSuites}`);
-  console.log(`Database Safety:  ${zeroMutationsPassed ? 'ZERO MUTATIONS (PASS)' : 'FAILED'}`);
+  console.log(`Database Safety:  ${documentCountsUnchanged ? 'DOCUMENT COUNTS UNCHANGED (writes not verified)' : 'FAILED'}`);
   console.log(`Execution Time:   ${totalDurationSeconds}s`);
   console.log(`Root Report:      ${rootReportPath}`);
   console.log(`Data Report:      ${dataReportPath}`);
@@ -344,7 +347,7 @@ async function main() {
     process.exit(1);
   } else {
     console.log('\n🎉 ALL PHASE 1~8L MODULES VERIFIED 100% REGRESSION-FREE!');
-    console.log('   K-Housing is strictly certified for Phase 8 release.');
+    console.log('   Suite results alone do not certify release readiness or absence of database writes.');
     process.exit(0);
   }
 }

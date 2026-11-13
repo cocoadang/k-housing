@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import { Firestore } from '@google-cloud/firestore';
+import { buildSourceRevision, publishSourceRevision } from '../src/server/sourceRevision';
+const directory=process.env.COLLECTOR_OUTPUT || 'data/private/current-source';
+const plan=buildSourceRevision(JSON.parse(fs.readFileSync(`${directory}/transactions.json`,'utf8')),JSON.parse(fs.readFileSync(`${directory}/manifest.json`,'utf8')));
+fs.writeFileSync(`${directory}/revision-plan.json`,JSON.stringify(plan));
+if (!process.env.FIRESTORE_EMULATOR_HOST && process.env.APPLY_SOURCE_REVISION !== 'true') throw Error('PRODUCTION_APPLY_NOT_ENABLED');
+const db=new Firestore({projectId:process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0064554427',databaseId:process.env.FIRESTORE_DATABASE_ID || 'ai-studio-khousing-38852770-f782-474c-b219-956fbb846237'});
+const revision=`r${new Date().toISOString().replace(/\D/g,'').slice(0,14)}`;
+publishSourceRevision(db,plan,revision).then(r=>console.log(JSON.stringify(r))).finally(()=>db.terminate());

@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   initializeFirestore,
+  connectFirestoreEmulator,
   getFirestore,
   Firestore,
   setLogLevel,
@@ -24,20 +25,21 @@ let firestoreAvailable = false;
  * Uses configuration provided in firebase-applet-config.json.
  */
 export function getFirestoreDb(): Firestore | null {
+  if (process.env.DISABLE_FIRESTORE === 'true') return null;
   if (firestoreInitialized) {
     return firestoreInstance;
   }
 
   try {
     const configPath = path.join(process.cwd(), 'firebase-applet-config.json');
-    if (!fs.existsSync(configPath)) {
+    if (!process.env.FIREBASE_CONFIG_JSON && !fs.existsSync(configPath)) {
       console.warn('[Firestore] firebase-applet-config.json not found. Firestore will be disabled.');
       firestoreInitialized = true;
       firestoreAvailable = false;
       return null;
     }
 
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const config = JSON.parse(process.env.FIREBASE_CONFIG_JSON || fs.readFileSync(configPath, 'utf8'));
     if (!config.apiKey || !config.projectId) {
       console.warn('[Firestore] Invalid firebase-applet-config.json. Missing apiKey or projectId.');
       firestoreInitialized = true;
@@ -69,6 +71,10 @@ export function getFirestoreDb(): Firestore | null {
       databaseId
     );
 
+    if (process.env.FIRESTORE_EMULATOR_HOST) {
+      const [host, port] = process.env.FIRESTORE_EMULATOR_HOST.split(':');
+      connectFirestoreEmulator(firestoreInstance, host, Number(port));
+    }
     firestoreInitialized = true;
     firestoreAvailable = true;
     console.log(`[Firestore] Initialized client (project: ${config.projectId}, db: ${databaseId || '(default)'})`);
@@ -83,6 +89,8 @@ export function getFirestoreDb(): Firestore | null {
 }
 
 export function isFirestoreAvailable(): boolean {
+  if (process.env.DISABLE_FIRESTORE === 'true') return false;
+  if (process.env.USE_SERVER_IAM === 'true') return true;
   if (!firestoreInitialized) {
     getFirestoreDb();
   }

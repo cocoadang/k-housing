@@ -137,7 +137,7 @@ export const ProjectTimelineSection: React.FC<ProjectTimelineSectionProps> = ({
                   {isBackground && (
                     <div className="mt-2.5 px-2.5 py-1.5 rounded-lg bg-purple-950/40 border border-purple-900/50 text-[11px] text-purple-300/90 flex items-center gap-1.5">
                       <Bookmark className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                      <span>현재 도심 공공주택 복합사업 지정 이전의 종전 구역 해제 등 과거 배경 이력이며, 현 사업의 법정 추진 절차에 산입되지 않습니다.</span>
+                      <span>현재 사업의 법정 추진 절차와 구분되는 과거 배경 이력이며, 현 사업의 법정 추진 절차에 산입되지 않습니다.</span>
                     </div>
                   )}
 
