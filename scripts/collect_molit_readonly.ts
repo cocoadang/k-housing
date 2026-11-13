@@ -1,3 +1,4 @@
+import {fetchMolitXml} from '../src/server/molitTransport';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -26,8 +27,7 @@ async function fetchMonth(district: string, month: string) {
   for (let page = 1; ; page++) {
     const url = new URL('https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev');
     url.search = new URLSearchParams({ serviceKey: key, LAWD_CD: district, DEAL_YMD: month, pageNo: String(page), numOfRows: '1000' }).toString();
-    const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
-    const xml = await response.text();
+    const {response,xml} = await fetchMolitXml(url);
     const payload = parser.parse(xml)?.response;
     if (!response.ok || !/^0+$/.test(String(payload?.header?.resultCode))) throw Error(`MOLIT_FETCH_FAILED: ${district}/${month}/${page}`);
     fs.writeFileSync(path.join(output, `${district}-${month}-${page}.xml`), xml);
