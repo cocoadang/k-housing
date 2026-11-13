@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "dunchon_redevelopment",
+  "projectId": "proj_dunchon_olympic_park",
+  "generatedAt": "2026-09-04T05:47:30.000Z",
+  "pendingCount": 4,
+  "byRejectionReason": {
+    "UNCONFIRMED_DATE": 1,
+    "REJECTED_HEURISTIC": 1,
+    "INSUFFICIENT_SOURCE": 1,
+    "INFERENCE_NOT_FACT": 1,
+    "CONFLICTING_SOURCES": 0,
+    "CONTENT_NOT_FOUND": 0
+  },
+  "items": [
+    {
+      "pendingId": "pend_milestone_transfer",
+      "evidenceId": "evi_milestone_transfer",
+      "category": "PROJECT_MILESTONE",
+      "subCategory": "이전고시",
+      "originalClaim": "2026년 3월 25일 강동구청 이전고시로 정비사업 법적 소유권 이전 대장정 마무리",
+      "sourceId": "src_gangdong_2026_transfer",
+      "rejectionReason": "UNCONFIRMED_DATE",
+      "detailReason": "강동구청 공식 고시 문서 번호(documentNumber) 부재. 2024년 11월 27일 준공인가 이후 조합 청산 및 이전고시 일정에 관한 잠정적/가상적 추정 날짜로, 법정 공고 원문 실체가 존재하지 않음 (CONTENT_NOT_FOUND).",
+      "requiredForVerification": "향후 강동구청에서 공식 발행하는 이전고시 고시문(고시 번호, 고시 일자 명시) 및 강동구보 원문."
+    },
+    {
+      "pendingId": "pend_mapping_unknown_reject",
+      "evidenceId": "evi_mapping_unknown_reject",
+      "category": "AREA_MAPPING",
+      "subCategory": "자동추론기각",
+      "originalClaim": "구 80㎡ -> 신 84㎡ 등 숫자 유사성에 근거한 단순 추론 매핑은 원천 기각됨 (자동 매핑 건수 = 0)",
+      "sourceId": "src_dunchon_association_book_2017",
+      "rejectionReason": "REJECTED_HEURISTIC",
+      "detailReason": "정비사업 분석 시 단순 면적 숫자 유사성(80->84)에 기인한 휴리스틱 1:1 매핑을 엄격히 방지하기 위한 거부(Rejection) 센티넬 데이터임. 분석 후보 엔티티가 아닌 무결성 제약 규칙.",
+      "requiredForVerification": "추가 자료 불필요 (영구 기각 센티넬로 유지)."
+    },
+    {
+      "pendingId": "pend_cost_reb_unverifiable",
+      "evidenceId": "evi_cost_reb_unverifiable",
+      "category": "CONSTRUCTION_COST",
+      "subCategory": "부동산원검증불가",
+      "originalClaim": "추가 공사비 요청액 중 약 9,700억 원(약 86%)은 합의 기준 부재로 한국부동산원 검증 불가 판정",
+      "sourceId": "src_reb_verification_2023",
+      "rejectionReason": "INSUFFICIENT_SOURCE",
+      "detailReason": "한국부동산원 공사비 검증 보고서상 시공단 요구 1조 1,385억원 중 9,764억원은 법적 검증 대상 외 항목(분양지연 금융손실 등)으로 조합-시공단 양자 합의에 위임된 미해결 분쟁(UNRESOLVED_DISPUTE) 항목임. 확정된 공사비가 아니므로 후보셋 격리.",
+      "requiredForVerification": "조합-시공사업단 간 9,764억원에 관한 최종 분쟁 타결 합의서 및 관리처분계획변경인가 고시문."
+    },
+    {
+      "pendingId": "pend_land_insight_equivalence",
+      "evidenceId": "evi_land_insight_equivalence",
+      "category": "LAND_SHARE",
+      "subCategory": "지분등가군",
+      "originalClaim": "저층 1단지 16평(19.09평), 2단지 16평(18.76평)과 고층 3단지 23평(18.76평), 4단지 23평(18.34평)은 전용면적이 51㎡ vs 71㎡로 상이하나 대지지분이 18~19평으로 유사하여 동일 권리가액군 형성",
+      "sourceId": "src_chosun_land_share",
+      "rejectionReason": "INFERENCE_NOT_FACT",
+      "detailReason": "단지별 평형별 대지지분 수치는 팩트이나, '동일 권리가액군 형성 및 선호도 유사성'은 언론 및 연구자의 2차 해석/분석적 추론(ANALYTICAL_INFERENCE)에 해당함. 법정 1차 팩트와 명확히 분리하여 보존.",
+      "requiredForVerification": "조합 감정평가 결과 통보서의 실제 평형별 종전자산 감정평가액 전수 명부."
+    }
+  ]
+}

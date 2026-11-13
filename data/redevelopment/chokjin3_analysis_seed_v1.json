@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "chokjin3_redevelopment",
+  "projectId": "proj_chokjin3_redevelopment",
+  "readinessSummary": {
+    "nominalAssetValue": "NOT_READY",
+    "costAdjustedValue": "NOT_READY",
+    "xirr": "NOT_READY",
+    "landShare": "NOT_READY",
+    "constructionCostTimeline": "NOT_READY"
+  },
+  "productionEligibilityDistribution": {
+    "VERIFIED": 6,
+    "SUPPORTED": 1,
+    "RESEARCH_ONLY": 0,
+    "PENDING": 3,
+    "total": 10
+  },
+  "readinessDetails": [
+    {
+      "module": "Nominal Asset Value",
+      "status": "NOT_READY",
+      "availableData": [
+        "부산진구 관리처분계획인가 고시 (3,545세대 계획, VERIFIED)"
+      ],
+      "blockers": [
+        "종전 저층 주거지 실거래 시계열 연속성 부재",
+        "신축 일반분양 및 조합원 분양 실거래 데이터 미발생 (착공/철거 단계)",
+        "종전-신축 평형 1:1 매핑 부재"
+      ],
+      "notes": "공식 데이터 부재 및 이종 자산 간 시계열 연결 금지로 계산 불가 (NOT_READY)"
+    },
+    {
+      "module": "Cost Adjusted Value",
+      "status": "NOT_READY",
+      "availableData": [
+        "시공사 선정 및 예정 공사비 약 1조 6,073억원 (REFERENCE)"
+      ],
+      "blockers": [
+        "시공사 증액 요구에 따른 본 도급계약 및 공사비 검증 협의 중",
+        "개별 조합원 확정 분담금 공적 원문 미공개",
+        "비례율 공적 확정 고시 부재"
+      ],
+      "notes": "공식 확정 데이터 부재로 계산 불가 (NOT_READY)"
+    },
+    {
+      "module": "XIRR",
+      "status": "NOT_READY",
+      "availableData": [],
+      "blockers": [
+        "조합원 납부 일정 및 실제 현금흐름 자료 부재"
+      ],
+      "notes": "공식 현금흐름 데이터 부재로 계산 불가 (NOT_READY)"
+    },
+    {
+      "module": "Land Share",
+      "status": "NOT_READY",
+      "availableData": [],
+      "blockers": [
+        "저층 단독·다세대·연립 주거지로 아파트형 규격 대지지분표 부재"
+      ],
+      "notes": "아파트형 규격 대지지분 미해당 (NOT_READY)"
+    },
+    {
+      "module": "Construction Cost Timeline",
+      "status": "NOT_READY",
+      "availableData": [
+        "2022년 시공사 선정 및 입찰 예정 공사비 1조 6,073억원 (REFERENCE)"
+      ],
+      "blockers": [
+        "한국부동산원 공사비 검증 완료 전",
+        "최종 도급변경계약 체결 전"
+      ],
+      "notes": "시공사 선정 예정액 외 법정 공사비 검증 완료 내역 부재 (NOT_READY)"
+    }
+  ]
+}

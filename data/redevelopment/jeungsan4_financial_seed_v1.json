@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "proportionalRate": {
+    "evidenceId": "evi_jeungsan4_proportional_rate_pending",
+    "valuePct": null,
+    "unit": "PERCENT",
+    "asOfDate": null,
+    "evidenceClass": "OFFICIAL",
+    "verificationStatus": "PENDING",
+    "calculationEligibility": "INELIGIBLE",
+    "eligibility": "PENDING",
+    "sourceId": "src_seoul_notice_2024_678",
+    "notes": "도심 공공주택 복합사업 특성상 현물보상 및 감정평가 산정 단계로 비례율 수치 미확정 (임의 추정 금지)"
+  },
+  "generalSalePrice": {
+    "evidenceId": "evi_jeungsan4_general_sale_pending",
+    "pricePerPyeong": null,
+    "unit": "KRW_PER_PYEONG",
+    "asOfDate": null,
+    "eligibility": "PENDING",
+    "sourceId": "src_seoul_notice_2024_678",
+    "notes": "입주자모집공고 전으로 일반분양가 미확정"
+  },
+  "memberSalePrice": {
+    "evidenceId": "evi_jeungsan4_member_price_pending",
+    "averagePricePerPyeong": null,
+    "unit": "KRW_PER_PYEONG",
+    "asOfDate": null,
+    "eligibility": "PENDING",
+    "sourceId": "src_seoul_notice_2024_678",
+    "notes": "토지등소유자 우선공급가 미확정"
+  },
+  "metricsBySemanticType": {
+    "PREDECESSOR_APPRAISAL_VALUE": {
+      "semanticType": "PREDECESSOR_APPRAISAL_VALUE",
+      "rosterAvailable": false,
+      "individualValues": null,
+      "eligibility": "PENDING",
+      "notes": "종전자산 감정평가 및 현물보상 통지 전 상태로 개별 평가액 미공개"
+    }
+  },
+  "applicationExampleProhibition": {
+    "rule": "NO_APPLICATION_EXAMPLES",
+    "enforced": true
+  }
+}

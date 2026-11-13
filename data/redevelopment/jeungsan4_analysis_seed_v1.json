@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "readinessSummary": {
+    "nominalAssetValue": "NOT_READY",
+    "costAdjustedValue": "NOT_READY",
+    "xirr": "NOT_READY",
+    "landShare": "NOT_READY",
+    "constructionCostTimeline": "NOT_READY"
+  },
+  "productionEligibilityDistribution": {
+    "VERIFIED": 3,
+    "SUPPORTED": 0,
+    "RESEARCH_ONLY": 0,
+    "PENDING": 4,
+    "total": 7
+  },
+  "readinessDetails": [
+    {
+      "module": "Nominal Asset Value",
+      "status": "NOT_READY",
+      "availableData": [
+        "서울시 복합사업계획 승인 고시 (3,509세대 공급계획, VERIFIED)"
+      ],
+      "blockers": [
+        "종전자산 감정평가 전",
+        "신축 평형 공급공고 및 분양가 미확정",
+        "종전-신축 평형 매핑 부재"
+      ],
+      "notes": "공식 데이터 부재로 계산 불가 (NOT_READY)"
+    },
+    {
+      "module": "Cost Adjusted Value",
+      "status": "NOT_READY",
+      "availableData": [],
+      "blockers": [
+        "확정 도급계약 및 공사비 검증 전",
+        "토지등소유자 개별 현물보상/분담금 산정 전"
+      ],
+      "notes": "공식 데이터 부재로 계산 불가 (NOT_READY)"
+    },
+    {
+      "module": "XIRR",
+      "status": "NOT_READY",
+      "availableData": [],
+      "blockers": [
+        "현금흐름(납부일자, 납부금액) 자료 부재"
+      ],
+      "notes": "공식 데이터 부재로 계산 불가 (NOT_READY)"
+    },
+    {
+      "module": "Land Share",
+      "status": "NOT_READY",
+      "availableData": [],
+      "blockers": [
+        "단독/다가구/다세대 필지별 토지조서 기준(아파트 단지형 규격 대지지분 부재)"
+      ],
+      "notes": "해당 없음 (NOT_READY)"
+    },
+    {
+      "module": "Construction Cost Timeline",
+      "status": "NOT_READY",
+      "availableData": [],
+      "blockers": [
+        "본 도급계약 체결 전 단계"
+      ],
+      "notes": "공사비 이력 부재 (NOT_READY)"
+    }
+  ]
+}

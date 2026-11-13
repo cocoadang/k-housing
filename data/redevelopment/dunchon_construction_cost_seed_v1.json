@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "dunchon_redevelopment",
+  "projectId": "proj_dunchon_olympic_park",
+  "costEvents": [
+    {
+      "eventId": "cost_event_2016_initial",
+      "evidenceId": "evi_cost_initial_2016",
+      "date": "2016-10-01",
+      "eventName": "최초 공사도급계약 체결",
+      "amountKrw": 2670800000000,
+      "status": "SIGNED_CONTRACT",
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_joongang_2020_contract",
+      "parties": [
+        "둔촌주공아파트 주택재건축정비사업조합",
+        "현대건설",
+        "HDC현대산업개발",
+        "대우건설",
+        "롯데건설"
+      ],
+      "notes": "시공사업단 선정 후 최초 체결된 법정 공사도급계약"
+    },
+    {
+      "eventId": "cost_event_2020_revised",
+      "evidenceId": "evi_cost_revised_2020",
+      "date": "2020-06-25",
+      "eventName": "공사도급변경계약 체결 (5,586억 증액)",
+      "amountKrw": 3229400000000,
+      "status": "SIGNED_CONTRACT",
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_joongang_2020_contract",
+      "parties": [
+        "둔촌주공아파트 주택재건축정비사업조합",
+        "시공사업단"
+      ],
+      "notes": "세대수 증가(12,032세대) 및 상가 추가 반영으로 5,586억 증액된 변경 도급계약"
+    },
+    {
+      "eventId": "cost_event_2022_builder_demand",
+      "evidenceId": "evi_cost_builder_demanded_2022",
+      "date": "2022-04-15",
+      "eventName": "시공사업단 추가 증액 요구 (1조 1,385억 요구)",
+      "amountKrw": 4367700000000,
+      "status": "REQUESTED",
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_hankyung_2022_suspension",
+      "parties": [
+        "시공사업단"
+      ],
+      "notes": "원자재값 급등 및 금융비용 반영을 이유로 시공사업단이 일방 요구한 금액(REQUESTED). 최종 확정액(FINAL)이 아니며 엄격 분리 관리."
+    },
+    {
+      "eventId": "cost_event_2023_reb_target",
+      "evidenceId": "evi_cost_reb_verification_target",
+      "date": "2023-06-08",
+      "eventName": "한국부동산원 공사비 검증 대상액 접수",
+      "amountKrw": 162100000000,
+      "status": "VERIFIED",
+      "eligibility": "VERIFIED",
+      "sourceId": "src_reb_verification_2023",
+      "parties": [
+        "한국부동산원",
+        "강동구청",
+        "조합"
+      ],
+      "notes": "시공단 요구액 중 법적 검증 가능 1,621억 원 공식 접수 검증"
+    },
+    {
+      "eventId": "cost_event_2023_reb_reduction",
+      "evidenceId": "evi_cost_reb_verification_reduction",
+      "date": "2023-06-08",
+      "eventName": "한국부동산원 검증 감액 판정",
+      "amountKrw": 37700000000,
+      "status": "VERIFIED",
+      "eligibility": "VERIFIED",
+      "sourceId": "src_reb_verification_2023",
+      "parties": [
+        "한국부동산원"
+      ],
+      "notes": "검증 대상 1,621억 원 중 377억 원 감액 판정 (인정액 1,244억 원)"
+    },
+    {
+      "eventId": "cost_event_2024_infrastructure_add",
+      "evidenceId": "evi_cost_infrastructure_2024",
+      "date": "2024-10-21",
+      "eventName": "기반시설·조경 공사비 210억 증액 합의",
+      "amountKrw": 21000000000,
+      "status": "AGREED",
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_businesspost_2024_infrastructure",
+      "parties": [
+        "조합",
+        "시공사업단"
+      ],
+      "notes": "단지 주변 도로 확장 및 조경 관련 공사비 210억 원 증액 합의"
+    }
+  ],
+  "rebAuditBreakdown": {
+    "targetAmountKrw": 162100000000,
+    "reducedAmountKrw": 37700000000,
+    "recognizedAmountKrw": 124400000000,
+    "unverifiableAmountKrw": 976400000000,
+    "notes": "한국부동산원은 1,621억 중 377억 감액, 1,244억 인정. 분양지연 금융손실 등 9,764억은 검증 불가(PROPOSED / PENDING 격리)로 판정."
+  },
+  "currentCostPhase": "POST_COMPLETION_PRE_LIQUIDATION",
+  "isFinal": false,
+  "finalTotalCostKrw": null,
+  "generatedAt": "2026-09-04T06:05:00.000Z"
+}

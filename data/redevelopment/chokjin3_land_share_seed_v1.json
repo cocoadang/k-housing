@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "chokjin3_redevelopment",
+  "projectId": "proj_chokjin3_redevelopment",
+  "canonicalUnit": "SQM",
+  "totalDistinctTiers": 0,
+  "evidenceId": "evi_chokjin3_land_share_pending",
+  "sourceId": "src_busanjin_notice_2024_95",
+  "eligibility": "PENDING",
+  "inferenceProhibition": {
+    "rule": "노후 저층 주거지(단독·다세대·연립) 재개발 사업으로 아파트형 규격 대지지분이 존재하지 않으며, 개별 토지조서 전 임의 대지지분 추론을 엄격히 금지함",
+    "enforced": true
+  },
+  "tiers": []
+}

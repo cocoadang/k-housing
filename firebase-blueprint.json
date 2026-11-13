@@ -1,0 +1,104 @@
+{
+  "entities": {
+    "Complex": {
+      "title": "Complex",
+      "description": "Master Apartment Complex Registry",
+      "properties": {
+        "id": { "type": "string", "description": "Unique complex ID" },
+        "name": { "type": "string", "description": "Official complex name" },
+        "shortName": { "type": "string", "description": "Display short name" },
+        "region": { "type": "string", "description": "Region key" },
+        "district": { "type": "string", "description": "District name" },
+        "dong": { "type": "string", "description": "Legal dong name" },
+        "lawdCd": { "type": "string", "description": "5-digit LAWD_CD" },
+        "apiAliases": { "type": "array", "items": { "type": "string" } },
+        "builtYear": { "type": "number" },
+        "totalUnits": { "type": "number" },
+        "representativeArea": { "type": "number" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["id", "name", "lawdCd"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Individual MOLIT Real Estate Apartment Sale Record",
+      "properties": {
+        "transactionId": { "type": "string", "description": "Deterministic transaction ID" },
+        "complexId": { "type": "string", "description": "Target complex ID" },
+        "complexName": { "type": "string", "description": "Complex name" },
+        "dealDate": { "type": "string", "description": "YYYY-MM-DD" },
+        "dealYear": { "type": "number" },
+        "dealMonth": { "type": "number" },
+        "dealDay": { "type": "number" },
+        "dealYmd": { "type": "string", "description": "YYYYMM" },
+        "price": { "type": "number", "description": "Price in 10,000 KRW" },
+        "exclusiveArea": { "type": "number", "description": "Exclusive area in sqm" },
+        "areaCategory": { "type": "string", "description": "Area category (59, 84, 114_PLUS, OTHER)" },
+        "floor": { "type": "number" },
+        "isCancelled": { "type": "boolean" },
+        "dealType": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "required": ["transactionId", "complexId", "dealDate", "price", "exclusiveArea"]
+    },
+    "MonthlyComplexPrice": {
+      "title": "MonthlyComplexPrice",
+      "description": "Monthly Aggregated Price and Volume Metrics per Complex and Area Category",
+      "properties": {
+        "complexId": { "type": "string" },
+        "dealYmd": { "type": "string" },
+        "areaCategory": { "type": "string" },
+        "transactionCount": { "type": "number" },
+        "medianPrice": { "type": "number" },
+        "averagePrice": { "type": "number" },
+        "medianPricePerSqm": { "type": "number" },
+        "confidence": { "type": "string" }
+      },
+      "required": ["complexId", "dealYmd", "areaCategory", "transactionCount", "medianPrice"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Operational and Data Collection Metadata",
+      "properties": {
+        "schemaVersion": { "type": "string" },
+        "lastAttempt": { "type": "string" },
+        "lastSuccessfulCollection": { "type": "string" }
+      }
+    },
+    "BackfillJob": {
+      "title": "BackfillJob",
+      "description": "Historical backfill job execution log",
+      "properties": {
+        "lawdCd": { "type": "string" },
+        "dealYmd": { "type": "string" },
+        "status": { "type": "string" },
+        "fetchedRows": { "type": "number" },
+        "savedTransactions": { "type": "number" },
+        "savedMonthlyRecords": { "type": "number" },
+        "durationMs": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "/complexes/{complexId}": {
+      "schema": "Complex",
+      "description": "Master apartment complexes"
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Individual actual apartment trade records"
+    },
+    "/monthlyComplexPrices/{monthlyPriceId}": {
+      "schema": "MonthlyComplexPrice",
+      "description": "Monthly aggregated prices"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "System settings and collection status"
+    },
+    "/backfillJobs/{jobId}": {
+      "schema": "BackfillJob",
+      "description": "Historical backfill job progress"
+    }
+  }
+}

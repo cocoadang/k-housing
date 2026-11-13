@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "canonicalUnit": "SQM",
+  "totalDistinctTiers": 0,
+  "evidenceId": "evi_jeungsan4_land_share_pending",
+  "sourceId": "src_seoul_notice_2024_678",
+  "eligibility": "PENDING",
+  "inferenceProhibition": {
+    "rule": "대지지분 규격화가 불가한 다세대·단독 재개발 구역으로, 개별 감정평가 전 임의 대지지분 추론 및 권리가액 추정 엄격 금지",
+    "enforced": true
+  },
+  "tiers": []
+}

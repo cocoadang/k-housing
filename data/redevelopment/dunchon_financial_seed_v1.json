@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "dunchon_redevelopment",
+  "projectId": "proj_dunchon_olympic_park",
+  "proportionalRate": {
+    "evidenceId": "evi_fin_proportional_rate",
+    "valuePct": 120.37,
+    "unit": "PERCENT",
+    "asOfDate": "2017-05-02",
+    "evidenceClass": "OFFICIAL",
+    "verificationStatus": "PENDING",
+    "calculationEligibility": "INELIGIBLE",
+    "eligibility": "PENDING",
+    "sourceId": "src_gangdong_2017_68",
+    "notes": "강동구 고시 제2017-68호 관리처분인가 원문 본문 직접 대조 미완료 상태 (PENDING + INELIGIBLE 처리로 공식 계산 사용 배제)"
+  },
+  "generalSalePrice": {
+    "evidenceId": "evi_fin_general_sale_price",
+    "pricePerPyeong": 38290000,
+    "unit": "KRW_PER_PYEONG",
+    "asOfDate": "2022-11-25",
+    "eligibility": "VERIFIED",
+    "sourceId": "src_cleanup_infomongttang",
+    "notes": "입주자모집공고 및 분양가상한제 심사위원회 최종 의결 단가"
+  },
+  "memberSalePrice": {
+    "evidenceId": "evi_fin_member_price",
+    "averagePricePerPyeong": 27800000,
+    "unit": "KRW_PER_PYEONG",
+    "asOfDate": "2017-05-04",
+    "eligibility": "SUPPORTED",
+    "sourceId": "src_herald_contribution_cases",
+    "notes": "관리처분인가 기준 조합원 평균 분양단가"
+  },
+  "metricsBySemanticType": {
+    "PREDECESSOR_APPRAISAL_VALUE": {
+      "semanticType": "PREDECESSOR_APPRAISAL_VALUE",
+      "rosterAvailable": false,
+      "individualValues": null,
+      "derivedRangeKrw": {
+        "min": 371354989,
+        "max": 869818061
+      },
+      "eligibility": "SUPPORTED",
+      "notes": "전수 개별 종전자산평가액 명부는 공공 미공개 상태임. 권리가액 범위와 비례율(120.37%)을 역산한 범위치만 존재하며, 누락된 개별값은 0으로 대체하지 않고 null로 유지함."
+    },
+    "RIGHTS_VALUE": {
+      "semanticType": "RIGHTS_VALUE",
+      "evidenceId": "evi_fin_rights_value_range",
+      "rangeKrw": {
+        "min": 447000000,
+        "max": 1047000000
+      },
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_herald_contribution_cases",
+      "asOfDate": "2017-05-04",
+      "notes": "기존 전용 24.75㎡~112.2㎡ 대상 조합원 권리가액(종전자산평가액 × 비례율 120.37%) 분포 범위"
+    },
+    "MEMBER_SALE_PRICE": {
+      "semanticType": "MEMBER_SALE_PRICE",
+      "evidenceId": "evi_fin_member_price",
+      "averagePerPyeongKrw": 27800000,
+      "individualRosterPrices": null,
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_herald_contribution_cases",
+      "asOfDate": "2017-05-04",
+      "notes": "신축 평형별 개별 조합원 분양가 명부는 조합원 전용 책자에 수록되어 공공 미공개, 평균단가만 보존"
+    },
+    "ADDITIONAL_CONTRIBUTION": {
+      "semanticType": "ADDITIONAL_CONTRIBUTION",
+      "evidenceId": "evi_fin_additional_contrib_avg",
+      "averageEstimatedRangeKrw": {
+        "min": 120000000,
+        "max": 128000000
+      },
+      "individualRosterValues": null,
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_herald_contribution_cases",
+      "asOfDate": "2022-12-12",
+      "notes": "전체 조합원 평균 추정 분담금 잠정 통보 범위. 개별 세대값은 평형 선택에 따라 상이함."
+    },
+    "ADDITIONAL_CHARGE": {
+      "semanticType": "ADDITIONAL_CHARGE",
+      "value": null,
+      "eligibility": "SUPPORTED",
+      "notes": "조합원 옵션/추가 공사비 부담금 항목으로 전수 일괄 데이터 부재 (null 유지, 0 입력 금지)"
+    },
+    "REFUND": {
+      "semanticType": "REFUND",
+      "value": null,
+      "individualRosterValues": null,
+      "eligibility": "SUPPORTED",
+      "notes": "대형 평형 다운사이징 시 발생하는 환급금은 개별 신청에 따라 발생하며 전수 명부 미공개 (null 유지, 0 입력 금지)"
+    }
+  },
+  "applicationExampleProhibition": {
+    "rule": "APPLICATION_EXAMPLE(1단지 16평 +1.88억, 3단지 23평 +0.43억, 4단지 34평 -2.57억)은 RESEARCH_ONLY 시뮬레이션 표본이며, 프로덕션 재무 입력값(Production Financial Input)으로의 사용 및 일반화가 엄격히 금지됨",
+    "enforced": true
+  },
+  "generatedAt": "2026-09-04T06:05:00.000Z"
+}

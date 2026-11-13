@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-09-04T02:10:00.000Z",
+  "lineage": {
+    "schemaVersion": 1,
+    "lineageId": "dunchon_redevelopment",
+    "lineageName": "둔촌주공아파트 주택재건축정비사업",
+    "predecessorComplexIds": [
+      "dunchon_jugong_1",
+      "dunchon_jugong_2",
+      "dunchon_jugong_3",
+      "dunchon_jugong_4"
+    ],
+    "successorComplexIds": [
+      "gangdong_olympic_park"
+    ],
+    "projectId": "proj_dunchon_olympic_park",
+    "description": "강동구 둔촌동 둔촌주공아파트 1~4단지(5,930세대)를 올림픽파크포레온(12,032세대)으로 재건축한 국내 최대 규모 주택재건축사업",
+    "sourceMetadata": [
+      {
+        "sourceType": "OFFICIAL_DOCUMENT",
+        "sourceName": "서울특별시 강동구청 고시 제2017-68호",
+        "sourceDocumentTitle": "둔촌주공아파트 주택재건축정비사업 관리처분계획인가 고시",
+        "publisher": "서울특별시 강동구청",
+        "asOfDate": "2017-05-04",
+        "confidence": "VERIFIED",
+        "notes": "법정 관리처분계획인가 고시 원문"
+      }
+    ]
+  },
+  "project": {
+    "schemaVersion": 1,
+    "projectId": "proj_dunchon_olympic_park",
+    "lineageId": "dunchon_redevelopment",
+    "projectName": "둔촌주공아파트 주택재건축정비사업",
+    "projectType": "RECONSTRUCTION",
+    "status": "COMPLETED",
+    "predecessorComplexIds": [
+      "dunchon_jugong_1",
+      "dunchon_jugong_2",
+      "dunchon_jugong_3",
+      "dunchon_jugong_4"
+    ],
+    "successorComplexIds": [
+      "gangdong_olympic_park"
+    ],
+    "milestoneDates": {
+      "safetyDiagnosisDate": null,
+      "promotionCommitteeApprovalDate": "2003-10-27",
+      "associationEstablishmentDate": "2009-12-28",
+      "projectApprovalDate": "2015-07-30",
+      "projectNoticeDate": "2015-08-05",
+      "projectNoticeNumber": "강동구 고시 제2015-93호",
+      "managementDispositionDate": "2017-05-02",
+      "managementDispositionNoticeDate": "2017-05-04",
+      "managementDispositionNoticeNumber": "강동구 고시 제2017-68호",
+      "demolitionStartDate": "2019-12-01",
+      "constructionStartDate": "2019-12-03",
+      "generalSaleDate": "2022-12-05",
+      "completionDate": "2024-11-27",
+      "moveInDate": "2024-11-27"
+    },
+    "units": {
+      "before": 5930,
+      "after": 12032
+    },
+    "floorAreaRatio": {
+      "beforePct": null,
+      "afterPct": null
+    },
+    "sourceMetadata": [
+      {
+        "sourceType": "STATUTORY_PLAN",
+        "sourceName": "서울시 클린업시스템 / 정비사업 정보몽땅",
+        "sourceDocumentTitle": "둔촌주공아파트 주택재건축정비사업 사업시행 및 관리처분 인가 내역",
+        "confidence": "HIGH"
+      }
+    ],
+    "confidence": "HIGH"
+  },
+  "areaMappings": [],
+  "verifiedAreaMappingsCount": 0,
+  "unknownAreaMappingsCount": 0,
+  "automaticMappingsCount": 0,
+  "costHistories": [],
+  "constructionCostHistories": [],
+  "notes": "Phase 8A foundation seed: No unverified automatic area mappings or fabricated financial figures."
+}

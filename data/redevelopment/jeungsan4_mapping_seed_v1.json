@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "summary": {
+    "predecessorFamilies": 0,
+    "successorFamilies": 0,
+    "verifiedActual": 0,
+    "verifiedOption": 0,
+    "partial": 0,
+    "unknown": 0,
+    "applicationExamples": 0,
+    "automatic": 0
+  },
+  "mappingPolicy": {
+    "evidenceId": "evi_jeungsan4_mapping_policy",
+    "policyType": "RIGHTS_VALUE_PREFERENCE_NM_DISTRIBUTION",
+    "rule": "도심 공공주택 복합사업의 토지등소유자 우선공급 및 일반공급 평형 배정은 종전자산 감정평가 및 우선공급 신청 결과에 따르며, 사전 임의 추정 매핑은 엄격히 금지됨",
+    "automaticInferredMappingAllowed": false,
+    "automaticMappingCount": 0
+  },
+  "coverageRecords": [],
+  "mappings": [],
+  "applicationExamples": []
+}

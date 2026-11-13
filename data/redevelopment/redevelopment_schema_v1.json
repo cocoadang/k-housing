@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "description": "Phase 8A Redevelopment Foundation Schema Blueprint for future Firestore collections and local validation",
+  "collections": {
+    "redevelopmentLineages": {
+      "documentId": "lineageId (e.g. dunchon_redevelopment)",
+      "fields": {
+        "schemaVersion": "number",
+        "lineageId": "string",
+        "lineageName": "string",
+        "predecessorComplexIds": "string[]",
+        "successorComplexIds": "string[]",
+        "projectId": "string | null",
+        "description": "string | null",
+        "sourceMetadata": "RedevelopmentSourceMetadata[]",
+        "createdAt": "string (ISO8601)",
+        "updatedAt": "string (ISO8601)"
+      },
+      "constraints": [
+        "predecessorComplexIds must have >= 1 elements",
+        "successorComplexIds must have >= 1 elements",
+        "predecessorComplexIds and successorComplexIds must have no intersection (self-cycle prohibited)",
+        "no duplicate IDs within arrays"
+      ]
+    },
+    "redevelopmentProjects": {
+      "documentId": "projectId (e.g. proj_dunchon_olympic_park)",
+      "fields": {
+        "schemaVersion": "number",
+        "projectId": "string",
+        "lineageId": "string",
+        "projectName": "string",
+        "projectType": "'RECONSTRUCTION' | 'REDEVELOPMENT'",
+        "status": "'PLANNING' | 'IN_PROGRESS' | 'COMPLETED'",
+        "predecessorComplexIds": "string[]",
+        "successorComplexIds": "string[]",
+        "milestoneDates": {
+          "safetyDiagnosisDate": "string | null",
+          "associationEstablishmentDate": "string | null",
+          "projectApprovalDate": "string | null",
+          "managementDispositionDate": "string | null",
+          "demolitionStartDate": "string | null",
+          "constructionStartDate": "string | null",
+          "generalSaleDate": "string | null",
+          "completionDate": "string | null",
+          "moveInDate": "string | null"
+        },
+        "units": {
+          "before": "number | null",
+          "after": "number | null"
+        },
+        "floorAreaRatio": {
+          "beforePct": "number | null",
+          "afterPct": "number | null"
+        },
+        "sourceMetadata": "RedevelopmentSourceMetadata[]",
+        "confidence": "'VERIFIED' | 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN'",
+        "createdAt": "string",
+        "updatedAt": "string"
+      }
+    },
+    "redevelopmentAreaMappings": {
+      "documentId": "mappingId (e.g. map_dunchon_4_78_to_foreon_84)",
+      "fields": {
+        "schemaVersion": "number",
+        "mappingId": "string",
+        "lineageId": "string",
+        "predecessorComplexId": "string",
+        "predecessorAreaFamilyId": "string",
+        "successorComplexId": "string",
+        "successorAreaFamilyId": "string",
+        "mappingStatus": "'VERIFIED' | 'PARTIAL' | 'UNKNOWN'",
+        "mappingType": "'DIRECT' | 'OPTIONAL' | 'MULTIPLE_POSSIBILITIES' | 'UNKNOWN'",
+        "sourceMetadata": "RedevelopmentSourceMetadata[]",
+        "notes": "string | null"
+      },
+      "constraints": [
+        "predecessorAreaFamilyId must exist in AREA_FAMILIES_REGISTRY[predecessorComplexId]",
+        "successorAreaFamilyId must exist in AREA_FAMILIES_REGISTRY[successorComplexId]",
+        "No automatic mapping by area similarity"
+      ]
+    },
+    "redevelopmentCostHistory": {
+      "documentId": "costHistoryId (e.g. cost_dunchon_4_78_to_foreon_84_v1)",
+      "fields": {
+        "schemaVersion": "number",
+        "costHistoryId": "string",
+        "lineageId": "string",
+        "projectId": "string | null",
+        "predecessorComplexId": "string",
+        "predecessorAreaFamilyId": "string",
+        "successorComplexId": "string",
+        "successorAreaFamilyId": "string",
+        "previousAssetValue": "number | null (만원)",
+        "proportionalRatePct": "number | null (%)",
+        "rightValue": "number | null (만원)",
+        "memberSalePrice": "number | null (만원)",
+        "additionalContribution": "number | null (만원)",
+        "status": "'ESTIMATED' | 'MANAGEMENT_DISPOSITION' | 'REVISED' | 'FINAL'",
+        "announcedDate": "string | null (YYYY-MM-DD)",
+        "effectiveDate": "string | null (YYYY-MM-DD)",
+        "paymentSchedule": "RedevelopmentPaymentStage[]",
+        "sourceMetadata": "RedevelopmentSourceMetadata[]",
+        "notes": "string | null"
+      },
+      "constraints": [
+        "Represents individual owner contribution outflow, NOT project construction cost",
+        "Historical versioning supported; no single global static scalar"
+      ]
+    },
+    "redevelopmentConstructionCostHistory": {
+      "documentId": "constructionCostHistoryId (e.g. ccost_dunchon_initial_contract)",
+      "fields": {
+        "schemaVersion": "number",
+        "constructionCostHistoryId": "string",
+        "projectId": "string",
+        "amount": "number",
+        "unit": "'KRW_MANWON' | 'KRW_EOK' | 'KRW_WON'",
+        "costBasis": "'TOTAL_PROJECT' | 'PER_PYEONG' | 'PER_SQM'",
+        "status": "'ESTIMATED' | 'CONTRACT' | 'DISPUTE_VERIFICATION' | 'SETTLEMENT' | 'FINAL'",
+        "effectiveDate": "string | null (YYYY-MM-DD)",
+        "contractor": "string | null",
+        "increaseAmount": "number | null",
+        "increaseRatePct": "number | null",
+        "sourceMetadata": "RedevelopmentSourceMetadata[]",
+        "notes": "string | null"
+      },
+      "constraints": [
+        "Represents project-level construction cost, strictly separated from member additional contribution"
+      ]
+    }
+  },
+  "sourceHierarchyPolicy": {
+    "tier1": {
+      "type": "OFFICIAL_DOCUMENT",
+      "description": "조합 공식 문서, 정비사업 공식 문서, 정부/지자체 공식 고시",
+      "defaultConfidence": "VERIFIED"
+    },
+    "tier2": {
+      "type": "STATUTORY_PLAN",
+      "description": "사업시행계획인가, 관리처분계획인가, 총회 책자",
+      "defaultConfidence": "HIGH"
+    },
+    "tier3": {
+      "type": "BUILDER_OFFICIAL",
+      "description": "시공사/상장사 공시, IR 공식 자료",
+      "defaultConfidence": "HIGH"
+    },
+    "tier4": {
+      "type": "REPUTABLE_MEDIA",
+      "description": "공식문서를 인용한 주요 일간지 및 경제지 보도",
+      "defaultConfidence": "MEDIUM"
+    },
+    "tier5": {
+      "type": "SECONDARY_RESEARCH",
+      "description": "부동산 포털, 리서치 보고서 등 2차 가공 자료",
+      "defaultConfidence": "LOW"
+    }
+  }
+}

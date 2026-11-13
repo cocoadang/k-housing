@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "dunchon_redevelopment",
+  "projectId": "proj_dunchon_olympic_park",
+  "summary": {
+    "predecessorFamilies": 16,
+    "verifiedActual": 0,
+    "verifiedOption": 0,
+    "partial": 0,
+    "unknown": 16,
+    "applicationExamples": 3,
+    "automatic": 0
+  },
+  "mappingPolicy": {
+    "evidenceId": "evi_mapping_policy",
+    "policyType": "RIGHTS_VALUE_PREFERENCE_NM_DISTRIBUTION",
+    "rule": "조합원 평형 배정은 면적 유사도(80->84 등)가 아닌 종전자산평가액 기반 권리가액 순위 및 희망신청에 따라 분산 배정(N:M)됨",
+    "automaticInferredMappingAllowed": false,
+    "automaticMappingCount": 0
+  },
+  "coverageRecords": [
+    {
+      "familyId": "pred_d1_25",
+      "complexNumber": 1,
+      "pyeongName": "7.5평형",
+      "exclusiveAreaSqm": 25.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지 (자동 추정 배제)"
+    },
+    {
+      "familyId": "pred_d1_51",
+      "complexNumber": 1,
+      "pyeongName": "16평형",
+      "exclusiveAreaSqm": 51.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": true,
+      "applicationExampleEvidenceIds": ["evi_mapping_sample_1"],
+      "notes": "신축 84㎡ 선택 예시(분담금 1.88억)가 존재하나 이는 분양신청 시뮬레이션 표본이며 전수 고정 배정이 아니므로 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d1_58",
+      "complexNumber": 1,
+      "pyeongName": "18평형",
+      "exclusiveAreaSqm": 58.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d1_80",
+      "complexNumber": 1,
+      "pyeongName": "22평형",
+      "exclusiveAreaSqm": 80.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d1_88",
+      "complexNumber": 1,
+      "pyeongName": "25평형",
+      "exclusiveAreaSqm": 88.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d2_51",
+      "complexNumber": 2,
+      "pyeongName": "16평형",
+      "exclusiveAreaSqm": 51.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d2_80",
+      "complexNumber": 2,
+      "pyeongName": "22평형",
+      "exclusiveAreaSqm": 80.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d2_88",
+      "complexNumber": 2,
+      "pyeongName": "25평형",
+      "exclusiveAreaSqm": 88.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d3_71",
+      "complexNumber": 3,
+      "pyeongName": "23평형",
+      "exclusiveAreaSqm": 71.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": true,
+      "applicationExampleEvidenceIds": ["evi_mapping_sample_2"],
+      "notes": "신축 84㎡ 선택 예시(분담금 4,300만)가 존재하나 시뮬레이션 표본에 불과하여 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d3_96",
+      "complexNumber": 3,
+      "pyeongName": "31평형",
+      "exclusiveAreaSqm": 96.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d3_98",
+      "complexNumber": 3,
+      "pyeongName": "34평형 A",
+      "exclusiveAreaSqm": 98.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d3_99",
+      "complexNumber": 3,
+      "pyeongName": "34평형 B",
+      "exclusiveAreaSqm": 99.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d4_71",
+      "complexNumber": 4,
+      "pyeongName": "23평형",
+      "exclusiveAreaSqm": 71.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d4_78",
+      "complexNumber": 4,
+      "pyeongName": "25평형",
+      "exclusiveAreaSqm": 78.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d4_97",
+      "complexNumber": 4,
+      "pyeongName": "31평형",
+      "exclusiveAreaSqm": 97.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": false,
+      "applicationExampleEvidenceIds": [],
+      "notes": "공식 세대별 최종 배정 명부 미공개로 실제 배정 현황 UNKNOWN 상태 유지"
+    },
+    {
+      "familyId": "pred_d4_99",
+      "complexNumber": 4,
+      "pyeongName": "34평형",
+      "exclusiveAreaSqm": 99.0,
+      "coverageStatus": "UNKNOWN",
+      "actualAllocationCount": 0,
+      "hasApplicationExample": true,
+      "applicationExampleEvidenceIds": ["evi_mapping_sample_3"],
+      "notes": "신축 49㎡ 다운사이징 선택 예시(환급금 2.57억)가 존재하나 시뮬레이션 표본에 불과하여 UNKNOWN 상태 유지"
+    }
+  ],
+  "applicationExamples": [
+    {
+      "exampleId": "app_ex_1_16_to_84",
+      "evidenceId": "evi_mapping_sample_1",
+      "sourceAreaFamily": "1단지 16평형 (51㎡)",
+      "targetSuccessorAreaFamily": "신축 84㎡ (34평형)",
+      "financialOutcomeType": "ADDITIONAL_CONTRIBUTION",
+      "amountKrw": 188000000,
+      "eligibility": "RESEARCH_ONLY",
+      "notes": "조합원 분양신청 통보 기준 추가분담금 예시. 실제 1:1 고정 배정(ACTUAL_ALLOCATION)이 아니며 RESEARCH_ONLY로 한정."
+    },
+    {
+      "exampleId": "app_ex_3_23_to_84",
+      "evidenceId": "evi_mapping_sample_2",
+      "sourceAreaFamily": "3단지 23평형 (71㎡)",
+      "targetSuccessorAreaFamily": "신축 84㎡ (34평형)",
+      "financialOutcomeType": "ADDITIONAL_CONTRIBUTION",
+      "amountKrw": 43000000,
+      "eligibility": "RESEARCH_ONLY",
+      "notes": "조합원 분양신청 통보 기준 추가분담금 예시. 고층 23평형 소유자가 84㎡ 선택 시 4,300만 원 분담 예시."
+    },
+    {
+      "exampleId": "app_ex_4_34_to_49",
+      "evidenceId": "evi_mapping_sample_3",
+      "sourceAreaFamily": "4단지 34평형 (99㎡)",
+      "targetSuccessorAreaFamily": "신축 49㎡ (22평형)",
+      "financialOutcomeType": "REFUND",
+      "amountKrw": 257000000,
+      "eligibility": "RESEARCH_ONLY",
+      "notes": "대형 평형 소유자의 다운사이징 신청 시 환급금 수령 표본 예시. production mapping 승격 금지."
+    }
+  ],
+  "generatedAt": "2026-09-04T06:05:00.000Z"
+}

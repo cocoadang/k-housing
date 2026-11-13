@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "currentCostPhase": "PLANNING",
+  "costEvents": [],
+  "rebAuditBreakdown": {
+    "targetAmountKrw": 0,
+    "reducedAmountKrw": 0,
+    "recognizedAmountKrw": 0,
+    "unverifiableAmountKrw": 0,
+    "notes": "한국부동산원 공사비 검증 전 단계"
+  },
+  "isFinal": false,
+  "finalTotalCostKrw": null
+}

@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "dunchon_redevelopment",
+  "projectId": "proj_dunchon_olympic_park",
+  "readinessSummary": {
+    "nominalAssetValue": "PARTIAL",
+    "costAdjustedValue": "PARTIAL",
+    "xirr": "NOT_READY",
+    "landShare": "READY",
+    "constructionCostTimeline": "READY"
+  },
+  "productionEligibilityDistribution": {
+    "VERIFIED": 22,
+    "SUPPORTED": 14,
+    "RESEARCH_ONLY": 3,
+    "PENDING": 4,
+    "total": 43
+  },
+  "readinessDetails": [
+    {
+      "module": "Nominal Asset Value",
+      "status": "PARTIAL",
+      "availableData": [
+        "법정 비례율 120.37% (2017 관리처분인가 고시, VERIFIED)",
+        "기존 평형별 권리가액 분포 범위 (4.47억 ~ 10.47억 원, SUPPORTED)",
+        "조합원 평균 분양단가 (평당 약 2,780만 원, SUPPORTED)",
+        "일반분양 확정단가 (평당 3,829만 원, VERIFIED)"
+      ],
+      "blockers": [
+        "5,930 세대별 개별 종전자산평가액 원부 명부 공공 미공개",
+        "신축 평형별 최종 개별 조합원 분양가 명부 부재"
+      ],
+      "notes": "거시적 비례율과 권리가액 범위는 확인되었으나, 개별 세대 단위의 확정 명산액 산출은 불가하여 PARTIAL로 엄격 분류"
+    },
+    {
+      "module": "Cost Adjusted Value",
+      "status": "PARTIAL",
+      "availableData": [
+        "2016 최초 도급계약 2조 6,708억 원 (SIGNED_CONTRACT)",
+        "2020 변경 도급계약 3조 2,294억 원 (SIGNED_CONTRACT)",
+        "2023 부동산원 검증 인정액 1,244억 원 (VERIFIED)",
+        "2024 기반시설 추가합의 210억 원 (AGREED)"
+      ],
+      "blockers": [
+        "최종 청산 총회 및 조합 해산 결산 승인 전으로 최종 공사비(FINAL) 미확정",
+        "시공단 요구액 중 부동산원 검증불가 9,764억 원의 최종 법적 정산 내역 미도래"
+      ],
+      "notes": "공사비 변동 타임라인과 검증 수치는 확보되었으나, 최종 청산 확정치가 없으므로 PARTIAL 판정"
+    },
+    {
+      "module": "XIRR",
+      "status": "NOT_READY",
+      "availableData": [
+        "사업 단계별 거시 마일스톤 일자 (구역지정, 인가, 착공, 준공)"
+      ],
+      "blockers": [
+        "개별 조합원의 실제 날짜별 입출금 현금흐름(계약금, 중도금 회차별 납부일 및 납부액) 원천 데이터 부재",
+        "이주비 대출 실행일 및 금융비용 발생 시점 데이터 부재",
+        "환급금 수령자의 실제 환급금 지급일 및 분할 지급 내역 부재"
+      ],
+      "notes": "XIRR 산출을 위한 최소 요건인 날짜별 실제 소유자 현금흐름(Cash Flow Timestamps)이 완전히 결여되어 있어 NOT_READY 판정. APPLICATION_EXAMPLE을 대체값으로 사용하는 행위 엄격 차단."
+    },
+    {
+      "module": "Land Share",
+      "status": "READY",
+      "availableData": [
+        "둔촌주공 1~4단지 15개 대지지분 전수 티어 평형별 수치 (pyeong)",
+        "법정 단위 기준 제곱미터(㎡) 정밀 환산 데이터 (400/121 유도 공식 적용)",
+        "단지별(저층 1·2단지 vs 고층 3·4단지) 구조 분류"
+      ],
+      "blockers": [],
+      "notes": "15개 전수 대지지분 티어가 완전히 정규화되어 즉시 계산 및 분석 가능 (READY)"
+    },
+    {
+      "module": "Construction Cost Timeline",
+      "status": "READY",
+      "availableData": [
+        "2016 최초 도급계약 체결 내역 (2.67조 원)",
+        "2020 공사도급변경계약 체결 내역 (3.23조 원)",
+        "2022 시공단 증액요구 내역 (4.37조 원 / 요구액 1.14조 원)",
+        "2023 부동산원 검증 보고서 (대상 1,621억, 감액 377억, 인정 1,244억)",
+        "2024 기반시설 증액합의 내역 (210억 원)"
+      ],
+      "blockers": [],
+      "notes": "공사비 변동 이력과 상태 분류(SIGNED_CONTRACT, REQUESTED, VERIFIED, AGREED)가 완비되어 타임라인 분석 준비 완료 (READY)"
+    }
+  ],
+  "generatedAt": "2026-09-04T06:05:00.000Z"
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "chokjin3_redevelopment",
+  "projectId": "proj_chokjin3_redevelopment",
+  "costEvents": [
+    {
+      "eventId": "cost_event_chokjin3_bid_contract",
+      "evidenceId": "evi_cost_chokjin3_contract_2022",
+      "date": "2022-11-06",
+      "eventName": "시공사 선정 당시 총 공사금액(도급액)",
+      "amountKrw": 1607300000000,
+      "status": "SIGNED_CONTRACT",
+      "eligibility": "SUPPORTED",
+      "sourceId": "src_dl_contract_2022",
+      "parties": [
+        "시민공원주변 촉진3구역 주택재개발정비사업조합",
+        "DL이앤씨"
+      ],
+      "notes": "DL이앤씨 시공사 선정 당시 총 공사금액(도급액) 약 1조 6,073억원 (3.3㎡당 약 765만원). 최근 물가 상승에 따른 시공사 증액 요구로 조합-시공사 본계약 협의 진행 중"
+    }
+  ],
+  "rebAuditBreakdown": {
+    "targetAmountKrw": 0,
+    "reducedAmountKrw": 0,
+    "recognizedAmountKrw": 0,
+    "unverifiableAmountKrw": 0,
+    "notes": "한국부동산원 공사비 검증 완료 전 (현재 공식 검증 결과 미발표)"
+  },
+  "currentCostPhase": "PRE_CONSTRUCTION_DISPUTE",
+  "isFinal": false,
+  "finalTotalCostKrw": null,
+  "generatedAt": "2026-09-07T00:00:00.000Z"
+}

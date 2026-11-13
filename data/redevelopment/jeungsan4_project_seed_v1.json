@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "name": "서울 증산4 도심 공공주택 복합지구 (증산4구역)",
+  "currentStatus": "IN_PROGRESS",
+  "projectType": "URBAN_PUBLIC_HOUSING_COMPLEX",
+  "redevelopmentTypeLabel": "도심 공공주택 복합사업",
+  "predecessor": {
+    "totalUnits": null,
+    "complexes": []
+  },
+  "successor": {
+    "name": "증산4구역 도심 공공주택 복합지구 신축단지 (가칭)",
+    "totalUnits": 3509,
+    "buildingCount": 38,
+    "maxFloors": 42,
+    "unitsBreakdown": {
+      "rental": 432,
+      "memberSaleEstimated": null,
+      "generalSale": 2372,
+      "reserve": 705
+    },
+    "areaFamilies": []
+  },
+  "milestones": [
+    {
+      "milestoneId": "ms_former_district_release",
+      "evidenceId": "evi_jeungsan4_former_release",
+      "category": "BACKGROUND_HISTORY",
+      "name": "종전 수색·증산 재정비촉진구역 해제 고시",
+      "date": "2019-06-20",
+      "approvalDate": "2019-06-20",
+      "noticeDate": "2019-06-20",
+      "noticeNumber": "서울특별시 고시 제2019-198호",
+      "sourceId": "src_seoul_notice_2019_198",
+      "sourceTier": "TIER_1_STATUTORY_OFFICIAL",
+      "evidenceClass": "OFFICIAL",
+      "verificationStatus": "VERIFIED",
+      "calculationEligibility": "INELIGIBLE",
+      "notes": "과거 민간재개발 추진구역 일몰제 적용 해제 후 공공주도 복합사업 전환 계기"
+    },
+    {
+      "milestoneId": "ms_district_designation",
+      "evidenceId": "evi_jeungsan4_district_designation",
+      "category": "PROJECT_MILESTONE",
+      "name": "도심 공공주택 복합지구 지정 고시",
+      "date": "2021-12-31",
+      "approvalDate": "2021-12-31",
+      "noticeDate": "2021-12-31",
+      "noticeNumber": "국토교통부 고시 (2021.12.31)",
+      "sourceId": "src_molit_notice_2021",
+      "sourceTier": "TIER_1_STATUTORY_OFFICIAL",
+      "evidenceClass": "OFFICIAL",
+      "verificationStatus": "VERIFIED",
+      "calculationEligibility": "ELIGIBLE",
+      "notes": "전국 최초 3080+ 도심 공공주택 복합사업 본지구 지정"
+    },
+    {
+      "milestoneId": "ms_complex_plan_approval",
+      "evidenceId": "evi_jeungsan4_plan_approval",
+      "category": "PROJECT_MILESTONE",
+      "name": "복합사업계획 승인 고시 (사업시행계획인가 갈음)",
+      "date": "2024-12-30",
+      "approvalDate": "2024-12-30",
+      "noticeDate": "2024-12-30",
+      "noticeNumber": "서울특별시 고시 제2024-678호",
+      "sourceId": "src_seoul_notice_2024_678",
+      "sourceTier": "TIER_1_STATUTORY_OFFICIAL",
+      "evidenceClass": "OFFICIAL",
+      "verificationStatus": "VERIFIED",
+      "calculationEligibility": "ELIGIBLE",
+      "notes": "대지면적 166,531.2㎡, 지하 6층~지상 42층, 38개동, 공동주택 3,509세대(공공분양 2,372, 이익공유 705, 공공임대 432)"
+    }
+  ]
+}

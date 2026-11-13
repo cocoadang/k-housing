@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "chokjin3_redevelopment",
+  "projectId": "proj_chokjin3_redevelopment",
+  "summary": {
+    "predecessorFamilies": 0,
+    "successorFamilies": 0,
+    "verifiedActual": 0,
+    "verifiedOption": 0,
+    "partial": 0,
+    "unknown": 0,
+    "applicationExamples": 0,
+    "automatic": 0
+  },
+  "mappingPolicy": {
+    "evidenceId": "evi_chokjin3_mapping_policy",
+    "policyType": "RIGHTS_VALUE_PREFERENCE_NM_DISTRIBUTION",
+    "rule": "주택재개발사업의 조합원 평형 배정은 종전자산 감정평가액 및 권리가액, 분양신청 결과에 따라 결정되므로, 종전 저층 필지와 신축 아파트 간의 사전 임의 1:1 평형 매핑은 엄격히 금지됨",
+    "automaticInferredMappingAllowed": false,
+    "automaticMappingCount": 0
+  },
+  "coverageRecords": [],
+  "mappings": [],
+  "applicationExamples": []
+}

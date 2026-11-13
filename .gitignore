@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+firebase-applet-config.json
+data/*.json
+data/*.csv
+data/migration_backup*/
+data/migration_results/
+*.tsbuildinfo

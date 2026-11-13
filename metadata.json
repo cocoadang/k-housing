@@ -1,0 +1,7 @@
+{
+  "name": "K-RealEstate Flagship Analytics",
+  "description": "국토교통부 실거래가 기준 서울/수도권 및 부산 주요 대표 대단지 아파트 시세 추이, CAGR, MDD, 상대수익률 벤치마크 및 재건축 가치분석 대시보드",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

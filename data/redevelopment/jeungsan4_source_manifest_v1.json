@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "jeungsan4_redevelopment",
+  "projectId": "proj_jeungsan4_complex",
+  "generatedAt": "2026-09-07T00:00:00.000Z",
+  "totalSources": 3,
+  "sources": [
+    {
+      "sourceId": "src_seoul_notice_2024_678",
+      "sourceType": "STATUTORY_PLAN",
+      "sourceTier": "TIER_1_STATUTORY_OFFICIAL",
+      "tierNumber": 1,
+      "title": "서울 증산4 도심 공공주택 복합지구 복합사업계획 승인 및 지형도면 등의 고시",
+      "publisher": "서울특별시",
+      "publishDate": "2024-12-30",
+      "documentNumber": "서울특별시 고시 제2024-678호",
+      "evidenceCategory": ["PROJECT_MILESTONE", "SUCCESSOR_STRUCTURE"],
+      "confidence": "VERIFIED",
+      "productionEligibility": "VERIFIED",
+      "notes": "서울시 공공주택특별법에 따른 복합사업계획 승인 및 고시 (3,509세대 계획 확정)"
+    },
+    {
+      "sourceId": "src_molit_notice_2021",
+      "sourceType": "OFFICIAL_DOCUMENT",
+      "sourceTier": "TIER_1_STATUTORY_OFFICIAL",
+      "tierNumber": 1,
+      "title": "증산4 도심 공공주택 복합지구 지정 고시",
+      "publisher": "국토교통부",
+      "publishDate": "2021-12-31",
+      "documentNumber": "국토교통부 고시 (2021.12.31)",
+      "evidenceCategory": ["PROJECT_MILESTONE"],
+      "confidence": "VERIFIED",
+      "productionEligibility": "VERIFIED",
+      "notes": "공공주도 3080+ 대책 도심 공공주택 복합사업 본지구 지정 고시"
+    },
+    {
+      "sourceId": "src_seoul_notice_2019_198",
+      "sourceType": "OFFICIAL_DOCUMENT",
+      "sourceTier": "TIER_1_STATUTORY_OFFICIAL",
+      "tierNumber": 1,
+      "title": "수색·증산 재정비촉진지구 재정비촉진계획 변경 및 증산4구역 재정비촉진구역 해제 고시",
+      "publisher": "서울특별시",
+      "publishDate": "2019-06-20",
+      "documentNumber": "서울특별시 고시 제2019-198호",
+      "evidenceCategory": ["PROJECT_MILESTONE"],
+      "confidence": "VERIFIED",
+      "productionEligibility": "RESEARCH_ONLY",
+      "notes": "종전 민간 재개발구역 일몰제 해제 고시"
+    }
+  ]
+}

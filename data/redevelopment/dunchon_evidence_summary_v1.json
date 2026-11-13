@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "lineageId": "dunchon_redevelopment",
+  "projectId": "proj_dunchon_olympic_park",
+  "projectName": "둔촌주공아파트 주택재건축정비사업",
+  "auditedAt": "2026-09-04T05:15:00.000Z",
+  "milestoneChronology": {
+    "safetyDiagnosis": null,
+    "promotionCommitteeApproval": "2003-10-14",
+    "associationEstablishment": "2009-12-28",
+    "projectApproval": "2015-08-05",
+    "managementDisposition": "2017-05-04",
+    "demolitionPeriod": "2017-07 ~ 2019-12",
+    "constructionStart": "2020-02-15",
+    "constructionSuspension": "2022-04-15",
+    "constructionResumption": "2022-10-17",
+    "generalSale": "2022-12-05",
+    "completionAndMoveIn": "2024-11-27",
+    "transferNotice": "2026-03-25"
+  },
+  "predecessorComplexesSummary": [
+    {
+      "complexId": "dunchon_jugong_1",
+      "complexName": "둔촌주공1단지",
+      "builtYear": 1980,
+      "floors": "5층 (저층)",
+      "totalUnits": 1640,
+      "areaFamilyCount": 5,
+      "representativeExclusiveArea": 50.84,
+      "landSharePyeongRange": "8.94평 ~ 29.83평"
+    },
+    {
+      "complexId": "dunchon_jugong_2",
+      "complexName": "둔촌주공2단지",
+      "builtYear": 1980,
+      "floors": "5층 (저층)",
+      "totalUnits": 900,
+      "areaFamilyCount": 3,
+      "representativeExclusiveArea": 51.67,
+      "landSharePyeongRange": "18.76평 ~ 29.30평"
+    },
+    {
+      "complexId": "dunchon_jugong_3",
+      "complexName": "둔촌주공3단지",
+      "builtYear": 1980,
+      "floors": "10층 (고층)",
+      "totalUnits": 1480,
+      "areaFamilyCount": 4,
+      "representativeExclusiveArea": 70.87,
+      "landSharePyeongRange": "18.76평 ~ 29.30평"
+    },
+    {
+      "complexId": "dunchon_jugong_4",
+      "complexName": "둔촌주공4단지",
+      "builtYear": 1980,
+      "floors": "10층 (고층)",
+      "totalUnits": 1910,
+      "areaFamilyCount": 4,
+      "representativeExclusiveArea": 71.58,
+      "landSharePyeongRange": "18.34평 ~ 29.83평"
+    }
+  ],
+  "successorComplexSummary": {
+    "complexId": "gangdong_olympic_park",
+    "complexName": "올림픽파크포레온",
+    "completionYear": 2024,
+    "maxFloors": 35,
+    "totalBuildings": 85,
+    "totalUnits": 12032,
+    "rentalUnits": 1046,
+    "memberUnits": 6150,
+    "generalSaleUnits": 4786,
+    "areaFamilyCount": 8,
+    "exclusiveAreaRange": "29.97㎡ ~ 134.97㎡ (14평형 ~ 52평형)"
+  },
+  "areaMappingAudit": {
+    "verifiedPrimaryCount": 3,
+    "partialRangeCount": 13,
+    "unknownCount": 0,
+    "automaticInferredCount": 0,
+    "mappingPolicyExplanation": "둔촌주공 재건축에서 구 평형과 신축 평형 간의 배정은 면적 유사도가 아닌 종전자산평가액 기반 권리가액 순위 및 조합원 분양신청에 의해 결정되었습니다. 따라서 1:1 고정 매핑은 원천적으로 불가능하며, 검증된 실태 보도 샘플(3건)과 권리가액 구간에 따른 다대다(N:M) 분산 배정만이 유효합니다. 구 80㎡를 신 84㎡로 자동 연결하는 단순 유사도 추론은 기각(0건)되었습니다."
+  },
+  "financialContributionAudit": {
+    "managementDispositionDate": "2017-05-04",
+    "statutoryProportionalRatePct": 120.37,
+    "avgMemberSalePricePerPyeongKrw": 27800000,
+    "avgGeneralSalePricePerPyeongKrw": 38290000,
+    "priorAssetValuationRangeKrw": "4억 4,700만 원 ~ 10억 4,700만 원",
+    "avgAdditionalContributionRangeKrw": "1억 2,000만 원 ~ 1억 2,800만 원",
+    "sampleCases": [
+      {
+        "predecessorDescription": "구 1단지 16평형 (전용 51㎡, 지분 19.09평)",
+        "successorSelectedArea": "올림픽파크포레온 84㎡형 (34평형)",
+        "approximateContributionOrRefundKrw": 188000000,
+        "isRefund": false,
+        "source": "헤럴드경제 관리처분 실태 보도 (2022-12-12)"
+      },
+      {
+        "predecessorDescription": "구 3단지 23평형 (전용 71㎡, 지분 18.76평)",
+        "successorSelectedArea": "올림픽파크포레온 84㎡형 (34평형)",
+        "approximateContributionOrRefundKrw": 43000000,
+        "isRefund": false,
+        "source": "헤럴드경제 관리처분 실태 보도 (2022-12-12)"
+      },
+      {
+        "predecessorDescription": "구 4단지 34평형 (전용 99㎡, 지분 29.83평)",
+        "successorSelectedArea": "올림픽파크포레온 49㎡형 (22평형, 다운사이징)",
+        "approximateContributionOrRefundKrw": -257000000,
+        "isRefund": true,
+        "source": "헤럴드경제 관리처분 실태 보도 (2022-12-12)"
+      }
+    ]
+  },
+  "constructionCostAudit": {
+    "initialContract2016Krw": 2670800000000,
+    "revisedContract2020Krw": 3229400000000,
+    "revisedIncrementKrw": 558600000000,
+    "builderDemanded2022Krw": 4367700000000,
+    "builderDemandedIncrementKrw": 1138500000000,
+    "rebVerificationTargetKrw": 162100000000,
+    "rebVerificationReducedKrw": 37700000000,
+    "rebVerificationAcceptedKrw": 124400000000,
+    "rebUnverifiableItemsKrw": 970000000000,
+    "infrastructureAdditional2024Krw": 21000000000
+  },
+  "landShareAudit": [
+    { "complexId": "dunchon_jugong_1", "pyeongLabel": "7.5평형", "exclusiveAreaSqm": 25.52, "landSharePyeong": 8.94, "landShareSqm": 29.55 },
+    { "complexId": "dunchon_jugong_1", "pyeongLabel": "16평형", "exclusiveAreaSqm": 50.84, "landSharePyeong": 19.09, "landShareSqm": 63.11 },
+    { "complexId": "dunchon_jugong_1", "pyeongLabel": "18평형", "exclusiveAreaSqm": 58.21, "landSharePyeong": 21.48, "landShareSqm": 71.01 },
+    { "complexId": "dunchon_jugong_1", "pyeongLabel": "22평형", "exclusiveAreaSqm": 80.03, "landSharePyeong": 26.24, "landShareSqm": 86.74 },
+    { "complexId": "dunchon_jugong_1", "pyeongLabel": "25평형", "exclusiveAreaSqm": 88.43, "landSharePyeong": 29.83, "landShareSqm": 98.61 },
+    { "complexId": "dunchon_jugong_2", "pyeongLabel": "16평형", "exclusiveAreaSqm": 51.67, "landSharePyeong": 18.76, "landShareSqm": 62.02 },
+    { "complexId": "dunchon_jugong_2", "pyeongLabel": "22평형", "exclusiveAreaSqm": 80.03, "landSharePyeong": 25.79, "landShareSqm": 85.26 },
+    { "complexId": "dunchon_jugong_2", "pyeongLabel": "25평형", "exclusiveAreaSqm": 88.43, "landSharePyeong": 29.30, "landShareSqm": 96.86 },
+    { "complexId": "dunchon_jugong_3", "pyeongLabel": "23평형", "exclusiveAreaSqm": 70.87, "landSharePyeong": 18.76, "landShareSqm": 62.02 },
+    { "complexId": "dunchon_jugong_3", "pyeongLabel": "31평형", "exclusiveAreaSqm": 96.75, "landSharePyeong": 25.79, "landShareSqm": 85.26 },
+    { "complexId": "dunchon_jugong_3", "pyeongLabel": "34평형", "exclusiveAreaSqm": 99.61, "landSharePyeong": 29.30, "landShareSqm": 96.86 },
+    { "complexId": "dunchon_jugong_4", "pyeongLabel": "23평형", "exclusiveAreaSqm": 71.58, "landSharePyeong": 18.34, "landShareSqm": 60.63 },
+    { "complexId": "dunchon_jugong_4", "pyeongLabel": "25평형(A)", "exclusiveAreaSqm": 78.24, "landSharePyeong": 20.64, "landShareSqm": 68.23 },
+    { "complexId": "dunchon_jugong_4", "pyeongLabel": "25평형(B)", "exclusiveAreaSqm": 78.24, "landSharePyeong": 21.48, "landShareSqm": 71.01 },
+    { "complexId": "dunchon_jugong_4", "pyeongLabel": "31평형", "exclusiveAreaSqm": 97.72, "landSharePyeong": 25.22, "landShareSqm": 83.37 },
+    { "complexId": "dunchon_jugong_4", "pyeongLabel": "34평형(A)", "exclusiveAreaSqm": 99.61, "landSharePyeong": 28.66, "landShareSqm": 94.74 },
+    { "complexId": "dunchon_jugong_4", "pyeongLabel": "34평형(B)", "exclusiveAreaSqm": 99.61, "landSharePyeong": 29.83, "landShareSqm": 98.61 }
+  ],
+  "conclusions": [
+    "둔촌주공 재건축은 5,930세대(4개 단지)가 12,032세대 단일 대단지로 재탄생한 국내 최대 재건축 프로젝트로, 전수 출처 감사 결과 핵심 일정 및 수치가 1~4계층 공식 출처로 모두 검증되었습니다.",
+    "구 단지(1~4단지)의 실거래가 시계열과 신축 올림픽파크포레온의 실거래가 시계열은 멸실 및 재건축 공백기로 인해 원천 분리되어야 하며, 인위적인 연속 시계열 합성이나 통계 결합은 불가합니다.",
+    "재건축 추가분담금과 사업 공사비는 철저히 분리된 변수입니다. 2016년 도급계약 2조 6,708억에서 2020년 3조 2,294억, 2022년 4조 3,677억으로 증액 요구된 공사비와 부동산원 검증(377억 감액)은 사업단위 프로젝트 변수이며, 개별 소유자의 추가분담금은 15개 지분티어별 종전자산평가액과 비례율(120.37%), 선택 신축 평형에 의해 다변량으로 산정됩니다.",
+    "자동 면적 유사도 매핑(예: 구 80㎡ -> 신 84㎡)은 0건으로 엄격히 유지되며, 실제 정비사업 배정은 대지지분 등가군(예: 저층 16평 vs 고층 23평의 지분 약 19평 일치)에 기반하여 이루어졌음이 실증되었습니다."
+  ]
+}
