@@ -23,3 +23,13 @@ The Gemini key is held only in Secret Manager and restricted to the Generative L
 Price-view caches now follow the active source revision (15-second pointer cache) so scheduled updates reach the chart/ledger and AI consistently. This introduces no database writes in the reader.
 
 Focused tests cover area separation, forged inputs, data gaps, single-month behavior, concurrent deduplication, source invalidation, rate limits, foreign origins, no-data behavior and sanitized provider errors. Existing project-isolation and collector tests remain included.
+
+## Applied production outcome
+
+Runtime image `66f890691968` is serving 100% traffic on ready revision `k-housing-00004-dh8`. Final collector execution `khousing-collector-h4vnl` succeeded and activated `r20261113200328_e92a1f92`; its complete source hash matches the isolated verified snapshot above. The existing 08:30 Asia/Seoul daily job now uses the new collector image.
+
+All three family/month endpoints returned the independently checked prices (30억원, 24억8천만원, 18억원 respectively), with one active trade in each reviewed month. Data status reports zero unclassified groups. The production browser generated the 115㎡ report using the global AI button and displayed 18억원, one observed month/one trade, null CAGR/MDD and explicit sample limitations. A repeated production request reused the report; empty 142㎡ source returned 422; forged client metrics returned 400. Operator cache clear remained disabled (503).
+
+Release checks: full regression 20/20, focused tests 21/21, typecheck/build and both GitHub validation checks passed. Machine-readable production proof is in `docs/validation/area-ai-production-proof.json`. No unrelated apt runtime changes were needed; existing links continue to target the same production origin.
+
+Rollback: remove the Gemini environment binding to disable generation, or route traffic to the preceding ready service revision. Collector rollback must preserve the last good price pointer and archive. Keep client-write-denying rules in place. A previous collector image would classify these new areas as unknown again; pause the daily job before reverting its image.
