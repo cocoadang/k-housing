@@ -4,10 +4,10 @@ import { requireOperator } from './src/server/apiSecurity';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI } from '@google/genai';
+import { createAiAnalysisRouter } from './src/server/aiAnalysis';
 import { XMLParser } from 'fast-xml-parser';
 import { isFirestoreAvailable } from './src/server/firestore';
-import { firestoreRepository, consolidateTradeRecords } from './src/server/firestoreRepository';
+import { firestoreRepository, consolidateTradeRecords, refreshPriceReadCaches } from './src/server/firestoreRepository';
 import { TARGET_COMPLEXES } from './src/data/complexesData';
 import { aggregateTradesByMonth } from './src/utils/calculations';
 import { getAreaCategory } from './src/utils/areaUtils';
@@ -42,16 +42,13 @@ const queryCache: Map<string, CacheEntry> = new Map();
 let totalCacheHits = 0;
 let totalApiRequests = 0;
 
-// Lazy initialized Gemini client
-let geminiClient: GoogleGenAI | null = null;
-function getGeminiClient(): GoogleGenAI | null {
-  if (!geminiClient && process.env.GEMINI_API_KEY) {
-    geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  }
-  return geminiClient;
-}
-
 let molitApiVerified = false;
+
+// Keep chart/ledger caches aligned with the same immutable source revision used by AI.
+app.use('/api', async (_req,res,next)=>{
+  try{await refreshPriceReadCaches();next();}
+  catch{res.status(503).json({error:{code:'DATA_UNAVAILABLE',message:'거래 자료를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'}});}
+});
 
 // 1. Health check & environment status
 app.get('/api/data-status', async (_req, res) => {
@@ -1166,62 +1163,8 @@ app.get('/api/complexes/:complexId/area-families/:areaFamilyId/monthly-prices', 
 // Redevelopment Analysis API Layer (Phase 8C-3 Public Contract)
 app.use('/api/redevelopment', redevelopmentRouter);
 
-// 5. AI Real Estate Analyst (Gemini API)
-app.post('/api/ai/analyze', operatorOnly, async (req, res) => {
-  const { complexes, baseline, selectedArea, metricsSummary, hasData } = req.body;
-
-  if (hasData === false || !metricsSummary || metricsSummary.latestPrice === undefined || metricsSummary.latestPrice === 0) {
-    return res.json({
-      analysis: '### ℹ️ 분석 불가 안내\n\n선택한 단지 및 기간 조건에 해당하는 실제 실거래가 데이터가 없어 AI 시장 진단을 수행할 수 없습니다.',
-    });
-  }
-
-  try {
-    const ai = getGeminiClient();
-    if (!ai) {
-      const primary = complexes?.[0];
-      const complexName = primary?.name || '선택 단지';
-      return res.json({
-        analysis: `### ℹ️ Gemini AI 분석 엔진 안내
-
-현재 서버 환경 변수에 **\`GEMINI_API_KEY\`**가 설정되어 있지 않습니다.
-Gemini API 키를 등록하시면 단지별 시세 사이클, 복합 성장률(CAGR), MDD 낙폭 방어율, 정책 변수 연계 심층 정량 분석 리포트가 실시간 생성됩니다.
-
-> **확인 가능한 실시간 정량 지표:**
-> - 대상 단지: **${complexName}** (전용 ${selectedArea === 'ALL' ? '전체' : selectedArea + '㎡'})
-> - 기간 내 CAGR, 최대 낙폭(MDD), 전고점 회복률, 3.3㎡당 단가는 대시보드 차트와 통계 매트릭스에서 즉시 확인하실 수 있습니다.`,
-      });
-    }
-
-    const prompt = `당신은 대한민국 최고 수준의 시니어 부동산 데이터 엔지니어이자 금융 자산 분석가입니다.
-실제 국토교통부 실거래가 데이터에서 집계된 다음 정량 지표만을 바탕으로 전문적인 부동산 시장 분석 보고서를 마크다운으로 작성해주세요.
-가공되지 않은 임의의 가짜 수치를 창작하지 마시고 제공된 통계 요약에 근거하여 작성하세요.
-
-[분석 대상 및 조건]
-- 대상 단지: ${JSON.stringify(complexes)}
-- 선택 평형: ${selectedArea === 'ALL' ? '전체 평형' : selectedArea + '㎡'}
-- 기준 시점: ${baseline}
-- 실제 집계 통계 요약: ${JSON.stringify(metricsSummary, null, 2)}
-
-[작성 가이드]
-1. 실제 실거래가 시세 변동 및 사이클 평가 (상승기, 조정기, 최근 거래가 추이)
-2. 연평균 복합 성장률(CAGR), 최대 낙폭(MDD), 전고점 회복률에 대한 전문적 해석
-3. 입지, 학군, 신축/구축 특성 등에 따른 시장 가치 요약
-4. 실제 데이터 기반의 정량적 총평`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    res.json({
-      analysis: response.text || '분석 결과를 생성하지 못했습니다.',
-    });
-  } catch (error: any) {
-    console.error('Gemini AI Analysis Error:', error);
-    res.status(500).json({ error: error.message || 'AI 분석 생성 중 오류가 발생했습니다.' });
-  }
-});
+// Public, bounded diagnostic API; administrative routes remain operator-only.
+app.use('/api/ai', createAiAnalysisRouter());
 
 // 6. Start Server with Vite middleware in dev, static files in prod
 async function startServer() {

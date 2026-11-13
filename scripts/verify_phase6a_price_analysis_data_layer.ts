@@ -3,12 +3,12 @@ import { expectedSeriesCount } from './verificationExpectations';
  * Phase 6A Verification Script: Price Analysis Area Family Data Layer
  *
  * Verifies:
- * 1. AREA_FAMILY_REGISTRY_PASS: 35 complexes, 188 total families
+ * 1. AREA_FAMILY_REGISTRY_PASS: 35 complexes, 189 total families
  * 2. ACTIVE_MONTHLY_187_PASS: Exactly 187 active monthly families in monthlyComplexPrices_v2
  * 3. EMPTY_FAMILY_SEMANTICS_PASS: namcheon_xi_142 returns hasMonthlyData: false, points: [], 200 OK
  * 4. AREA_FAMILY_METADATA_API_PASS: metadata contract, counts, and fields
  * 5. AREA_FAMILY_SORT_PASS: representativeExclusiveArea ASC, areaFamilyId ASC
- * 6. ALL_AREA_FAMILIES_SUPPORTED: All 188 families accessible via API
+ * 6. ALL_AREA_FAMILIES_SUPPORTED: All 189 families accessible via API
  * 7. SPARSE_SERIES_PASS: Only traded months returned, no zero-fill, no synthetic points
  * 8. SAMICK_61_PASS: Samick 61㎡ is samick_61, standardCategory '59', monthly series complete
  * 9. NAMCHEON_XI_142_PASS: 1 cancelled canonical tx, activeCount=0, points: [], not 404
@@ -65,11 +65,12 @@ async function runVerification() {
 
   assertCheck(
     'AREA_FAMILY_REGISTRY_PASS',
-    totalComplexesInRegistry === 35 && totalFamiliesInRegistry === 188,
-    `Complexes: ${totalComplexesInRegistry}/35, Total Families: ${totalFamiliesInRegistry}/188`
+    totalComplexesInRegistry === 35 && totalFamiliesInRegistry === 189,
+    `Complexes: ${totalComplexesInRegistry}/35, Total Families: ${totalFamiliesInRegistry}/189`
   );
 
   // --------------------------------------------------------------------------
+  // Historical base collections remain unchanged; the newly discovered 115 family exists in the source overlay.
   // CHECK 2: ACTIVE_MONTHLY_187_PASS
   // --------------------------------------------------------------------------
   console.log('\nReading monthlyComplexPrices_v2 snapshot...');
@@ -91,11 +92,11 @@ async function runVerification() {
   ).filter((id) => !activeFamilyIdsInV2.has(id));
 
   assertCheck(
-    'ACTIVE_MONTHLY_187_PASS',
+    'HISTORICAL_BASELINE_ACTIVE_187_PASS',
     totalV2Docs === 12633 &&
       activeFamilyIdsInV2.size === 187 &&
-      missingFromV2.length === 1 &&
-      missingFromV2[0] === 'namcheon_xi_142',
+      missingFromV2.length === 2 &&
+      [...missingFromV2].sort().join(',') === 'namcheon_xi_115,namcheon_xi_142',
     `Total docs: ${totalV2Docs}, Active Families: ${activeFamilyIdsInV2.size}/187, Inactive: [${missingFromV2.join(', ')}]`
   );
 
@@ -158,7 +159,7 @@ async function runVerification() {
   // --------------------------------------------------------------------------
   // CHECK 6: ALL_AREA_FAMILIES_SUPPORTED
   // --------------------------------------------------------------------------
-  console.log('\nVerifying all 188 registry families can be queried without unexpected failures...');
+  console.log('\nVerifying all 189 registry families can be queried without unexpected failures...');
   let totalQueried = 0;
   let activeQueried = 0;
   let emptyQueried = 0;
@@ -191,8 +192,8 @@ async function runVerification() {
 
   assertCheck(
     'ALL_AREA_FAMILIES_SUPPORTED',
-    !anyQueryFailed && totalQueried === 188 && activeQueried === 187 && emptyQueried === 1,
-    `Total queried: ${totalQueried}/188, Active: ${activeQueried}/187, Empty: ${emptyQueried}/1`
+    !anyQueryFailed && totalQueried === 189 && activeQueried === 188 && emptyQueried === 1,
+    `Total queried: ${totalQueried}/189, Active: ${activeQueried}/188, Empty: ${emptyQueried}/1`
   );
 
   // --------------------------------------------------------------------------

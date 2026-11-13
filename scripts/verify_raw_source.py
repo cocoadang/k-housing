@@ -1,4 +1,5 @@
 """Independent XML validation; does not import the TypeScript collector or its parser."""
+import os
 import json
 import pathlib
 import re
@@ -6,9 +7,9 @@ import xml.etree.ElementTree as ET
 
 base = pathlib.Path('data/private')
 registry = {c['id']: c for c in json.loads((base / 'registered-complexes.json').read_text(encoding='utf-8'))}
-source = json.loads((base / 'current-source/transactions.json').read_text(encoding='utf-8'))
+source = json.loads((pathlib.Path(os.environ.get('COLLECTOR_OUTPUT', str(base / 'current-source'))) / 'transactions.json').read_text(encoding='utf-8'))
 raw = {}
-for filename in (base / 'current-source').glob('*.xml'):
+for filename in pathlib.Path(os.environ.get('COLLECTOR_OUTPUT', str(base / 'current-source'))).glob('*.xml'):
     district, month, _ = filename.stem.split('-')
     raw.setdefault((district, month), []).extend(ET.fromstring(filename.read_text(encoding='utf-8')).findall('./body/items/item'))
 
