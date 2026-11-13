@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-11-13T15:21:03.630Z",
+  "checkedAt": "2026-11-13T19:57:12.288Z",
   "isolated": true,
-  "checks": 385,
+  "checks": 391,
   "passed": true,
   "originalCounts": {
     "transactions": 48485,
@@ -15,31 +15,15 @@
     "monthlyComplexPrices_v2": "683f17fd8208dfcacb625c945b6ce6f19bba302d583fb7bd87490461ce61fd56",
     "monthlyStandardAreaPrices_v2": "c8b6bf3e9c714962291426a1ede143749d0f7f5e903dabb3041f13230a5020c1"
   },
-  "sourceSha256": "164fc0a3472b5433ecabecdd910e14e7e246a12df8e6f039208de3c7569b1fea",
+  "sourceSha256": "714343c1d4109223f3d9924b1b744a15ff7b3d3cd72604e7295e073efb70df1b",
   "revisionCounts": {
-    "transactions": 801,
-    "monthlyComplexPrices_v2": 346,
-    "monthlyStandardAreaPrices_v2": 204
+    "transactions": 806,
+    "monthlyComplexPrices_v2": 352,
+    "monthlyStandardAreaPrices_v2": 208
   },
-  "unmappedAreas": [
-    {
-      "id": "gwacheon_xi_202609_d2_f21_p300000_a12588",
-      "complexId": "gwacheon_xi",
-      "area": 125.88
-    },
-    {
-      "id": "gangdong_olympic_park_202611_d2_f21_p248000_a5996",
-      "complexId": "gangdong_olympic_park",
-      "area": 59.96
-    },
-    {
-      "id": "busan_namcheon_xi_202610_d9_f8_p180000_a11542",
-      "complexId": "busan_namcheon_xi",
-      "area": 115.4169
-    }
-  ],
+  "unmappedAreas": [],
   "limitations": [
-    "Unregistered exact areas remain unclassified; no area conversion was inferred.",
+    "Only registered exact areas are classified; the three reviewed discoveries are included without inferring supply areas or lettered floorplan types.",
     "Isolated data comparisons do not assert that production has had zero writes."
   ]
 }

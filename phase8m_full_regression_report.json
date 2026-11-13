@@ -1,12 +1,12 @@
 {
   "auditName": "PHASE_8M_FULL_REGRESSION_AND_RELEASE_AUDIT",
-  "verifiedAt": "2026-11-13T15:26:18.734Z",
+  "verifiedAt": "2026-11-13T20:00:35.501Z",
   "overallStatus": "REGRESSION_SUITES_PASSED_RELEASE_NOT_CERTIFIED",
   "allPassed": true,
   "totalSuites": 20,
   "passedSuitesCount": 20,
   "failedSuitesCount": 0,
-  "durationSeconds": "184.8",
+  "durationSeconds": "200.9",
   "limitations": [
     "Document counts do not prove zero writes",
     "UI source checks are not browser interaction tests"
@@ -108,7 +108,7 @@
       "section": "Section 1: Core Map & Data Layer",
       "scriptPath": "scripts/verify_phase5c_map_cutover.ts",
       "passed": true,
-      "durationMs": 10962,
+      "durationMs": 7996,
       "stdoutSnippet": "SPARSE_SERIES_PASS:           PASS\nAPI_CONTRACT_PASS:            PASS\nFINAL STATUS:                 MAP_EXPLORER_V2_CUTOVER_SUCCESS\n====================================================\n\nSaved verification report to: C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase5c_map_cutover_report.json"
     },
     {
@@ -117,7 +117,7 @@
       "section": "Section 1: Core Map & Data Layer",
       "scriptPath": "scripts/verify_phase6a_price_analysis_data_layer.ts",
       "passed": true,
-      "durationMs": 52469,
+      "durationMs": 64567,
       "stdoutSnippet": "Verifying Firestore collection sizes remain identical...\n✅ [PASS] FIRESTORE_UNCHANGED - transactions: 48485/48485, monthlyComplexPrices: 5153/5153, monthlyComplexPrices_v2: 12633/12633, monthlyStandardAreaPrices_v2: 5757/5757 (0 mutations)\n\n================================================================\n🎉 PHASE 6A VERIFICATION RESULT: AREA_FAMILY_DATA_LAYER_SUCCESS\n================================================================"
     },
     {
@@ -126,7 +126,7 @@
       "section": "Section 1: Core Map & Data Layer",
       "scriptPath": "scripts/verify_phase7a_compare_data_layer.ts",
       "passed": true,
-      "durationMs": 9430,
+      "durationMs": 11229,
       "stdoutSnippet": "\n📄 Report saved to: C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase7a_compare_data_layer_report.json\n\n================================================================\n🎉 PHASE 7A VERIFICATION SUCCESSFUL: ALL QUALITY GATES PASSED\n================================================================"
     },
     {
@@ -135,7 +135,7 @@
       "section": "Section 2: Core Financial & Price Analysis UI",
       "scriptPath": "scripts/verify_phase6b_price_analysis_ui.ts",
       "passed": true,
-      "durationMs": 13783,
+      "durationMs": 14911,
       "stdoutSnippet": "\n📄 Report saved to: C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase6b_price_analysis_ui_report.json\n\n================================================================\n🎉 PHASE 6B VERIFICATION SUCCESSFUL: ALL QUALITY GATES PASSED\n================================================================"
     },
     {
@@ -144,7 +144,7 @@
       "section": "Section 2: Core Financial & Price Analysis UI",
       "scriptPath": "scripts/verify_phase7b_compare_ui.ts",
       "passed": true,
-      "durationMs": 7369,
+      "durationMs": 7708,
       "stdoutSnippet": "\n📄 Report written to: C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase7b_compare_ui_report.json\n\n================================================================\n🎉 ALL PHASE 7B VERIFICATION CHECKS PASSED PERFECTLY!\n================================================================"
     },
     {
@@ -153,7 +153,7 @@
       "section": "Section 3: Redevelopment Foundation & Evidence Partitioning",
       "scriptPath": "scripts/verify_phase8a_redevelopment_foundation.ts",
       "passed": true,
-      "durationMs": 61864,
+      "durationMs": 61969,
       "stdoutSnippet": "✅ [PASS] BUILD_PASS - Build passed with 0 errors\n\n📄 Report written to: C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase8a_redevelopment_foundation_report.json\n================================================================\n🎉 ALL PHASE 8A VERIFICATION CHECKS PASSED PERFECTLY!\n================================================================"
     },
     {
@@ -162,7 +162,7 @@
       "section": "Section 3: Redevelopment Foundation & Evidence Partitioning",
       "scriptPath": "scripts/verify_phase8b1_dunchon_evidence.ts",
       "passed": true,
-      "durationMs": 1554,
+      "durationMs": 1985,
       "stdoutSnippet": "✅ [PASS] FIRESTORE_STANDARD_V2_INTACT - monthlyStandardAreaPrices_v2: 5757 == 5,757\n\n--- GATE 12: Write Verification Report ---\n📄 Verification report written to C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase8b1_dunchon_evidence_report.json\n\n🎉 ALL PHASE 8B-1 QUALITY GATES PASSED SUCCESSFULLY!"
     },
     {
@@ -171,7 +171,7 @@
       "section": "Section 3: Redevelopment Foundation & Evidence Partitioning",
       "scriptPath": "scripts/verify_phase8b2_primary_source_verification.ts",
       "passed": true,
-      "durationMs": 143,
+      "durationMs": 233,
       "stdoutSnippet": "6. Checking Candidate Usability Metadata...\n  ✓ All 39 candidates have usableInAnalysis: true and robust analysisUsageNotes.\n\n==================================================\nALL PHASE 8B-2 VERIFICATION TESTS PASSED SUCCESSFULLY!\n=================================================="
     },
     {
@@ -180,7 +180,7 @@
       "section": "Section 3: Redevelopment Foundation & Evidence Partitioning",
       "scriptPath": "scripts/verify_phase8b3_normalized_seed.ts",
       "passed": true,
-      "durationMs": 147,
+      "durationMs": 217,
       "stdoutSnippet": "9. Validating Report Consistency & Firestore Safety...\n  ✓ Report confirmed: Verdict=DUNCHON_NORMALIZED_SEED_SUCCESS, Firestore Writes=0.\n\n==================================================\nALL PHASE 8B-3 NORMALIZATION TESTS PASSED SUCCESSFULLY!\n=================================================="
     },
     {
@@ -189,7 +189,7 @@
       "section": "Section 4: Redevelopment Analysis Engine & API Contracts",
       "scriptPath": "scripts/verify_phase8c1_redevelopment_analysis_engine.ts",
       "passed": true,
-      "durationMs": 172,
+      "durationMs": 219,
       "stdoutSnippet": "\n✓ Final Report written to: C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase8c1_redevelopment_analysis_engine_report.json\n\n==================================================\nALL 20 TEST SCENARIOS AND ARCHITECTURAL GATES PASSED!\n=================================================="
     },
     {
@@ -198,7 +198,7 @@
       "section": "Section 4: Redevelopment Analysis Engine & API Contracts",
       "scriptPath": "scripts/verify_phase8c2_redevelopment_data_integration.ts",
       "passed": true,
-      "durationMs": 6791,
+      "durationMs": 8187,
       "stdoutSnippet": "--- Section 6: Generating Report File ---\nReport generated successfully at C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase8c2_redevelopment_data_integration_report.json\n\n================================================================\n🎉 PHASE 8C-2 RESULT: REDEVELOPMENT_DATA_INTEGRATION_SUCCESS\n================================================================"
     },
     {
@@ -207,7 +207,7 @@
       "section": "Section 4: Redevelopment Analysis Engine & API Contracts",
       "scriptPath": "scripts/verify_phase8c3_redevelopment_api.ts",
       "passed": true,
-      "durationMs": 6912,
+      "durationMs": 7421,
       "stdoutSnippet": "\n================================================================\n📊 PHASE 8C-3 VERIFICATION SUMMARY: 24 / 24 PASSED\n================================================================\n\n[Report Generated] Saved report to C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase8c3_redevelopment_api_report.json"
     },
     {
@@ -216,7 +216,7 @@
       "section": "Section 5: Redevelopment UI, Provenance & Semantics",
       "scriptPath": "scripts/verify_phase8d_redevelopment_ui.ts",
       "passed": true,
-      "durationMs": 160,
+      "durationMs": 177,
       "stdoutSnippet": "[Test 24] ✅ PASS: Land Share: Precise counts (17 records, 15 categories, 12 values, 16 area families) & legal disclaimer\n\n================================================================\n📊 PHASE 8D VERIFICATION SUMMARY: 24 / 24 PASSED\n================================================================\n🎉 ALL 24 PHASE 8D UI TESTS PASSED SUCCESSFULLY!"
     },
     {
@@ -225,7 +225,7 @@
       "section": "Section 5: Redevelopment UI, Provenance & Semantics",
       "scriptPath": "scripts/verify_phase8d1_redevelopment_ui_integrity.ts",
       "passed": true,
-      "durationMs": 151,
+      "durationMs": 157,
       "stdoutSnippet": "======================================================================\nPHASE 8D-1B VERIFICATION SUMMARY: 8/8 PASS, 0 FAIL\n======================================================================\n[Report Generated] Saved report artifact to C:\\Users\\Owner\\.codex\\workspaces\\housing-20261113\\housing\\data\\phase8d1_redevelopment_ui_integrity_report.json\n\n🎉 All 8 Phase 8D-1B integrity checks passed with 100% compliance."
     },
     {
@@ -234,7 +234,7 @@
       "section": "Section 5: Redevelopment UI, Provenance & Semantics",
       "scriptPath": "scripts/verify_phase8l_ui_semantics.ts",
       "passed": true,
-      "durationMs": 165,
+      "durationMs": 167,
       "stdoutSnippet": "[PASS] 4.2 OwnerEconomicsSection displays the 5-step settlement pipeline\n[PASS] 5.1 comparison59Engine calculates supply pyeong using 3.305785 factor\n================================================================\n📊 PHASE 8L VERIFICATION SUMMARY: 18 / 18 PASSED\n================================================================\n🎉 ALL PHASE 8L UI AREA SEMANTIC RULES VERIFIED SUCCESSFULLY!"
     },
     {
@@ -243,7 +243,7 @@
       "section": "Section 6: Additional Projects & E2E Validation",
       "scriptPath": "scripts/verify_phase8f_jeungsan4_e2e.ts",
       "passed": true,
-      "durationMs": 1874,
+      "durationMs": 2094,
       "stdoutSnippet": "✅ [PASS] TC_8F_14_ANALYSIS_REFUSAL_OR_REJECTION - Safely rejected ungrounded analysis with error code: INVALID_COMPLEX\n✅ [PASS] TC_8F_15_ZERO_DUNCHON_LEAKAGE_IN_SEED - No Dunchon-specific identifiers or data found in Jeungsan 4 seed bundle\n✅ [PASS] TC_8F_16_ZERO_FIRESTORE_MUTATIONS - Firestore document count preserved: 12633 === 12633\n================================================================\n📊 PHASE 8F VERIFICATION SUMMARY: 16 / 16 PASSED\n================================================================"
     },
     {
@@ -252,7 +252,7 @@
       "section": "Section 6: Additional Projects & E2E Validation",
       "scriptPath": "scripts/verify_phase8g_business_type_timeline.ts",
       "passed": true,
-      "durationMs": 1878,
+      "durationMs": 2036,
       "stdoutSnippet": "✅ [PASS] TC_8G_13_UI_TIMELINE_DISTINCTION - ProjectTimelineSection visibly separates BACKGROUND_HISTORY from PROJECT_MILESTONE\n✅ [PASS] TC_8G_14_UI_GOVERNING_LAW_DISTINCTION - ProjectHeader shows distinct legal framework badges\n✅ [PASS] TC_8G_15_ZERO_FIRESTORE_MUTATIONS - Firestore document count preserved: 12633 === 12633\n================================================================\n📊 PHASE 8G VERIFICATION SUMMARY: 15 / 15 PASSED\n================================================================"
     },
     {
@@ -261,7 +261,7 @@
       "section": "Section 6: Additional Projects & E2E Validation",
       "scriptPath": "scripts/verify_phase8h_chokjin3.ts",
       "passed": true,
-      "durationMs": 1862,
+      "durationMs": 2001,
       "stdoutSnippet": "✅ [PASS] TC_8H_17_TARGETS_SAFE_EMPTY - getTargets safely handles low-rise residential area with empty targets\n✅ [PASS] TC_8H_18_LINEAGES_LIST_CONTAINS_CHOKJIN3 - Lineages list contains chokjin3_redevelopment (total: 3)\n✅ [PASS] TC_8H_19_ZERO_FIRESTORE_MUTATIONS - Firestore document count unchanged: 12633 === 12633\n================================================================\n📊 PHASE 8H VERIFICATION SUMMARY: 19 / 19 PASSED\n================================================================"
     },
     {
@@ -270,7 +270,7 @@
       "section": "Section 7: Standardized 59㎡ Engine & Real Data Isolation",
       "scriptPath": "scripts/verify_phase8j_comparison59.ts",
       "passed": true,
-      "durationMs": 947,
+      "durationMs": 1053,
       "stdoutSnippet": "✅ [PASS] TC_8J_11_SUPPLY_PYEONG_NA\n✅ [PASS] TC_8J_12_ZERO_FIRESTORE_MUTATIONS\n\n================================================================\n📊 PHASE 8J TEST SUMMARY: 18 / 18 PASSED\n================================================================"
     },
     {
@@ -279,7 +279,7 @@
       "section": "Section 7: Standardized 59㎡ Engine & Real Data Isolation",
       "scriptPath": "scripts/verify_phase8k_real_data.ts",
       "passed": true,
-      "durationMs": 5289,
+      "durationMs": 5578,
       "stdoutSnippet": "✅ [PASS] TC_8K_03_SIMULATION_VALUE_DELTA\n✅ [PASS] TC_8K_04_READONLY_AUDIT_monthlyComplexPrices_v2\n\n================================================================\n📊 Phase 8K-1 Verification Results: 28 Passed, 0 Failed\n================================================================"
     }
   ]

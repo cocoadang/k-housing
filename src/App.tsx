@@ -23,7 +23,7 @@ import { Header, MainNavTab } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { MultiComplexCompare } from './components/MultiComplexCompare';
 import { PriceAnalysisView } from './components/PriceAnalysis/PriceAnalysisView';
-import { AiAnalysisDrawer } from './components/AiAnalysisDrawer';
+import { AiAnalysisDrawer, type AiSelection } from './components/AiAnalysisDrawer';
 import { MapExplorerView } from './components/Map/MapExplorerView';
 import { RedevelopmentAnalysis } from './components/RedevelopmentAnalysis';
 import { Menu } from 'lucide-react';
@@ -67,6 +67,7 @@ export default function App() {
   ]);
 
   // 4. Modals & Drawers
+  const [aiSelection, setAiSelection] = useState<AiSelection | null>(null);
   const [isAiDrawerOpen, setIsAiDrawerOpen] = useState<boolean>(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
@@ -384,7 +385,7 @@ export default function App() {
           setActiveView(v);
           if (v === 'COMPARE') setCompareMode(true);
         }}
-        onOpenAiDrawer={() => setIsAiDrawerOpen(true)}
+        onOpenAiDrawer={() => { if(activeView !== 'ANALYSIS' || aiSelection?.complexId !== currentComplex.id) setAiSelection({complexId:currentComplex.id,selectedArea, startYmd:startDate.replace(/\D/g,''),endYmd:endDate.replace(/\D/g,'')}); setIsAiDrawerOpen(true); }}
         onExportCsv={handleExportCsv}
         selectedCompareCount={selectedCompareIds.length}
       />
@@ -422,10 +423,11 @@ export default function App() {
             onSelectComplex={(id) => {
               setSelectedComplexId(id);
             }}
+            onAnalysisSelectionChange={setAiSelection}
             initialPreferredCategory={selectedArea}
             allAreaTrades={rawTrades}
             onNavigateToMap={() => setActiveView('MAP')}
-            onOpenAiDrawer={() => setIsAiDrawerOpen(true)}
+            onOpenAiDrawer={(selection) => { setAiSelection({complexId:currentComplex.id,...selection}); setIsAiDrawerOpen(true); }}
             isLoadingTrades={isLoading}
             apiError={apiError}
             onRetryFetch={fetchActiveTrades}
@@ -500,11 +502,7 @@ export default function App() {
         isOpen={isAiDrawerOpen}
         onClose={() => setIsAiDrawerOpen(false)}
         complex={currentComplex}
-        latestAgg={latestAgg}
-        cagrResult={cagrResult}
-        mddResult={mddResult}
-        selectedArea={selectedArea}
-        baselineOption={baselineOption}
+        selection={aiSelection}
       />
     </div>
   );

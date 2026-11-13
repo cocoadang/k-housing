@@ -1,4 +1,5 @@
 import {
+  getActivePriceRevision,
   collection,
   getDocs,
   query,
@@ -25,6 +26,14 @@ const memStandardAreaV2Cache = new Map<string, MonthlyAggregate[]>();
 // Phase 6A: Dedicated isolated cache for V2 AreaFamily metadata and monthly time-series
 const memAreaFamilyMetaCache = new Map<string, AreaFamilyMetadata[]>();
 const memAreaFamilyMonthlyCache = new Map<string, AreaFamilyMonthlyPoint[]>();
+
+let cachedSourceRevision: string | undefined;
+export async function refreshPriceReadCaches() {
+  const revision=await getActivePriceRevision();
+  if(!revision?.revision || cachedSourceRevision===revision.revision)return;
+  for(const cache of [memTransactionCache,memMonthlyCache,memStandardAreaV2Cache,memAreaFamilyMetaCache,memAreaFamilyMonthlyCache])cache.clear();
+  cachedSourceRevision=revision.revision;
+}
 
 let isFirestoreQuotaExhausted = false;
 let quotaExhaustedLoggedAt = 0;

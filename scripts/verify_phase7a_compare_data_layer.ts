@@ -169,7 +169,7 @@ async function runVerification() {
 
   assertCheck(
     'ALL_AREA_FAMILIES_SUPPORTED',
-    totalRegistryFamilies === 188 && successfullyResolved === 188,
+    totalRegistryFamilies === 189 && successfullyResolved === 189,
     `Resolved ${successfullyResolved}/${totalRegistryFamilies} families across all 35 complexes`
   );
 
@@ -697,7 +697,7 @@ async function runVerification() {
       identity: 'complexId + areaFamilyId',
       keyFormat: '${complexId}::${areaFamilyId}',
       supportsSameComplexDifferentFamily: true,
-      allAreaFamiliesSupported: 188,
+      allAreaFamiliesSupported: 189,
     },
     compareModes: {
       ABSOLUTE_PRICE: 'medianPrice (만원) per observed month',

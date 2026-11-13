@@ -3,7 +3,8 @@ import { AreaFamily } from '../types';
 /**
  * Single Source of Truth (SSOT) Registry for Area Families
  * Phase 2.5: Finalized across all 35 complexes (31 current + 4 predecessor complexes).
- * Coverage: 100.0% (385/385 distinct historical areas mapped, 0 unmapped).
+ * Historical baseline: 385 distinct areas. Current discoveries and source evidence
+ * are recorded in docs/validation/area-resolution-20261114.json.
  */
 
 export const AREA_FAMILIES_REGISTRY: Record<string, AreaFamily[]> = {
@@ -786,7 +787,7 @@ export const AREA_FAMILIES_REGISTRY: Record<string, AreaFamily[]> = {
       label: "125㎡형 (49평형)",
       shortLabel: "125형",
       representativeExclusiveArea: 125.87,
-      exactAreas: [125.87],
+      exactAreas: [125.87,125.88],
       standardCategory: "OTHER",
       exclusiveAreaPyeong: 38.1,
       legacyPyeongLabel: "49평형",
@@ -1192,7 +1193,7 @@ export const AREA_FAMILIES_REGISTRY: Record<string, AreaFamily[]> = {
       label: "59㎡형 (25평형)",
       shortLabel: "59형",
       representativeExclusiveArea: 59.99,
-      exactAreas: [59.98,59.99],
+      exactAreas: [59.96,59.98,59.99],
       standardCategory: "59",
       exclusiveAreaPyeong: 18.1,
       legacyPyeongLabel: "25평형",
@@ -1519,7 +1520,7 @@ export const AREA_FAMILIES_REGISTRY: Record<string, AreaFamily[]> = {
   ],
 
   // =========================================================================
-  // busan_namcheon_xi (7 families)
+  // busan_namcheon_xi (8 families)
   // =========================================================================
   busan_namcheon_xi: [
     {
@@ -1585,6 +1586,17 @@ export const AREA_FAMILIES_REGISTRY: Record<string, AreaFamily[]> = {
       exclusiveAreaPyeong: 30.8,
       legacyPyeongLabel: "40평형",
       source: "HISTORICAL_DISCOVERY_VERIFIED",
+      confidence: "HIGH",
+    },
+    {
+      id: "namcheon_xi_115",
+      complexId: "busan_namcheon_xi",
+      label: "115㎡형",
+      shortLabel: "115형",
+      representativeExclusiveArea: 115.4169,
+      exactAreas: [115.4169],
+      standardCategory: "OTHER",
+      source: "TRANSACTION_DISCOVERY",
       confidence: "HIGH",
     },
     {

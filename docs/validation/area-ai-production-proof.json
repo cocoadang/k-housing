@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-11-13T20:05:21.846Z",
+  "production": "https://k-housing-5he2zcaska-du.a.run.app",
+  "image": "66f890691968",
+  "revision": "k-housing-00004-dh8",
+  "collectorExecution": "khousing-collector-h4vnl",
+  "source": {
+    "revision": "r20261113200328_e92a1f92",
+    "sourceSha256": "714343c1d4109223f3d9924b1b744a15ff7b3d3cd72604e7295e073efb70df1b",
+    "archiveUri": "gs://run-sources-gen-lang-client-0064554427-asia-northeast3/khousing-source/r20261113200328_e92a1f92/source.json.gz",
+    "counts": {
+      "monthlyStandardAreaPrices_v2": 208,
+      "monthlyComplexPrices_v2": 352,
+      "transactions": 806
+    }
+  },
+  "ai": {
+    "httpStatus": 200,
+    "model": "gemini-3.8-flash",
+    "selectedFamily": "namcheon_xi_115",
+    "latestPrice": 180000,
+    "trades": 1,
+    "cagrPct": null,
+    "mddPct": null,
+    "cached": true,
+    "reportNonempty": true,
+    "emptySourceStatus": 422
+  },
+  "uiVerified": true
+}

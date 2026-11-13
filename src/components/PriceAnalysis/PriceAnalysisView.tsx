@@ -31,7 +31,8 @@ interface PriceAnalysisViewProps {
   initialPreferredCategory?: AreaCategory;
   allAreaTrades?: TradeRecord[];
   onNavigateToMap: () => void;
-  onOpenAiDrawer: () => void;
+  onOpenAiDrawer: (selection:{areaFamilyId?:string;startYmd:string;endYmd:string}) => void;
+  onAnalysisSelectionChange?: (selection:{complexId:string;areaFamilyId:string;startYmd:string;endYmd:string}) => void;
   isLoadingTrades?: boolean;
   apiError?: { message: string; target?: string } | null;
   onRetryFetch?: () => void;
@@ -47,6 +48,7 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
   allAreaTrades = [],
   onNavigateToMap,
   onOpenAiDrawer,
+  onAnalysisSelectionChange,
   isLoadingTrades = false,
   apiError = null,
   onRetryFetch,
@@ -64,6 +66,10 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
   const [selectedAreaFamilyId, setSelectedAreaFamilyId] = useState<string | null>(null);
   const [isLoadingFamilies, setIsLoadingFamilies] = useState<boolean>(true);
   const [familyError, setFamilyError] = useState<string | null>(null);
+
+  useEffect(()=>{
+    if(selectedAreaFamilyId)onAnalysisSelectionChange?.({complexId:complex.id,areaFamilyId:selectedAreaFamilyId,startYmd:analysisPeriod.startYmd,endYmd:analysisPeriod.endYmd});
+  },[complex.id,selectedAreaFamilyId,analysisPeriod.startYmd,analysisPeriod.endYmd,onAnalysisSelectionChange]);
 
   // 3. V2 Monthly price points state
   const [monthlyAggs, setMonthlyAggs] = useState<MonthlyAggregate[]>([]);
@@ -348,7 +354,7 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
         analysisPeriod={analysisPeriod}
         onChangePeriod={(p) => setAnalysisPeriod(p)}
         onNavigateToMap={onNavigateToMap}
-        onOpenAiDrawer={onOpenAiDrawer}
+        onOpenAiDrawer={() => onOpenAiDrawer({areaFamilyId:selectedAreaFamilyId || undefined,startYmd:analysisPeriod.startYmd,endYmd:analysisPeriod.endYmd})}
       />
 
       {/* Loading state indicator banner */}

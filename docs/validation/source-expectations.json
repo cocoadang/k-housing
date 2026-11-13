@@ -5,11 +5,11 @@
     "activeRawRows": 7,
     "rawSourceSha256": "385988b6d633fecdd7ae8ed791dc8c1cf081ab6bf6c82f3e7c6b7f4cbe841eaa"
   },
-  "basis": "Independently parsed current MOLIT XML; cancelled rows excluded once by source status.",
+  "basis": "Independent Python XML parser and preserved historical baseline excluding covered months; follows registered exact-area matching to 0.01 sqm, retains raw precision. Registry 189 families; historical base 187 active families.",
   "seriesCounts": {
     "banpo_xi_59": 153,
     "banpo_xi_84": 184,
     "samick_61": 225
   },
-  "sourceSha256": "164fc0a3472b5433ecabecdd910e14e7e246a12df8e6f039208de3c7569b1fea"
+  "sourceSha256": "714343c1d4109223f3d9924b1b744a15ff7b3d3cd72604e7295e073efb70df1b"
 }

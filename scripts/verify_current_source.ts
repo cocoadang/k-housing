@@ -46,7 +46,7 @@ async function main(){
    assert.equal(hash,digest(before));originalContentHashes[name]=hash;checks++;
   }
  }
- const report={checkedAt:new Date().toISOString(),isolated:true,checks,passed:true,originalCounts:counts,originalContentHashes,sourceSha256:plan.manifest.sourceSha256,revisionCounts:plan.manifest.counts,unmappedAreas:plan.manifest.unknownAreas,limitations:['Unregistered exact areas remain unclassified; no area conversion was inferred.','Isolated data comparisons do not assert that production has had zero writes.']};
+ const report={checkedAt:new Date().toISOString(),isolated:true,checks,passed:true,originalCounts:counts,originalContentHashes,sourceSha256:plan.manifest.sourceSha256,revisionCounts:plan.manifest.counts,unmappedAreas:plan.manifest.unknownAreas,limitations:['Only registered exact areas are classified; the three reviewed discoveries are included without inferring supply areas or lettered floorplan types.','Isolated data comparisons do not assert that production has had zero writes.']};
  fs.writeFileSync('data/current-source-verification.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
  await original.terminate();
 }

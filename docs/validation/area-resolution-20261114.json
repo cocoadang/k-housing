@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-11-13T19:53:43.595Z",
+  "source": "MOLIT RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev",
+  "sourceUrl": "https://www.data.go.kr/data/15126468/openapi.do",
+  "identityMatch": "exact registered name + dong + aptSeq retained; other complexes with same area excluded",
+  "classificationBasis": "Existing broad exclusive-area families, not lettered floorplan types; no supply area or legacy pyeong label inferred. New 115.4169 sqm family remains OTHER, separate from 125 sqm.",
+  "rows": [
+    {
+      "complexId": "gwacheon_xi",
+      "areaFamilyId": "gwacheon_xi_125",
+      "exactArea": 125.88,
+      "sourceFile": "41290-202609-1.xml",
+      "sourceFileSha256": "b2342b64a19ba43ae4947f38e046109f509df076388a73710ea050387041d034",
+      "officialSourceRow": {
+        "aptNm": "과천자이",
+        "aptSeq": "41290-463",
+        "umdNm": "별양동",
+        "jibun": "93",
+        "excluUseAr": "125.88",
+        "dealYear": "2026",
+        "dealMonth": "9",
+        "dealDay": "2",
+        "dealAmount": "300,000",
+        "floor": "21",
+        "cdealType": "",
+        "cdealDay": ""
+      },
+      "decision": "ADD_EXACT_AREA_TO_EXISTING_FAMILY"
+    },
+    {
+      "complexId": "gangdong_olympic_park",
+      "areaFamilyId": "olympic_park_59",
+      "exactArea": 59.96,
+      "sourceFile": "11740-202611-1.xml",
+      "sourceFileSha256": "b738ac6748a034746f899f0f81506f619961bd42b370a8e0e1584d691928bf46",
+      "officialSourceRow": {
+        "aptNm": "올림픽파크포레온",
+        "aptSeq": "11740-5273",
+        "umdNm": "둔촌동",
+        "jibun": "633",
+        "excluUseAr": "59.96",
+        "dealYear": "2026",
+        "dealMonth": "11",
+        "dealDay": "2",
+        "dealAmount": "248,000",
+        "floor": "21",
+        "cdealType": "",
+        "cdealDay": ""
+      },
+      "decision": "ADD_EXACT_AREA_TO_EXISTING_FAMILY"
+    },
+    {
+      "complexId": "busan_namcheon_xi",
+      "areaFamilyId": "namcheon_xi_115",
+      "exactArea": 115.4169,
+      "sourceFile": "26500-202610-1.xml",
+      "sourceFileSha256": "2a81dc97bc66303c2c047e5b445c38f16b7f847dabccfe6226e184b1d7c881cd",
+      "officialSourceRow": {
+        "aptNm": "남천자이",
+        "aptSeq": "26500-2456",
+        "umdNm": "남천동",
+        "jibun": "613",
+        "excluUseAr": "115.4169",
+        "dealYear": "2026",
+        "dealMonth": "10",
+        "dealDay": "9",
+        "dealAmount": "180,000",
+        "floor": "8",
+        "cdealType": "",
+        "cdealDay": ""
+      },
+      "decision": "NEW_SEPARATE_FAMILY"
+    }
+  ]
+}
