@@ -15,3 +15,6 @@ data/migration_results/
 *.tsbuildinfo
 
 data/generated/
+
+data/private/
+*.log

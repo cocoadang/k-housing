@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   initializeFirestore,
+  connectFirestoreEmulator,
   getFirestore,
   Firestore,
   setLogLevel,
@@ -70,6 +71,10 @@ export function getFirestoreDb(): Firestore | null {
       databaseId
     );
 
+    if (process.env.FIRESTORE_EMULATOR_HOST) {
+      const [host, port] = process.env.FIRESTORE_EMULATOR_HOST.split(':');
+      connectFirestoreEmulator(firestoreInstance, host, Number(port));
+    }
     firestoreInitialized = true;
     firestoreAvailable = true;
     console.log(`[Firestore] Initialized client (project: ${config.projectId}, db: ${databaseId || '(default)'})`);
@@ -84,6 +89,8 @@ export function getFirestoreDb(): Firestore | null {
 }
 
 export function isFirestoreAvailable(): boolean {
+  if (process.env.DISABLE_FIRESTORE === 'true') return false;
+  if (process.env.USE_SERVER_IAM === 'true') return true;
   if (!firestoreInitialized) {
     getFirestoreDb();
   }

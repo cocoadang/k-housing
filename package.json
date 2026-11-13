@@ -9,10 +9,11 @@
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.cjs",
     "lint": "tsc --noEmit",
-    "test": "tsx --test src/tests/*.test.ts"
+    "test": "tsx --test src/tests/*.test.ts src/tests/*.test.tsx"
   },
   "dependencies": {
     "@google-cloud/firestore": "^9.0.1",
+    "@google-cloud/storage": "^9.0.0",
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vis.gl/react-google-maps": "^1.9.0",

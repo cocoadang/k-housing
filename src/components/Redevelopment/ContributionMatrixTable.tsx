@@ -22,12 +22,12 @@ import type {
 import { buildDunchonContributionMatrix, DUNCHON_PLAN_VERSION_COMPARISON } from '../../data/dunchonContributionMatrix';
 
 interface ContributionMatrixTableProps {
-  matrixData?: ContributionMatrixData;
+  matrixData: ContributionMatrixData;
   className?: string;
 }
 
 export const ContributionMatrixTable: React.FC<ContributionMatrixTableProps> = ({
-  matrixData = buildDunchonContributionMatrix(),
+  matrixData,
   className = '',
 }) => {
   // Complex Filter: 'ALL' | 1 | 2 | 3 | 4

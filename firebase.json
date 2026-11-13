@@ -4,5 +4,14 @@
       "database": "ai-studio-khousing-38852770-f782-474c-b219-956fbb846237",
       "rules": "firestore.rules"
     }
-  ]
+  ],
+  "emulators": {
+    "firestore": {
+      "port": 8085
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
 }

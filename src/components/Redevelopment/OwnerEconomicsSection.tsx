@@ -1,3 +1,4 @@
+import { buildDunchonContributionMatrix } from '../../data/dunchonContributionMatrix';
 import React, { useState } from 'react';
 import {
   Wallet,
@@ -26,6 +27,7 @@ import type {
 } from '../../types/redevelopmentApi';
 
 interface OwnerEconomicsSectionProps {
+  lineageId: string;
   researchExamples?: RedevelopmentResearchExample[];
   selectedPredecessorTarget?: RedevelopmentTargetInfo | null;
   selectedSuccessorTarget?: RedevelopmentTargetInfo | null;
@@ -33,6 +35,7 @@ interface OwnerEconomicsSectionProps {
 }
 
 export const OwnerEconomicsSection: React.FC<OwnerEconomicsSectionProps> = ({
+  lineageId,
   researchExamples = [],
   selectedPredecessorTarget,
   selectedSuccessorTarget,
@@ -54,6 +57,15 @@ export const OwnerEconomicsSection: React.FC<OwnerEconomicsSectionProps> = ({
       return complexMatch && pyeongMatch;
     }) || null;
   }, [selectedPredecessorTarget, landShareData]);
+
+  if (lineageId !== 'dunchon_redevelopment') return (
+    <section className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+      <h2 className="font-bold text-slate-100">조합원 개별 경제성 및 분담금 분석</h2>
+      <p className="text-sm text-slate-400">선택한 사업의 개별 종전자산평가액, 권리가액 및 신청 주택형별 조합원분양가 자료가 충분하지 않습니다. 분담금과 연환산수익률을 계산할 수 없습니다.</p>
+      <p className="text-sm text-slate-400">종전자산평가액 → 권리가액 → 신청 주택형별 조합원분양가 → 추가분담금 / 환급금</p>
+      <p className="text-xs text-slate-500">공개 참고사례 {researchExamples.length}건 · 다른 사업의 분담금 표는 적용하지 않습니다.</p>
+    </section>
+  );
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-6 shadow-md">
@@ -265,7 +277,7 @@ export const OwnerEconomicsSection: React.FC<OwnerEconomicsSectionProps> = ({
       </div>
 
       {/* 4. 조합원 분담금 매트릭스 (Contribution Matrix) */}
-      <ContributionMatrixTable />
+      <ContributionMatrixTable matrixData={buildDunchonContributionMatrix()} />
 
       {/* 5. Collapsible Section: Public Research Examples Detail (APPLICATION_EXAMPLE / RESEARCH_ONLY) */}
       <div className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950/60">

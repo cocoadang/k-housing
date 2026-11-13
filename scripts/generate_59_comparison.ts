@@ -1,8 +1,7 @@
 import { createHash } from 'node:crypto';
 import { weightedDealStats, effectiveDealCount, registeredAreaMatches } from '../src/utils/transactionStatistics';
 import { AREA_FAMILIES_REGISTRY } from '../src/data/areaFamilies';
-import { getFirestoreDb } from '../src/server/firestore';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { getReaderDb as getFirestoreDb, collection, query, where, getDocs } from '../src/server/firestoreReader';
 import fs from 'fs';
 import path from 'node:path';
 
@@ -95,7 +94,7 @@ async function run() {
   const statsByComplex: Record<string, Record<number, YearStats>> = {};
 
   for (const cfg of complexConfigs) {
-    const docs = snapshot ? snapshot.filter(d => d.complexId === cfg.id) : await (async () => {
+    const docs: Deal[] = snapshot ? snapshot.filter(d => d.complexId === cfg.id) : await (async () => {
       const snap = await getDocs(query(collection(db!, 'transactions'), where('complexId', '==', cfg.id)));
       return snap.docs.map(d => ({ ...d.data(), id: d.id }) as Deal);
     })();
@@ -205,7 +204,7 @@ async function run() {
     metadata: {
       generatedAt: new Date().toISOString(),
       canonicalInputSha256: createHash('sha256').update(JSON.stringify(rawDealsByComplex)).digest('hex'),
-      upstreamMolitReverification: 'NOT_PERFORMED',
+      upstreamMolitReverification: 'NOT_PERFORMED_BY_THIS_EXPORT_SCRIPT',
       inputMode: snapshot ? 'ARCHIVED_SNAPSHOT_NOT_CURRENT_OR_COMPLETE' : 'FIRESTORE_READ',
       coverage: Object.fromEntries(complexConfigs.map(c => [c.id, { sourceRows: rawDealsByComplex[c.id].length, completenessVerified: false }])),
       dataSource: '국토교통부 실거래가 공개시스템 원천데이터 (MOLIT_APT_TRADE)',

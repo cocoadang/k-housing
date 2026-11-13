@@ -337,6 +337,8 @@ export const RedevelopmentAnalysisView: React.FC = () => {
         onSelectLineageId={setSelectedLineageId}
         lineageDetail={lineageDetail}
         isLoading={isLoadingLineage}
+        landShareCount={landShareData?.tiers?.length}
+        constructionCostCount={constructionCosts?.events?.length}
       />
 
       {/* Section B: Market Value Analysis (Most Interactive Section) */}
@@ -367,10 +369,14 @@ export const RedevelopmentAnalysisView: React.FC = () => {
       <ProjectTimelineSection
         lineageDetail={lineageDetail}
         isLoading={isLoadingLineage}
+        landShareCount={landShareData?.tiers?.length}
+        constructionCostCount={constructionCosts?.events?.length}
       />
 
       {/* Section D: Owner Economics */}
       <OwnerEconomicsSection
+        key={selectedLineageId}
+        lineageId={selectedLineageId}
         researchExamples={researchExamples}
         selectedPredecessorTarget={selectedPredecessorTarget}
         selectedSuccessorTarget={selectedSuccessorTarget}

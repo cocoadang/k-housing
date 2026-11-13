@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-11-13T15:11:40.129Z",
+  "isolated": true,
+  "checks": 381,
+  "passed": true,
+  "originalCounts": {
+    "transactions": 48485,
+    "monthlyComplexPrices": 5153,
+    "monthlyComplexPrices_v2": 12633,
+    "monthlyStandardAreaPrices_v2": 5757
+  },
+  "sourceSha256": "b5a9082d3703055e2ecfdeb4f87ef9834678a842e82b0c65b49699c4963603c6",
+  "revisionCounts": {
+    "transactions": 801,
+    "monthlyComplexPrices_v2": 346,
+    "monthlyStandardAreaPrices_v2": 204
+  },
+  "unmappedAreas": [
+    {
+      "id": "gwacheon_xi_202609_d2_f21_p300000_a12588",
+      "complexId": "gwacheon_xi",
+      "area": 125.88
+    },
+    {
+      "id": "gangdong_olympic_park_202611_d2_f21_p248000_a5996",
+      "complexId": "gangdong_olympic_park",
+      "area": 59.96
+    },
+    {
+      "id": "busan_namcheon_xi_202610_d9_f8_p180000_a11542",
+      "complexId": "busan_namcheon_xi",
+      "area": 115.4169
+    }
+  ],
+  "limitations": [
+    "Unregistered exact areas remain unclassified; no area conversion was inferred.",
+    "Legacy collection counts are not by themselves a zero-write audit."
+  ]
+}

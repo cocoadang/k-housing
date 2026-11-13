@@ -128,7 +128,7 @@ export const ProjectEconomicsSection: React.FC<ProjectEconomicsSectionProps> = (
                 도급계약 체결 및 증액 검증
               </div>
               <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                시공단 계약(2.67조) → 증액요구(3.23조) → 부동산원 검증 인정(1,621억) 등 총 공사지출액 변동
+                선택한 사업의 도급계약과 공사비 변동은 아래 출처별 이력에서 확인합니다.
               </p>
             </div>
             <div className="text-[10px] text-slate-500 border-t border-slate-800/80 pt-2">

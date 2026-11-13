@@ -3,8 +3,8 @@ import {
   getDocs,
   query,
   where,
-} from 'firebase/firestore';
-import { getFirestoreDb } from './firestore';
+} from './firestoreReader';
+import { getReaderDb as getFirestoreDb } from './firestoreReader';
 import { AREA_FAMILIES_REGISTRY } from '../data/areaFamilies';
 import { isPredecessorComplex } from '../data/redevelopmentLineages';
 import type {

@@ -19,6 +19,8 @@ interface ProjectHeaderProps {
   onSelectLineageId: (id: string) => void;
   lineageDetail: RedevelopmentLineageDetailResponse['lineage'] | null;
   isLoading: boolean;
+  landShareCount?: number;
+  constructionCostCount?: number;
 }
 
 export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
@@ -27,6 +29,8 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
   onSelectLineageId,
   lineageDetail,
   isLoading,
+  landShareCount,
+  constructionCostCount,
 }) => {
   const unitsBefore = lineageDetail?.units?.before ?? null;
   const unitsAfter = lineageDetail?.units?.after ?? null;
@@ -150,7 +154,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
               <span className="text-[11px] text-slate-400">시장가격 비교</span>
               <div className="flex items-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>가능 (시나리오)</span>
+                <span>{lineageDetail?.readiness.nominalScenario.availability === 'AVAILABLE' ? '가능 (시나리오)' : '자료 부족'}</span>
               </div>
             </div>
 
@@ -168,7 +172,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
               <span className="text-[11px] text-slate-400">비용 반영 분석</span>
               <div className="flex items-center gap-1 mt-1 text-sky-400 font-semibold text-xs">
                 <AlertTriangle className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                <span>일부 가능 (PARTIAL)</span>
+                <span>{lineageDetail?.readiness.costAdjusted.readiness || '자료 미확보'}</span>
               </div>
             </div>
 
@@ -186,7 +190,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
               <span className="text-[11px] text-slate-400">종전 대지지분</span>
               <div className="flex items-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>확인 가능 (17티어)</span>
+                <span>{landShareCount ? `확인 가능 (${landShareCount}티어)` : '자료 미확보'}</span>
               </div>
             </div>
 
@@ -195,7 +199,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
               <span className="text-[11px] text-slate-400">사업 공사비 이력</span>
               <div className="flex items-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>확인 가능 (6이벤트)</span>
+                <span>{constructionCostCount ? `확인 가능 (${constructionCostCount}이벤트)` : '자료 미확보'}</span>
               </div>
             </div>
           </div>

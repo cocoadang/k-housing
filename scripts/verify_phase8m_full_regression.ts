@@ -220,7 +220,7 @@ async function main() {
     console.log(`   Script: ${suite.scriptPath}`);
 
     const sTime = Date.now();
-    const res = spawnSync('npx', ['tsx', suite.scriptPath], {
+    const res = spawnSync(process.execPath, ['--import', 'tsx', suite.scriptPath], {
       encoding: 'utf-8',
       env: { ...process.env },
       maxBuffer: 20 * 1024 * 1024,
