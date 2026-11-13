@@ -35,6 +35,11 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({
 
   return (
     <div className="space-y-4">
+      {selectedLineageId === 'chokjin3_redevelopment' && (
+        <a href="https://apt.dsoom.com/#/status/chokjin-3" className="inline-flex text-sm text-emerald-400 underline">
+          촉진3 최신 사업현황·진행 소식 보기
+        </a>
+      )}
       {/* 1. Trust & Methodology Notice Banner (Clear & Compact) */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 sm:p-4 text-xs text-slate-300 flex items-start gap-3 shadow-sm">
         <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />

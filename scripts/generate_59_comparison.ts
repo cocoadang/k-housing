@@ -1,8 +1,16 @@
+import { createHash } from 'node:crypto';
+import { weightedDealStats, effectiveDealCount, registeredAreaMatches } from '../src/utils/transactionStatistics';
+import { AREA_FAMILIES_REGISTRY } from '../src/data/areaFamilies';
 import { getFirestoreDb } from '../src/server/firestore';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import fs from 'fs';
+import path from 'node:path';
 
 interface Deal {
+  id?: string;
+  activeCount?: number;
+  normalRowCount?: number;
+  cancellationRowCount?: number;
   dealDate: string;
   dealYear: number;
   dealMonth: number;
@@ -27,7 +35,7 @@ interface YearStats {
 
 // Percentile function (Linear interpolation between closest ranks - NIST / Excel PERCENTILE.INC / R type 7)
 function calculatePercentile(sortedArr: number[], p: number): number {
-  if (sortedArr.length === 0) return 0;
+  if (sortedArr.length === 0) throw new Error('NO_OBSERVATIONS');
   if (sortedArr.length === 1) return sortedArr[0];
   const index = (sortedArr.length - 1) * p;
   const lower = Math.floor(index);
@@ -47,8 +55,10 @@ function getPercentileRank(arr: number[], val: number): number {
 }
 
 async function run() {
-  const db = getFirestoreDb();
-  if (!db) {
+  const inputPath = process.env.ANALYSIS_INPUT;
+  const snapshot: Deal[] | null = inputPath ? JSON.parse(fs.readFileSync(inputPath, 'utf8')) : null;
+  const db = snapshot ? null : getFirestoreDb();
+  if (!db && !snapshot) {
     console.error('No DB');
     process.exit(1);
   }
@@ -85,18 +95,15 @@ async function run() {
   const statsByComplex: Record<string, Record<number, YearStats>> = {};
 
   for (const cfg of complexConfigs) {
-    const q = query(collection(db, 'transactions'), where('complexId', '==', cfg.id));
-    const snap = await getDocs(q);
-    const docs = snap.docs.map(d => d.data() as Deal);
+    const docs = snapshot ? snapshot.filter(d => d.complexId === cfg.id) : await (async () => {
+      const snap = await getDocs(query(collection(db!, 'transactions'), where('complexId', '==', cfg.id)));
+      return snap.docs.map(d => ({ ...d.data(), id: d.id }) as Deal);
+    })();
     rawDealsByComplex[cfg.id] = docs;
 
-    // Filter valid 59m2 deals
-    const valid = docs.filter(d => {
-      const isCanc = d.isCancelled === true || (d.cancelDate && d.cancelDate.trim().length > 0);
-      if (isCanc) return false;
-      const area = Number(d.exclusiveArea);
-      return area >= cfg.areaMin && area <= cfg.areaMax;
-    });
+    const family = AREA_FAMILIES_REGISTRY[cfg.id]?.find(f => f.standardCategory === '59');
+    if (!family) throw new Error(`MISSING_REGISTERED_59_FAMILY: ${cfg.id}`);
+    const valid = docs.filter(d => d.dealDate >= `${cfg.builtDate}-01` && d.dealDate <= new Date().toISOString().slice(0, 10) && effectiveDealCount(d) > 0 && Number.isFinite(d.price) && d.price > 0 && registeredAreaMatches(d.exclusiveArea, family.exactAreas));
 
     valid.sort((a, b) => a.dealDate.localeCompare(b.dealDate));
     validDealsByComplex[cfg.id] = valid;
@@ -107,25 +114,14 @@ async function run() {
 
     for (const yr of years) {
       const yrDeals = valid.filter(d => d.dealYear === yr);
-      const prices = yrDeals.map(d => d.price).sort((a, b) => a - b);
-      const sum = prices.reduce((acc, p) => acc + p, 0);
-      const avg = Math.round((sum / prices.length) * 10) / 10;
-      const mid = Math.floor(prices.length / 2);
-      const median = prices.length % 2 === 1 ? prices[mid] : Math.round(((prices[mid - 1] + prices[mid]) / 2) * 10) / 10;
-      statsByComplex[cfg.id][yr] = {
-        year: yr,
-        count: yrDeals.length,
-        avgPrice: avg,
-        medianPrice: median,
-        minPrice: prices[0],
-        maxPrice: prices[prices.length - 1],
-      };
+      const stats = weightedDealStats(yrDeals);
+      if (stats) statsByComplex[cfg.id][yr] = { year: yr, ...stats };
     }
   }
 
   // All years from 2008 to 2026
   const allYears: number[] = [];
-  for (let y = 2008; y <= 2026; y++) allYears.push(y);
+  for (let y = 2008; y <= new Date().getFullYear(); y++) allYears.push(y);
 
   interface AnnualComparisonRow {
     year: number;
@@ -161,6 +157,7 @@ async function run() {
 
   // Summary statistics for ratios A, B, C
   function computeRatioStats(ratios: { year: number; val: number }[], name: string) {
+    if (!ratios.length) return null;
     const vals = ratios.map(r => r.val).sort((a, b) => a - b);
     const n = vals.length;
     const sum = vals.reduce((a, b) => a + b, 0);
@@ -207,6 +204,10 @@ async function run() {
   const fullOutput = {
     metadata: {
       generatedAt: new Date().toISOString(),
+      canonicalInputSha256: createHash('sha256').update(JSON.stringify(rawDealsByComplex)).digest('hex'),
+      upstreamMolitReverification: 'NOT_PERFORMED',
+      inputMode: snapshot ? 'ARCHIVED_SNAPSHOT_NOT_CURRENT_OR_COMPLETE' : 'FIRESTORE_READ',
+      coverage: Object.fromEntries(complexConfigs.map(c => [c.id, { sourceRows: rawDealsByComplex[c.id].length, completenessVerified: false }])),
       dataSource: '국토교통부 실거래가 공개시스템 원천데이터 (MOLIT_APT_TRADE)',
       dataPrinciples: [
         '국토교통부 실거래가 원천데이터만 사용',
@@ -223,7 +224,7 @@ async function run() {
           address: '경기도 과천시 원문동',
           moveInDate: '2008년 8월',
           exclusiveArea59Molit: '59.97㎡',
-          total59ValidTransactions: validDealsByComplex['gwacheon_raemian_sur'].length,
+          total59ValidTransactions: validDealsByComplex['gwacheon_raemian_sur'].reduce((n, d) => n + effectiveDealCount(d), 0),
         },
         {
           id: 'jamsil_els',
@@ -231,7 +232,7 @@ async function run() {
           address: '서울특별시 송파구 잠실동',
           moveInDate: '2008년 9월',
           exclusiveArea59Molit: '59.96㎡',
-          total59ValidTransactions: validDealsByComplex['jamsil_els'].length,
+          total59ValidTransactions: validDealsByComplex['jamsil_els'].reduce((n, d) => n + effectiveDealCount(d), 0),
         },
         {
           id: 'banpo_raemian',
@@ -239,10 +240,11 @@ async function run() {
           address: '서울특별시 서초구 반포동',
           moveInDate: '2009년 7월',
           exclusiveArea59Molit: '59.89㎡, 59.96㎡, 59.98㎡',
-          total59ValidTransactions: validDealsByComplex['banpo_raemian'].length,
+          total59ValidTransactions: validDealsByComplex['banpo_raemian'].reduce((n, d) => n + effectiveDealCount(d), 0),
         },
       ],
     },
+    sourceDeals: validDealsByComplex,
     annualStats: comparisonRows,
     relativePriceStats: {
       A_Gwacheon_to_Jamsil: statsA,
@@ -251,7 +253,9 @@ async function run() {
     },
   };
 
-  fs.writeFileSync('data/molit_59_comparison_analysis.json', JSON.stringify(fullOutput, null, 2));
+  const outputDir = process.env.ANALYSIS_OUTPUT_DIR || 'data/generated';
+  fs.mkdirSync(outputDir, { recursive: true });
+  fs.writeFileSync(path.join(outputDir, 'molit_59_comparison_analysis.json'), JSON.stringify(fullOutput, null, 2));
 
   // CSV generation
   let csv = '연도,과천_거래건수,과천_평균가(만원),과천_중앙가(만원),과천_최저가(만원),과천_최고가(만원),잠실_거래건수,잠실_평균가(만원),잠실_중앙가(만원),잠실_최저가(만원),잠실_최고가(만원),반포_거래건수,반포_평균가(만원),반포_중앙가(만원),반포_최저가(만원),반포_최고가(만원),A_상대가격(과천/잠실),B_상대가격(과천/반포),C_상대가격(잠실/반포)\n';
@@ -266,8 +270,8 @@ async function run() {
     csv += `${r.year},${gwStr},${jsStr},${bpStr},${aStr},${bStr},${cStr}\n`;
   }
 
-  fs.writeFileSync('data/molit_59_comparison_analysis.csv', csv);
-  console.log('Saved to data/molit_59_comparison_analysis.json and data/molit_59_comparison_analysis.csv');
+  fs.writeFileSync(path.join(outputDir, 'molit_59_comparison_analysis.csv'), csv);
+  console.log(`Saved corrected analysis and source deals to ${outputDir}. Completeness is not certified.`);
 
   process.exit(0);
 }

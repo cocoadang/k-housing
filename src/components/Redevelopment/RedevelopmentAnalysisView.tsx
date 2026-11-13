@@ -1,3 +1,4 @@
+import { parseHousingRoute } from '../../utils/housingRoute';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Building2,
@@ -29,7 +30,7 @@ import type { AnalysisMode, PriceMetricType } from '../../types/redevelopmentAna
 export const RedevelopmentAnalysisView: React.FC = () => {
   // 1. Lineage State
   const [lineages, setLineages] = useState<RedevelopmentLineageListItem[]>([]);
-  const [selectedLineageId, setSelectedLineageId] = useState<string>('dunchon_redevelopment');
+  const [selectedLineageId, setSelectedLineageId] = useState<string>(() => parseHousingRoute(window.location.search).lineageId);
   const [lineageDetail, setLineageDetail] = useState<RedevelopmentLineageDetailResponse['lineage'] | null>(null);
 
   // 2. Targets State

@@ -1,4 +1,5 @@
 import express from 'express';
+import { requireOperator } from './src/server/apiSecurity';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
@@ -6,7 +7,6 @@ import { GoogleGenAI } from '@google/genai';
 import { XMLParser } from 'fast-xml-parser';
 import { isFirestoreAvailable } from './src/server/firestore';
 import { firestoreRepository, consolidateTradeRecords } from './src/server/firestoreRepository';
-import { isMigrationLocked } from './src/server/migrationLock';
 import { TARGET_COMPLEXES } from './src/data/complexesData';
 import { aggregateTradesByMonth } from './src/utils/calculations';
 import { getAreaCategory } from './src/utils/areaUtils';
@@ -17,8 +17,10 @@ import { redevelopmentRouter } from './src/server/redevelopmentRouter';
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-const PORT = 3000;
+app.disable('x-powered-by');
+app.use(express.json({ limit: '100kb' }));
+const operatorOnly = requireOperator(() => process.env.OPERATOR_API_SECRET);
+const PORT = Number(process.env.PORT) || 3000;
 
 // Initialize XML parser for MOLIT OpenAPI data.go.kr XML responses
 const xmlParser = new XMLParser({
@@ -119,7 +121,7 @@ app.get('/api/cache/stats', (req, res) => {
   });
 });
 
-app.post('/api/cache/clear', (req, res) => {
+app.post('/api/cache/clear', operatorOnly, (req, res) => {
   queryCache.clear();
   totalCacheHits = 0;
   totalApiRequests = 0;
@@ -369,7 +371,7 @@ async function fetchMolitSingleMonth(lawdCd: string, dealYmd: string, apiKey: st
 }
 
 // 3. API Debug Endpoint for verification
-app.get('/api/debug/molit', async (req, res) => {
+app.get('/api/debug/molit', operatorOnly, async (req, res) => {
   const lawdCd = String(req.query.lawdCd || '11650');
   const dealYmd = String(req.query.dealYmd || '202408');
   const apiKey = process.env.MOLIT_API_KEY;
@@ -436,7 +438,7 @@ app.get('/api/debug/molit', async (req, res) => {
 });
 
 // 4. Single Month MOLIT API Proxy
-app.get('/api/molit/trades', async (req, res) => {
+app.get('/api/molit/trades', operatorOnly, async (req, res) => {
   const { lawdCd, dealYmd } = req.query;
   totalApiRequests++;
 
@@ -489,7 +491,7 @@ app.get('/api/molit/trades', async (req, res) => {
 });
 
 // 4. Multi-month Range MOLIT API Batch Proxy
-app.get('/api/molit/trades-range', async (req, res) => {
+app.get('/api/molit/trades-range', operatorOnly, async (req, res) => {
   const { lawdCd, startYmd, endYmd } = req.query;
   totalApiRequests++;
 
@@ -877,142 +879,10 @@ app.get('/api/complex-trades/:complexId', async (req, res) => {
   }
 
   // 2. Fetch from MOLIT API if not found in Firestore
-  const apiKey = process.env.MOLIT_API_KEY;
-  if (!apiKey || apiKey.trim().length === 0) {
-    return res.status(401).json({
-      success: false,
-      error: {
-        code: 'AUTH_ERROR',
-        message: '국토교통부 실거래가 API Key(MOLIT_API_KEY)가 서버 환경변수에 설정되어 있지 않습니다.',
-      },
-    });
-  }
+  // Public reads must not fan out to upstream multi-year collection jobs.
+  return res.status(503).json({ success: false, error: { code: 'DATA_NOT_AVAILABLE', message: '저장된 거래 자료가 없습니다. 데이터 갱신 후 다시 확인해주세요.' } });
 
-  // Build months list
-  const startYear = parseInt(effectiveStartYmd.substring(0, 4), 10);
-  const startMonth = parseInt(effectiveStartYmd.substring(4, 6), 10);
-  const endYear = parseInt(effectiveEndYmd.substring(0, 4), 10);
-  const endMonth = parseInt(effectiveEndYmd.substring(4, 6), 10);
 
-  const months: string[] = [];
-  let curY = startYear;
-  let curM = startMonth;
-  while (curY < endYear || (curY === endYear && curM <= endMonth)) {
-    const mStr = curM < 10 ? `0${curM}` : `${curM}`;
-    months.push(`${curY}${mStr}`);
-    curM++;
-    if (curM > 12) {
-      curM = 1;
-      curY++;
-    }
-  }
-
-  const rawItems: any[] = [];
-  const concurrency = 4;
-  let fatalError: any = null;
-
-  for (let i = 0; i < months.length; i += concurrency) {
-    const batch = months.slice(i, i + concurrency);
-    const promises = batch.map(async (ymd) => {
-      try {
-        const fetchRes = await fetchMolitSingleMonth(effectiveLawdCd, ymd, apiKey);
-        return { ymd, items: fetchRes.items, error: null };
-      } catch (err: any) {
-        return { ymd, items: [], error: err };
-      }
-    });
-
-    const results = await Promise.all(promises);
-    for (const r of results) {
-      if (r.error && (r.error.code === 'AUTH_ERROR' || r.error.code === 'RATE_LIMIT')) {
-        fatalError = r.error;
-        break;
-      }
-      rawItems.push(...r.items);
-    }
-
-    if (fatalError) break;
-    if (i + concurrency < months.length) {
-      await new Promise((r) => setTimeout(r, 30));
-    }
-  }
-
-  if (fatalError) {
-    return res.status(fatalError.code === 'AUTH_ERROR' ? 401 : 500).json({
-      success: false,
-      error: fatalError,
-    });
-  }
-
-  // Filter and transform matching records
-  const matchingComplex = targetComplex || {
-    id: complexId,
-    name: complexId,
-    shortName: complexId,
-    lawdCd: effectiveLawdCd,
-  };
-
-  const matchedTrades: TradeRecord[] = rawItems
-    .filter((item) => {
-      const aptName = item.aptNm || item.아파트 || '';
-      const dong = item.umdNm || item.bubdong || item.법정동 || item.dong || '';
-      return serverMatchesComplex(aptName, dong, matchingComplex);
-    })
-    .map((item, idx) => serverTransformMolitItem(item, matchingComplex, idx));
-
-  // Consolidate raw trades by deterministic transaction ID to merge cancellation metadata
-  const consolidatedTrades = consolidateTradeRecords(matchedTrades, matchingComplex.id);
-
-  // 3. Persist to Firestore asynchronously / safely
-  if (isFirestoreAvailable() && targetComplex) {
-    (async () => {
-      try {
-        await firestoreRepository.saveComplexMetadata(targetComplex);
-        if (isMigrationLocked()) {
-          console.warn(`[MIGRATION_LOCK] Complex trade fetch bypassing Firestore transactions write for '${targetComplex.id}' during migration.`);
-        } else if (consolidatedTrades.length > 0) {
-          await firestoreRepository.saveTransactions(consolidatedTrades, targetComplex.id);
-
-          // Exclude cancelled trades from monthly price aggregations
-          const validTrades = consolidatedTrades.filter((t) => !t.isCancelled);
-          const areas: ('59' | '84' | '114_PLUS' | 'ALL')[] = ['59', '84', '114_PLUS', 'ALL'];
-          for (const area of areas) {
-            const areaTrades = area === 'ALL' ? validTrades : validTrades.filter((t) => t.areaCategory === area);
-            const monthly = aggregateTradesByMonth(areaTrades);
-            await firestoreRepository.saveMonthlyPrices(targetComplex.id, monthly, area);
-          }
-
-          await firestoreRepository.recordCollectionStatus({
-            complexId: targetComplex.id,
-            lawdCd: targetComplex.lawdCd,
-            startYmd: effectiveStartYmd,
-            endYmd: effectiveEndYmd,
-            itemCount: consolidatedTrades.length,
-            success: true,
-          });
-        }
-      } catch (saveErr: any) {
-        console.warn(`[Firestore] Background persist error for ${complexId}:`, saveErr?.message || saveErr);
-      }
-    })();
-  }
-
-  // Filter returned items by areaCategory if requested
-  const filteredTrades =
-    effectiveArea === 'ALL' ? consolidatedTrades : consolidatedTrades.filter((t) => t.areaCategory === effectiveArea);
-
-  const processed = processTradesResponse(filteredTrades);
-
-  return res.json({
-    success: true,
-    source: 'MOLIT_OPENAPI',
-    complexId,
-    lawdCd: effectiveLawdCd,
-    startYmd: effectiveStartYmd,
-    endYmd: effectiveEndYmd,
-    areaCategory: effectiveArea,
-    ...processed,
-  });
 });
 
 // 4.2.1 Get All-Time High Canonical Individual Trade for AreaFamily
@@ -1286,7 +1156,7 @@ app.get('/api/complexes/:complexId/area-families/:areaFamilyId/monthly-prices', 
 app.use('/api/redevelopment', redevelopmentRouter);
 
 // 5. AI Real Estate Analyst (Gemini API)
-app.post('/api/ai/analyze', async (req, res) => {
+app.post('/api/ai/analyze', operatorOnly, async (req, res) => {
   const { complexes, baseline, selectedArea, metricsSummary, hasData } = req.body;
 
   if (hasData === false || !metricsSummary || metricsSummary.latestPrice === undefined || metricsSummary.latestPrice === 0) {

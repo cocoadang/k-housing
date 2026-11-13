@@ -1,14 +1,9 @@
 import {
   collection,
-  doc,
-  setDoc,
   getDocs,
   query,
   where,
-  writeBatch,
-  serverTimestamp,
 } from 'firebase/firestore';
-import { isMigrationLocked } from './migrationLock';
 import { getFirestoreDb } from './firestore';
 import { AREA_FAMILIES_REGISTRY } from '../data/areaFamilies';
 import { isPredecessorComplex } from '../data/redevelopmentLineages';
@@ -189,144 +184,16 @@ export const firestoreRepository = {
    * Save complex metadata to 'complexes/{complexId}' and in-memory cache
    */
   async saveComplexMetadata(complex: ComplexInfo): Promise<boolean> {
-    memComplexCache.set(complex.id, complex);
-
-    if (isFirestoreQuotaExhausted) return true;
-    const db = getFirestoreDb();
-    if (!db) return false;
-
-    try {
-      const docRef = doc(db, 'complexes', complex.id);
-      await setDoc(
-        docRef,
-        {
-          id: complex.id,
-          name: complex.name,
-          shortName: complex.shortName,
-          region: complex.region,
-          province: complex.province || '',
-          city: complex.city,
-          district: complex.district,
-          dong: complex.dong,
-          subRegion: complex.subRegion || '',
-          lawdCd: complex.lawdCd,
-          apiAliases: complex.apiAliases || [],
-          latitude: complex.latitude,
-          longitude: complex.longitude,
-          builtYear: complex.builtYear,
-          totalUnits: complex.totalUnits,
-          featuredAreas: complex.featuredAreas || [],
-          representativeArea: complex.representativeArea || 59,
-          category: complex.category,
-          description: complex.description || '',
-          badge: complex.badge || null,
-          active: true,
-          updatedAt: serverTimestamp(),
-          createdAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
-      return true;
-    } catch (err: any) {
-      if (!checkAndHandleQuotaError(err)) {
-        console.warn(`[Firestore] Failed to save complex metadata for ${complex.id}:`, err?.message || err);
-      }
-      return false;
-    }
+    // Query service is read-only. Ingestion uses a separate IAM identity.
+    throw new Error('READ_ONLY_REPOSITORY');
   },
 
   /**
    * Save batch of TradeRecords into 'transactions/{transactionId}' and memory
    */
   async saveTransactions(records: TradeRecord[], complexId: string): Promise<number> {
-    if (records.length === 0) return 0;
-
-    // 1. Update in-memory cache immediately
-    const existing = memTransactionCache.get(complexId) || [];
-    const mergedMap = new Map<string, TradeRecord>();
-    existing.forEach((r) => mergedMap.set(r.id, r));
-    records.forEach((r) => mergedMap.set(r.id, r));
-    const mergedList = Array.from(mergedMap.values()).sort((a, b) => a.dealDate.localeCompare(b.dealDate));
-    memTransactionCache.set(complexId, mergedList);
-
-    if (isFirestoreQuotaExhausted) return records.length;
-    if (isMigrationLocked()) {
-      console.warn(`[MIGRATION_LOCK] Firestore transactions write blocked for complex '${complexId}': migration in progress.`);
-      return records.length;
-    }
-    const db = getFirestoreDb();
-    if (!db) return records.length;
-
-    let savedCount = 0;
-    const BATCH_SIZE = 350;
-
-    try {
-      for (let i = 0; i < records.length; i += BATCH_SIZE) {
-        const chunk = records.slice(i, i + BATCH_SIZE);
-        const batch = writeBatch(db);
-
-        chunk.forEach((r) => {
-          const docId = generateDeterministicTransactionId(complexId, {
-            dealYmd: r.dealYmd,
-            dealDay: r.dealDay,
-            floor: r.floor,
-            price: r.price,
-            exclusiveArea: r.exclusiveArea,
-          });
-
-          const docRef = doc(db, 'transactions', docId);
-          const normalRowCount = r.normalRowCount !== undefined ? r.normalRowCount : r.isCancelled ? 0 : 1;
-          const cancellationRowCount =
-            r.cancellationRowCount !== undefined ? r.cancellationRowCount : r.isCancelled ? 1 : 0;
-          const activeCount =
-            r.activeCount !== undefined ? r.activeCount : Math.max(0, normalRowCount - cancellationRowCount);
-          const isCancelled = activeCount === 0;
-
-          batch.set(
-            docRef,
-            {
-              transactionId: docId,
-              fingerprint: docId,
-              complexId,
-              complexName: r.complexName,
-              dealDate: r.dealDate,
-              dealYear: r.dealYear,
-              dealMonth: r.dealMonth,
-              dealDay: r.dealDay,
-              dealYmd: r.dealYmd,
-              price: r.price,
-              exclusiveArea: r.exclusiveArea,
-              areaCategory: r.areaCategory,
-              pyeong: r.pyeong,
-              pricePerPyeong: r.pricePerPyeong,
-              pricePerSqm: r.pricePerSqm,
-              floor: r.floor,
-              normalRowCount,
-              cancellationRowCount,
-              activeCount,
-              isCancelled,
-              cancelDate: r.cancelDate || ' ',
-              cancelDates: r.cancelDates || [],
-              registrationDate: r.registrationDate || '',
-              dealType: r.dealType || '',
-              isOutlier: !!r.isOutlier,
-              source: 'MOLIT_APT_TRADE',
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-        });
-
-        await batch.commit();
-        savedCount += chunk.length;
-      }
-      return savedCount;
-    } catch (err: any) {
-      if (!checkAndHandleQuotaError(err)) {
-        console.warn(`[Firestore] Failed to save transactions for ${complexId}:`, err?.message || err);
-      }
-      return records.length;
-    }
+    // Query service is read-only. Ingestion uses a separate IAM identity.
+    throw new Error('READ_ONLY_REPOSITORY');
   },
 
   /**
@@ -472,63 +339,8 @@ export const firestoreRepository = {
     monthlyAggs: MonthlyAggregate[],
     areaCategory: AreaCategory | '114_PLUS' | 'ALL' | 'OTHER'
   ): Promise<number> {
-    const validAggs = monthlyAggs.filter((m) => m.transactionCount > 0 && m.medianPrice > 0);
-    if (validAggs.length === 0) return 0;
-
-    // Cache in memory
-    const key = `${complexId}_${areaCategory}`;
-    memMonthlyCache.set(key, validAggs);
-
-    if (isFirestoreQuotaExhausted) return validAggs.length;
-    const db = getFirestoreDb();
-    if (!db) return validAggs.length;
-
-    let savedCount = 0;
-    const BATCH_SIZE = 350;
-
-    try {
-      for (let i = 0; i < validAggs.length; i += BATCH_SIZE) {
-        const chunk = validAggs.slice(i, i + BATCH_SIZE);
-        const batch = writeBatch(db);
-
-        chunk.forEach((m) => {
-          const docId = `${complexId}_${m.dealYmd}_${areaCategory}`;
-          const docRef = doc(db, 'monthlyComplexPrices', docId);
-
-          batch.set(
-            docRef,
-            {
-              complexId,
-              dealYmd: m.dealYmd,
-              month: m.month,
-              year: m.year,
-              displayDate: m.displayDate,
-              areaCategory,
-              transactionCount: m.transactionCount,
-              medianPrice: m.medianPrice,
-              averagePrice: m.averagePrice,
-              medianPricePerSqm: m.medianPricePerSqm,
-              averagePricePerSqm: m.averagePricePerSqm,
-              medianPricePerPyeong: m.medianPricePerPyeong,
-              minPrice: m.minPrice,
-              maxPrice: m.maxPrice,
-              confidence: m.confidence,
-              calculatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-        });
-
-        await batch.commit();
-        savedCount += chunk.length;
-      }
-      return savedCount;
-    } catch (err: any) {
-      if (!checkAndHandleQuotaError(err)) {
-        console.warn(`[Firestore] Failed to save monthly prices for ${complexId}:`, err?.message || err);
-      }
-      return validAggs.length;
-    }
+    // Query service is read-only. Ingestion uses a separate IAM identity.
+    throw new Error('READ_ONLY_REPOSITORY');
   },
 
   /**
@@ -1062,27 +874,8 @@ export const firestoreRepository = {
     itemCount: number;
     success: boolean;
   }): Promise<void> {
-    if (isFirestoreQuotaExhausted) return;
-    const db = getFirestoreDb();
-    if (!db) return;
-
-    try {
-      const docRef = doc(db, 'settings', 'dataCollection');
-      await setDoc(
-        docRef,
-        {
-          schemaVersion: '1.0.0',
-          lastAttempt: serverTimestamp(),
-          ...(status.success ? { lastSuccessfulCollection: serverTimestamp() } : {}),
-          lastStatus: status,
-        },
-        { merge: true }
-      );
-    } catch (err: any) {
-      if (!checkAndHandleQuotaError(err)) {
-        console.warn('[Firestore] Failed to record collection status:', err?.message || err);
-      }
-    }
+    // Query service is read-only. Ingestion uses a separate IAM identity.
+    throw new Error('READ_ONLY_REPOSITORY');
   },
 };
 
