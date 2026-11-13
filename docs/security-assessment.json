@@ -1,12 +1,8 @@
 {
-  "score": 1,
-  "summary": "Deployed named-database rules were read on 2026-11-13 and allow unauthenticated writes to all documents. The local replacement denies all client writes and compiled successfully through the Rules API (HTTP 200, no issues). It has not been deployed. This score describes the currently deployed rules, not the proposed replacement.",
-  "findings": [
-    {
-      "check": "Authority Source / Update Bypass",
-      "severity": "critical",
-      "issue": "The deployed recursive wildcard allows anyone to create, update or delete any document without identity or validation.",
-      "recommendation": "Apply the reviewed query-only rules to the explicitly named housing database after verifying legitimate consumers. Run ingestion under a separately authorized server identity. Review IAM independently because server IAM bypasses client rules."
-    }
-  ]
+  "score": 8,
+  "assessedAt": "2026-11-14",
+  "summary": "Reviewed replacement rules were deployed to the explicitly named housing database and exact content was read back. Anonymous REST writes return 403. Runtime reader and collector identities are separated; real reader identity tests deny writes and other database access.",
+  "historicalFinding": "On 2026-11-13 the former deployed recursive wildcard allowed unauthenticated writes. It has been replaced; historical assessment is preserved in git history.",
+  "findings": [],
+  "limitations": ["Admin/server IAM bypasses client rules and must be reviewed independently; current application identities are scoped to the named database.", "This assessment does not certify unrelated projects or databases."]
 }

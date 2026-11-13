@@ -38,3 +38,5 @@ Local validation result: 6 focused tests passed; TypeScript and production build
 - Latest-source comparisons execute 385 checks, including original dataset content hashes. Historical probes confirmed the 2012 ELS 35000만원, 2012 Sur 40000만원 and 2010 Banpo 77400만원 rows exist in upstream records; they were not removed as presumed errors.
 - Chokjin/Jeungsan no longer show Dunchon contribution data. Header counts and construction-cost descriptions are project-specific. Analysis defaults to the current month.
 - Old verification literals represented the September source snapshot. Source-aware runs use exact frozen counts from an independent baseline/source merge: Banpo Xi 59=153 months, 84=184, Samick 61=225. Samick August 2026 median is 88200만원 from seven valid raw rows. Assertions remain exact; no tolerance or bypass is added. Source hashes and independent evidence are in docs/validation/source-expectations.json.
+
+Production update (2026-11-14): remaining deployment gates described above are completed; see docs/DEPLOYMENT.md for applied controls, validation, integration, rollback and remaining data limitations.
