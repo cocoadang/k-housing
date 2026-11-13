@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-11-13T19:46:42.115Z",
+  "checkedAt": "2026-11-13T19:53:43.595Z",
   "source": "MOLIT RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev",
-  "sourceUrl": "https://www.data.go.kr/data/15126469/openapi.do",
+  "sourceUrl": "https://www.data.go.kr/data/15126468/openapi.do",
   "identityMatch": "exact registered name + dong + aptSeq retained; other complexes with same area excluded",
   "classificationBasis": "Existing broad exclusive-area families, not lettered floorplan types; no supply area or legacy pyeong label inferred. New 115.4169 sqm family remains OTHER, separate from 125 sqm.",
   "rows": [

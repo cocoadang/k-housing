@@ -23,7 +23,7 @@
   },
   "unmappedAreas": [],
   "limitations": [
-    "Unregistered exact areas remain unclassified; no area conversion was inferred.",
+    "Only registered exact areas are classified; the three reviewed discoveries are included without inferring supply areas or lettered floorplan types.",
     "Isolated data comparisons do not assert that production has had zero writes."
   ]
 }

@@ -1,5 +1,7 @@
 # Production release — 2026-11-14 (Asia/Seoul)
 
+Follow-up: the three held areas are resolved and server-grounded AI diagnosis is enabled in the subsequent release. See `docs/AREA_AND_AI_RELEASE.md` for current behavior and validation. The sections below retain the original deployment baseline.
+
 Production: https://k-housing-5he2zcaska-du.a.run.app
 
 Runtime image: `2604c058acdd` in the Seoul Cloud Run service `k-housing` and job `khousing-collector`.
