@@ -9,6 +9,9 @@ import {
   BaselineOption,
 } from '../../types';
 import { ComplexMapMarker } from './ComplexMapMarker';
+import type { GwacheonSchools } from '../../types/schools';
+import { GwacheonSchoolPanel } from './GwacheonSchoolPanel';
+const GwacheonSchoolLayer = React.lazy(() => import('./GwacheonSchoolLayer'));
 import { computeMapComplexSummary } from '../../utils/mapUtils';
 import { formatAreaCategoryLabel } from '../../utils/areaUtils';
 import { formatPrice, formatPyeongPrice, formatSqmPrice } from '../../utils/calculations';
@@ -71,7 +74,8 @@ const MAP_ENABLED_REGIONS = [
 const RegionFitBoundsCameraController: React.FC<{
   selectedSubRegion: string;
   mapBaseComplexes: ComplexInfo[];
-}> = ({ selectedSubRegion, mapBaseComplexes }) => {
+  schoolLocations?: { latitude: number; longitude: number }[];
+}> = ({ selectedSubRegion, mapBaseComplexes, schoolLocations }) => {
   const map = useMap();
   const isInitialMount = useRef(true);
 
@@ -97,7 +101,8 @@ const RegionFitBoundsCameraController: React.FC<{
     // Filter complexes for the specific subRegion among 10 enabled regions
     const targetComplexes = mapBaseComplexes.filter((c) => c.subRegion === selectedSubRegion);
 
-    const validComplexes = targetComplexes.filter(
+    const locations = selectedSubRegion === '과천' ? [...targetComplexes, ...(schoolLocations || [])] : targetComplexes;
+    const validComplexes = locations.filter(
       (c) => Number.isFinite(c.latitude) && Number.isFinite(c.longitude)
     );
 
@@ -136,7 +141,7 @@ const RegionFitBoundsCameraController: React.FC<{
         }
       };
     }
-  }, [map, selectedSubRegion, mapBaseComplexes]);
+  }, [map, selectedSubRegion, mapBaseComplexes, schoolLocations]);
 
   return null;
 };
@@ -183,7 +188,28 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
   selectedArea,
   onSelectArea,
 }) => {
-  const [selectedSubRegion, setSelectedSubRegion] = useState<string>('ALL');
+  const [selectedSubRegion, setSelectedSubRegion] = useState<string>(() => {
+    const region = new URLSearchParams(window.location.search).get('region');
+    return region === 'gwacheon' || region === '과천' ? '과천' : 'ALL';
+  });
+  const [schoolData, setSchoolData] = useState<GwacheonSchools | null>(null);
+  const [schoolLoadError, setSchoolLoadError] = useState(false);
+  const [showSchools, setShowSchools] = useState(true);
+  const [showZones, setShowZones] = useState(true);
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
+  const isGwacheon = selectedSubRegion === '과천';
+  const loadSchoolData = useCallback(async () => {
+    setSchoolLoadError(false);
+    try {
+      const { default: snapshot } = await import('../../data/gwacheonSchools.json');
+      setSchoolData(snapshot as GwacheonSchools);
+    } catch { setSchoolLoadError(true); }
+  }, []);
+  useEffect(() => { if (isGwacheon && !schoolData) void loadSchoolData(); }, [isGwacheon, loadSchoolData, schoolData]);
+  const handleSchoolSelect = useCallback((id: string) => {
+    setSelectedSchoolId(id);
+    onSelectComplex('');
+  }, [onSelectComplex]);
   const [priceMode, setPriceMode] = useState<MapPriceMode>('LATEST_PRICE');
   const [hoveredComplexId, setHoveredComplexId] = useState<string | null>(null);
   const regionBtnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -269,17 +295,19 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
   // Handle region filter button click
   const handleSelectSubRegion = (subId: string) => {
     setSelectedSubRegion(subId);
+    setSelectedSchoolId(null);
     onSelectComplex('');
   };
 
   // Handle complex marker click
   const handleComplexClick = (complex: ComplexInfo) => {
+    setSelectedSchoolId(null);
     onSelectComplex(complex.id);
   };
 
   const currentSelectedComplex = useMemo(() => {
-    return mapBaseComplexes.find((c) => c.id === selectedComplexId) || null;
-  }, [mapBaseComplexes, selectedComplexId]);
+    return filteredComplexes.find((c) => c.id === selectedComplexId) || null;
+  }, [filteredComplexes, selectedComplexId]);
 
   const selectedSummary = useMemo(() => {
     return currentSelectedComplex ? summariesMap[currentSelectedComplex.id] : null;
@@ -405,6 +433,13 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
         </div>
       </div>
 
+      {isGwacheon && <div className="flex flex-wrap items-center gap-2 bg-slate-900 border-b border-slate-700 px-3 py-2 text-xs shrink-0">
+        <span className="text-emerald-300">단지 가격: 선택 면적의 최근 거래월 중앙값</span>
+        <button type="button" aria-pressed={showSchools} onClick={() => setShowSchools(v => !v)} className={`px-3 py-1.5 rounded-lg ${showSchools ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>초등학교 {schoolData?.schools.length || ''}</button>
+        <button type="button" aria-pressed={showZones} onClick={() => setShowZones(v => !v)} className={`px-3 py-1.5 rounded-lg ${showZones ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>통학구역</button>
+        <span className="text-[11px] text-slate-400">전체 학생 수 · 공식 자료 기준일 표시</span>
+      </div>}
+
       {/* 2. Pure Full-Screen Map Canvas */}
       <div className="relative flex-1 min-h-0 w-full overflow-hidden">
         {/* Full Viewport Google Maps Layer (Absolute Inset-0) */}
@@ -426,10 +461,10 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
             >
               <Map
                 defaultCenter={{
-                  lat: 37.50,
-                  lng: 127.02,
+                  lat: isGwacheon ? 37.423 : 37.50,
+                  lng: isGwacheon ? 126.993 : 127.02,
                 }}
-                defaultZoom={10}
+                defaultZoom={isGwacheon ? 14 : 10}
                 mapId="DEMO_MAP_ID"
                 gestureHandling="greedy"
                 disableDefaultUI={false}
@@ -441,8 +476,13 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
                 <RegionFitBoundsCameraController
                   selectedSubRegion={selectedSubRegion}
                   mapBaseComplexes={mapBaseComplexes}
+                  schoolLocations={schoolData?.schools}
                 />
                 <ComplexSelectionCameraController selectedComplex={currentSelectedComplex} />
+                {isGwacheon && schoolData && <React.Suspense fallback={null}>
+                  <GwacheonSchoolLayer data={schoolData} showSchools={showSchools} showZones={showZones}
+                    selectedId={selectedSchoolId} onSelect={handleSchoolSelect} />
+                </React.Suspense>}
 
                 {/* Render ComplexMapMarker for 10 map-enabled regions (filtered) */}
                 {filteredComplexes.map((c) => {
@@ -508,6 +548,12 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
             </div>
           )}
         </div>
+
+        {isGwacheon && (schoolData ? <GwacheonSchoolPanel data={schoolData} selectedId={selectedSchoolId}
+          onSelect={handleSchoolSelect} onClose={() => setSelectedSchoolId(null)} /> :
+          <div role="status" className="absolute top-3 right-3 left-3 sm:left-auto z-20 rounded-xl bg-slate-900 p-3 text-xs">
+            {schoolLoadError ? <><span>학교 자료를 불러오지 못했습니다.</span><button type="button" className="ml-2 underline" onClick={loadSchoolData}>다시 시도</button></> : '공식 학교 자료를 불러오는 중…'}
+          </div>)}
 
         {/* Selected Complex Summary Card Overlay */}
         {currentSelectedComplex && (

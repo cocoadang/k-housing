@@ -176,6 +176,10 @@ export const ComplexMapMarker: React.FC<ComplexMapMarkerProps> = ({
           </div>
         </div>
 
+        {complex.subRegion === '과천' && priceMode === 'LATEST_PRICE' && summary?.hasData && <div className="bg-slate-950/95 text-slate-300 rounded px-1.5 text-[10px]">
+          {summary.latestMonth?.replace(/^(\d{4})(\d{2})$/, '$1.$2') || '기준월 확인 필요'} 월 중앙값
+        </div>}
+
         {/* Marker Needle / Pin Tip */}
         <div
           className={`w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[6px] -mt-[1px] transition-colors ${
