@@ -50,7 +50,10 @@ export interface ComplexFootprints {
     type: 'FeatureCollection';
     features: { type: 'Feature'; geometry: SchoolZone['geometry']; properties: {
       complexId: string; name: string;
-      sourceObjects: { type: string; id: number; version: number; timestamp: string; name: string; url: string }[];
+      sourceObjects: ({ type: 'way' | 'relation'; id: number; version: number; timestamp: string; name: string; url: string } | {
+        type: 'official-parcel'; id: string; pnu: string; version: string; timestamp: string; name: string; url: string;
+        provider: string; license: string; sourceCrs: string;
+      })[];
     } }[];
   };
 }
