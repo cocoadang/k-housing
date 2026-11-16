@@ -1,0 +1,113 @@
+{
+  "startedAt": "2026-11-16T11:01:53.889Z",
+  "checkedAt": "2026-11-16T11:02:18.040Z",
+  "revision": "k-housing-schools-ea9f2e9",
+  "previousRevision": "k-housing-metrics-3d12f51",
+  "url": "https://schools-check---k-housing-5he2zcaska-du.a.run.app",
+  "image": "asia-northeast3-docker.pkg.dev/gen-lang-client-0064554427/cloud-run-source-deploy/k-housing@sha256:f7006bcfbc05e7bd5413711266af5291ee78654c1beea0e0cec48ead7ffdc419",
+  "checks": {
+    "health": true,
+    "gwacheon_59": true,
+    "gwacheon_84": true,
+    "html": true,
+    "templatePreserved": true,
+    "cpuIdle": true
+  },
+  "prices": {
+    "59": [
+      {
+        "id": "gwacheon_wieverfield",
+        "price": 208000,
+        "month": "202610",
+        "latitude": 37.4231801,
+        "longitude": 126.9906074
+      },
+      {
+        "id": "gwacheon_xi",
+        "price": 214000,
+        "month": "202609",
+        "latitude": 37.4288973,
+        "longitude": 126.9989003
+      },
+      {
+        "id": "gwacheon_raemian_sur",
+        "price": 190000,
+        "month": "202610",
+        "latitude": 37.4208454,
+        "longitude": 126.9919769
+      }
+    ],
+    "84": [
+      {
+        "id": "gwacheon_wieverfield",
+        "price": 240000,
+        "month": "202609",
+        "latitude": 37.4231801,
+        "longitude": 126.9906074
+      },
+      {
+        "id": "gwacheon_xi",
+        "price": 255000,
+        "month": "202610",
+        "latitude": 37.4288973,
+        "longitude": 126.9989003
+      },
+      {
+        "id": "gwacheon_raemian_sur",
+        "price": 214000,
+        "month": "202610",
+        "latitude": 37.4208454,
+        "longitude": 126.9919769
+      }
+    ]
+  },
+  "noNotifications": "No Telegram, collection, scheduled job or AI endpoints invoked.",
+  "promotedAt": "2026-11-16T11:03:32.369Z",
+  "productionUrl": "https://k-housing-5he2zcaska-du.a.run.app",
+  "productionChecks": {
+    "promoted": true,
+    "runtimePreserved": true,
+    "health": true,
+    "finalTraffic": true
+  },
+  "browserVerification": {
+    "desktop": true,
+    "mobile390x844": true,
+    "sixSchoolMarkers": true,
+    "sevenOfficialZonesIncludingJoint": true,
+    "schoolDetailsAndGeneralAverage": true,
+    "sourceDatesAndLinks": true,
+    "schoolAndZoneSwitches": true,
+    "area59and84Prices": true,
+    "apartmentSummary": true,
+    "regionExitRemovesSchoolLayer": true,
+    "viewportReset": true,
+    "productionMapsLoaded": true,
+    "previewReferrerRestriction": "Expected; key was not expanded; final verification used existing production origin."
+  },
+  "finishedAt": "2026-11-16T11:06:08.064Z",
+  "github": {
+    "pullRequest": "https://github.com/cocoadang/k-housing/pull/3",
+    "sourceCommit": "ea9f2e9ed4573f51e290e40f86df30d19656ee1e",
+    "mergeCommit": "7cf9b07d4ddd3e3d78ac6a422d3021b944a70dbd",
+    "checks": [
+      43853654973,
+      43853755674
+    ],
+    "testsPassed": 32
+  },
+  "data": {
+    "schools": 6,
+    "students": 5254,
+    "zones": 7,
+    "studentsAsOf": "2026-04-01",
+    "zonesAsOf": "2026-09-20",
+    "snapshot": "gwacheon-schools-20261116-v1"
+  },
+  "syntheticTelemetryWindow": {
+    "start": "2026-11-16T11:01:53.889Z",
+    "end": "2026-11-16T11:06:08.064Z",
+    "note": "Exclude release probes and browser interactions from organic cost/cache usage comparisons."
+  },
+  "passed": true
+}
