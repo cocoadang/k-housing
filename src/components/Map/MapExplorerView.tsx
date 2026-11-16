@@ -9,9 +9,13 @@ import {
   BaselineOption,
 } from '../../types';
 import { ComplexMapMarker } from './ComplexMapMarker';
-import type { GwacheonSchools } from '../../types/schools';
-import { GwacheonSchoolPanel } from './GwacheonSchoolPanel';
-const GwacheonSchoolLayer = React.lazy(() => import('./GwacheonSchoolLayer'));
+import type { ComplexFootprints } from '../../types/schools';
+import { SchoolMapPanel } from './SchoolMapPanel';
+import { useRegionalSchools } from './useRegionalSchools';
+import { schoolRegionFromQuery } from '../../services/schoolMapData';
+import { SUBREGIONS_METADATA } from '../../data/complexesData';
+const SchoolMapLayer = React.lazy(() => import('./SchoolMapLayer'));
+const ComplexBoundaryLayer = React.lazy(() => import('./ComplexBoundaryLayer'));
 import { computeMapComplexSummary } from '../../utils/mapUtils';
 import { formatAreaCategoryLabel } from '../../utils/areaUtils';
 import { formatPrice, formatPyeongPrice, formatSqmPrice } from '../../utils/calculations';
@@ -74,18 +78,10 @@ const MAP_ENABLED_REGIONS = [
 const RegionFitBoundsCameraController: React.FC<{
   selectedSubRegion: string;
   mapBaseComplexes: ComplexInfo[];
-  schoolLocations?: { latitude: number; longitude: number }[];
-}> = ({ selectedSubRegion, mapBaseComplexes, schoolLocations }) => {
+}> = ({ selectedSubRegion, mapBaseComplexes }) => {
   const map = useMap();
-  const isInitialMount = useRef(true);
 
   useEffect(() => {
-    // Prevent fitBounds on initial component mount
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
     if (!map) return;
 
     // When 'ALL' is selected, reset to default Seoul/Metropolitan center and zoom 10 without nationwide fitBounds
@@ -101,8 +97,7 @@ const RegionFitBoundsCameraController: React.FC<{
     // Filter complexes for the specific subRegion among 10 enabled regions
     const targetComplexes = mapBaseComplexes.filter((c) => c.subRegion === selectedSubRegion);
 
-    const locations = selectedSubRegion === '과천' ? [...targetComplexes, ...(schoolLocations || [])] : targetComplexes;
-    const validComplexes = locations.filter(
+    const validComplexes = targetComplexes.filter(
       (c) => Number.isFinite(c.latitude) && Number.isFinite(c.longitude)
     );
 
@@ -141,7 +136,7 @@ const RegionFitBoundsCameraController: React.FC<{
         }
       };
     }
-  }, [map, selectedSubRegion, mapBaseComplexes, schoolLocations]);
+  }, [map, selectedSubRegion, mapBaseComplexes]);
 
   return null;
 };
@@ -189,26 +184,32 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
   onSelectArea,
 }) => {
   const [selectedSubRegion, setSelectedSubRegion] = useState<string>(() => {
-    const region = new URLSearchParams(window.location.search).get('region');
-    return region === 'gwacheon' || region === '과천' ? '과천' : 'ALL';
+    return schoolRegionFromQuery(new URLSearchParams(window.location.search).get('region'));
   });
-  const [schoolData, setSchoolData] = useState<GwacheonSchools | null>(null);
-  const [schoolLoadError, setSchoolLoadError] = useState(false);
+  const { schoolData, schoolLoadError, retry: loadSchoolData } = useRegionalSchools(selectedSubRegion);
+  const [footprints, setFootprints] = useState<ComplexFootprints | null>(null);
+  const [footprintError, setFootprintError] = useState(false);
+  const [showFootprints, setShowFootprints] = useState(true);
   const [showSchools, setShowSchools] = useState(true);
-  const [showZones, setShowZones] = useState(true);
+  const [showZones, setShowZones] = useState(false);
   const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
-  const isGwacheon = selectedSubRegion === '과천';
-  const loadSchoolData = useCallback(async () => {
-    setSchoolLoadError(false);
+  const hasSchoolRegion = selectedSubRegion !== 'ALL';
+  const initialRegionMetadata = SUBREGIONS_METADATA.find(r => r.id === selectedSubRegion);
+  const loadFootprints = useCallback(async () => {
+    setFootprintError(false);
     try {
-      const { default: snapshot } = await import('../../data/gwacheonSchools.json');
-      setSchoolData(snapshot as GwacheonSchools);
-    } catch { setSchoolLoadError(true); }
+      const { default: snapshot } = await import('../../data/complexFootprints.json');
+      setFootprints(snapshot as unknown as ComplexFootprints);
+    } catch { setFootprintError(true); }
   }, []);
-  useEffect(() => { if (isGwacheon && !schoolData) void loadSchoolData(); }, [isGwacheon, loadSchoolData, schoolData]);
+  useEffect(() => { void loadFootprints(); }, [loadFootprints]);
   const handleSchoolSelect = useCallback((id: string) => {
     setSelectedSchoolId(id);
     onSelectComplex('');
+  }, [onSelectComplex]);
+  const handleBoundarySelect = useCallback((id: string) => {
+    setSelectedSchoolId(null);
+    onSelectComplex(id);
   }, [onSelectComplex]);
   const [priceMode, setPriceMode] = useState<MapPriceMode>('LATEST_PRICE');
   const [hoveredComplexId, setHoveredComplexId] = useState<string | null>(null);
@@ -281,8 +282,11 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
 
   // Base complexes for map explorer (restricted to 10 designated regions, 26 complexes total)
   const mapBaseComplexes = useMemo(() => {
-    return complexes.filter((c) => MAP_ENABLED_REGIONS.includes(c.subRegion));
-  }, [complexes]);
+    return complexes.filter((c) => MAP_ENABLED_REGIONS.includes(c.subRegion)).map(c => {
+      const anchor = footprints?.anchors[c.id];
+      return anchor ? { ...c, ...anchor, location: { lat: anchor.latitude, lng: anchor.longitude } } : c;
+    });
+  }, [complexes, footprints]);
 
   // Filter complexes by subregion among map-enabled complexes (no search query filter on pure map)
   const filteredComplexes = useMemo(() => {
@@ -291,6 +295,8 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
     }
     return mapBaseComplexes.filter((c) => c.subRegion === selectedSubRegion);
   }, [mapBaseComplexes, selectedSubRegion]);
+  const visibleComplexIds = useMemo(() => filteredComplexes.map(c => c.id), [filteredComplexes]);
+  const missingOutlines = useMemo(() => filteredComplexes.filter(c => footprints?.unavailable[c.id]), [filteredComplexes, footprints]);
 
   // Handle region filter button click
   const handleSelectSubRegion = (subId: string) => {
@@ -301,8 +307,7 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
 
   // Handle complex marker click
   const handleComplexClick = (complex: ComplexInfo) => {
-    setSelectedSchoolId(null);
-    onSelectComplex(complex.id);
+    handleBoundarySelect(complex.id);
   };
 
   const currentSelectedComplex = useMemo(() => {
@@ -433,12 +438,17 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
         </div>
       </div>
 
-      {isGwacheon && <div className="flex flex-wrap items-center gap-2 bg-slate-900 border-b border-slate-700 px-3 py-2 text-xs shrink-0">
+      <div className="flex flex-wrap items-center gap-2 bg-slate-900 border-b border-slate-700 px-3 py-2 text-xs shrink-0">
         <span className="text-emerald-300">단지 가격: 선택 면적의 최근 거래월 중앙값</span>
-        <button type="button" aria-pressed={showSchools} onClick={() => setShowSchools(v => !v)} className={`px-3 py-1.5 rounded-lg ${showSchools ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>초등학교 {schoolData?.schools.length || ''}</button>
-        <button type="button" aria-pressed={showZones} onClick={() => setShowZones(v => !v)} className={`px-3 py-1.5 rounded-lg ${showZones ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>통학구역</button>
-        <span className="text-[11px] text-slate-400">전체 학생 수 · 공식 자료 기준일 표시</span>
-      </div>}
+        <button type="button" aria-pressed={showFootprints} onClick={() => setShowFootprints(v => !v)} className={`px-3 py-1.5 rounded-lg ${showFootprints ? 'bg-emerald-700 text-white' : 'bg-slate-800 text-slate-300'}`}>단지 외곽</button>
+        {hasSchoolRegion && <>
+          <button type="button" aria-pressed={showSchools} onClick={() => setShowSchools(v => !v)} className={`px-3 py-1.5 rounded-lg ${showSchools ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>초등학교 {schoolData?.schools.length || ''}</button>
+          <button type="button" aria-pressed={showZones} onClick={() => setShowZones(v => !v)} className={`px-3 py-1.5 rounded-lg ${showZones ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>통학구역</button>
+        </>}
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="text-[10px] text-slate-400 underline">단지 외곽 참고도형: © OpenStreetMap contributors · ODbL</a>
+        {missingOutlines.map(c => <span key={c.id} className="text-[11px] text-amber-300" title={footprints?.unavailable[c.id].reason}>{c.shortName}: 독립 외곽 미확인</span>)}
+        {footprintError && <button type="button" className="text-amber-300 underline" onClick={loadFootprints}>단지 외곽 불러오기 재시도</button>}
+      </div>
 
       {/* 2. Pure Full-Screen Map Canvas */}
       <div className="relative flex-1 min-h-0 w-full overflow-hidden">
@@ -461,10 +471,10 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
             >
               <Map
                 defaultCenter={{
-                  lat: isGwacheon ? 37.423 : 37.50,
-                  lng: isGwacheon ? 126.993 : 127.02,
+                  lat: initialRegionMetadata?.center.lat ?? 37.50,
+                  lng: initialRegionMetadata?.center.lng ?? 127.02,
                 }}
-                defaultZoom={isGwacheon ? 14 : 10}
+                defaultZoom={hasSchoolRegion ? 14 : 10}
                 mapId="DEMO_MAP_ID"
                 gestureHandling="greedy"
                 disableDefaultUI={false}
@@ -476,11 +486,13 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
                 <RegionFitBoundsCameraController
                   selectedSubRegion={selectedSubRegion}
                   mapBaseComplexes={mapBaseComplexes}
-                  schoolLocations={schoolData?.schools}
                 />
                 <ComplexSelectionCameraController selectedComplex={currentSelectedComplex} />
-                {isGwacheon && schoolData && <React.Suspense fallback={null}>
-                  <GwacheonSchoolLayer data={schoolData} showSchools={showSchools} showZones={showZones}
+                {showFootprints && footprints && <React.Suspense fallback={null}>
+                  <ComplexBoundaryLayer data={footprints} complexIds={visibleComplexIds} selectedId={selectedComplexId} onSelect={handleBoundarySelect} />
+                </React.Suspense>}
+                {hasSchoolRegion && schoolData && <React.Suspense fallback={null}>
+                  <SchoolMapLayer data={schoolData} showSchools={showSchools} showZones={showZones}
                     selectedId={selectedSchoolId} onSelect={handleSchoolSelect} />
                 </React.Suspense>}
 
@@ -549,7 +561,7 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
           )}
         </div>
 
-        {isGwacheon && (schoolData ? <GwacheonSchoolPanel data={schoolData} selectedId={selectedSchoolId}
+        {hasSchoolRegion && (schoolData ? <SchoolMapPanel data={schoolData} selectedId={selectedSchoolId}
           onSelect={handleSchoolSelect} onClose={() => setSelectedSchoolId(null)} /> :
           <div role="status" className="absolute top-3 right-3 left-3 sm:left-auto z-20 rounded-xl bg-slate-900 p-3 text-xs">
             {schoolLoadError ? <><span>학교 자료를 불러오지 못했습니다.</span><button type="button" className="ml-2 underline" onClick={loadSchoolData}>다시 시도</button></> : '공식 학교 자료를 불러오는 중…'}
