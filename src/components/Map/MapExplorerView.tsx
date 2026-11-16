@@ -445,8 +445,7 @@ export const MapExplorerView: React.FC<MapExplorerViewProps> = ({
           <button type="button" aria-pressed={showSchools} onClick={() => setShowSchools(v => !v)} className={`px-3 py-1.5 rounded-lg ${showSchools ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>초등학교 {schoolData?.schools.length || ''}</button>
           <button type="button" aria-pressed={showZones} onClick={() => setShowZones(v => !v)} className={`px-3 py-1.5 rounded-lg ${showZones ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-300'}`}>통학구역</button>
         </>}
-        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="text-[10px] text-slate-400 underline">단지 외곽 참고도형: © OpenStreetMap contributors · ODbL</a>
-        {filteredComplexes.some(c => c.id === 'busan_centum_park_2') && <a href="https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?pnu=2635010400111970000" target="_blank" rel="noopener noreferrer" className="text-[10px] text-slate-400 underline">센텀파크2차: 국토교통부 토지이음 · 공공누리 출처표시 · 참고용 필지 외곽</a>}
+        <a href="https://www.eum.go.kr/web/am/amMain.jsp" target="_blank" rel="noopener noreferrer" className="text-[10px] text-slate-400 underline">단지 외곽: 국토교통부 토지이음 · 공공누리 출처표시 · 참고용 필지 경계</a>
         {missingOutlines.map(c => <span key={c.id} className="text-[11px] text-amber-300" title={footprints?.unavailable[c.id].reason}>{c.shortName}: 독립 외곽 미확인</span>)}
         {footprintError && <button type="button" className="text-amber-300 underline" onClick={loadFootprints}>단지 외곽 불러오기 재시도</button>}
       </div>

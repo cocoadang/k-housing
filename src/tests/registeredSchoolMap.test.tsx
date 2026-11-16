@@ -83,7 +83,7 @@ test('31 apartment outlines are distinct from school boundaries and retain provi
   assert.equal(footprints.collection.features.length, 31);
   assert.deepEqual(Object.keys(footprints.unavailable), []);
   assert.equal(Object.keys(footprints.anchors).length, TARGET_COMPLEXES.length);
-  assert.equal(footprints.license, 'ODbL-1.0; KOGL-Type-1 (Centum Park 2)');
+  assert.equal(footprints.license, 'KOGL-Type-1');
   for (const f of footprints.collection.features) {
     const a = footprints.anchors[f.properties.complexId];
     const polygons = f.geometry.type === 'Polygon' ? [f.geometry.coordinates as number[][][]] : f.geometry.coordinates as number[][][][];
@@ -91,14 +91,12 @@ test('31 apartment outlines are distinct from school boundaries and retain provi
     for (const p of polygons) for (const r of p) assert.deepEqual(r[0], r.at(-1));
     for (const ref of f.properties.sourceObjects) {
       if (ref.type === 'official-parcel') {
-        assert.equal(f.properties.complexId, 'busan_centum_park_2');
-        assert.equal(ref.pnu, '2635010400111970000');
+        assert.match(ref.pnu, /^\d{19}$/);
         assert.equal(ref.provider, '국토교통부 토지이음');
         assert.equal(ref.license, 'KOGL-Type-1');
-        assert.equal(ref.url, 'https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?pnu=2635010400111970000');
+        assert.equal(ref.url, 'https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?pnu=' + ref.pnu);
       } else {
-        assert.ok(ref.url.startsWith('https://www.openstreetmap.org/'));
-        assert.ok(ref.version > 0);
+        assert.fail('all current outlines must use reviewed official parcels');
       }
     }
   }
@@ -124,6 +122,29 @@ test('Centum Park 2 exact parcel contains all six towers and excludes Centum Sta
     const [lng, lat] = xy as number[]; assert.ok(!ringContains(ring, lng, lat), name);
   }
   assert.ok(!f.properties.sourceObjects.some(s => s.id === 784126265), 'merged Star polygon must never substitute');
+});
+
+test('all 62 reviewed parcels retain exact membership, residential checks and the excluded neighbouring campus', () => {
+  const source = JSON.parse(readFileSync(new URL('../../docs/validation/registered-parcel-source-20261116.json', import.meta.url), 'utf8'));
+  const pnus = new Set<string>();
+  for (const f of footprints.collection.features) {
+    const item = source.items[f.properties.complexId];
+    assert.deepEqual(f.properties.sourceObjects.map(s => s.type === 'official-parcel' ? s.pnu : '').sort(), item.parcels.map((p: any) => p.properties.pnu).sort());
+    for (const s of f.properties.sourceObjects) if (s.type === 'official-parcel') { assert.ok(!pnus.has(s.pnu)); pnus.add(s.pnu); }
+    const polygons = f.geometry.type === 'Polygon' ? [f.geometry.coordinates as number[][][]] : f.geometry.coordinates as number[][][][];
+    for (const b of item.buildingPositions) {
+      const [lng, lat] = b.point;
+      const contained = polygons.some(p => ringContains(p[0], lng, lat) && !p.slice(1).some(h => ringContains(h, lng, lat)));
+      assert.equal(contained, b.included, f.properties.name + ': ' + b.id);
+    }
+  }
+  assert.equal(pnus.size, 62);
+  assert.ok(!pnus.has('1168010300112830000'), 'Gaepo Xi Rene must not enter Forest');
+  const grand = footprints.collection.features.find(f => f.properties.complexId === 'e_pyeonhansesang_grandmaison')!;
+  assert.equal(grand.properties.sourceObjects.length, 6, 'all six Grandmaison subcomplexes must remain');
+  assert.equal(grand.geometry.type, 'MultiPolygon', 'roads cannot be bridged by a campus envelope');
+  const acro = footprints.collection.features.find(f => f.properties.complexId === 'banpo_acro')!;
+  assert.equal(acro.properties.sourceObjects.length, 2, 'representative-point lookup alone misses the main Acro parcel');
 });
 
 test('generic school card labels current region, limited scope, official dates and missing counts honestly', () => {
