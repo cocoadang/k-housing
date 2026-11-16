@@ -1,0 +1,193 @@
+{
+  "startedAt": "2026-11-16T11:48:00.429Z",
+  "checkedAt": "2026-11-16T11:48:22.877Z",
+  "revision": "k-housing-regions-13877cf",
+  "previousRevision": "k-housing-schools-ea9f2e9",
+  "url": "https://regions-check---k-housing-5he2zcaska-du.a.run.app",
+  "productionUrl": "https://k-housing-5he2zcaska-du.a.run.app",
+  "image": "asia-northeast3-docker.pkg.dev/gen-lang-client-0064554427/cloud-run-source-deploy/k-housing@sha256:b1878fd5382c9bef918be0e4e41123efdd1759674f8e9a984ab490abbcd5dc04",
+  "buildId": "4737a997-9a33-4e47-a55e-f09a3de5a42c",
+  "checks": {
+    "health": true,
+    "all31PricesUnchanged_59": true,
+    "all31PricesUnchanged_84": true,
+    "sourceRevisionUnchanged": true,
+    "runtimePreserved": true,
+    "cpuIdle": true,
+    "staticDataFiles": true,
+    "allRegionalAssetsMatchBuild": true
+  },
+  "data": {
+    "regions": 13,
+    "schools": 158,
+    "zones": 168,
+    "footprints": 30,
+    "unavailable": [
+      "busan_centum_park_2"
+    ]
+  },
+  "sourceRevision": "r20261115233017_f3ebd916",
+  "syntheticStart": "2026-11-16T11:45:27.153Z",
+  "noNotifications": "No Telegram, collection, scheduler or AI endpoints invoked; public GET checks only.",
+  "promotedAt": "2026-11-16T11:48:49.488Z",
+  "productionChecks": {
+    "promoted": true,
+    "runtimePreserved": true,
+    "health": true,
+    "finalTraffic": true,
+    "sourceRevisionUnchanged": true
+  },
+  "browserVerification": {
+    "regions": [
+      {
+        "region": "반포",
+        "schoolCount": 10,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 3,
+        "expectedPriceMarkers": 3
+      },
+      {
+        "region": "잠실",
+        "schoolCount": 10,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 3,
+        "expectedPriceMarkers": 3
+      },
+      {
+        "region": "개포",
+        "schoolCount": 17,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 3,
+        "expectedPriceMarkers": 3
+      },
+      {
+        "region": "대치",
+        "schoolCount": 10,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 2,
+        "expectedPriceMarkers": 2
+      },
+      {
+        "region": "마포",
+        "schoolCount": 16,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 2,
+        "expectedPriceMarkers": 2
+      },
+      {
+        "region": "성동",
+        "schoolCount": 18,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 2,
+        "expectedPriceMarkers": 2
+      },
+      {
+        "region": "용산",
+        "schoolCount": 2,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 1,
+        "expectedPriceMarkers": 1
+      },
+      {
+        "region": "길음",
+        "schoolCount": 17,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 2,
+        "expectedPriceMarkers": 2
+      },
+      {
+        "region": "강동",
+        "schoolCount": 20,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 3,
+        "expectedPriceMarkers": 3
+      },
+      {
+        "region": "과천",
+        "schoolCount": 6,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 3,
+        "expectedPriceMarkers": 3
+      },
+      {
+        "region": "구성남",
+        "schoolCount": 25,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 3,
+        "expectedPriceMarkers": 3
+      },
+      {
+        "region": "남천동",
+        "schoolCount": 5,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 2,
+        "expectedPriceMarkers": 2
+      },
+      {
+        "region": "센텀시티",
+        "schoolCount": 8,
+        "heading": true,
+        "catchmentsDefaultOff": true,
+        "footprintsDefaultOn": true,
+        "priceMarkers": 2,
+        "expectedPriceMarkers": 2
+      }
+    ],
+    "desktop": true,
+    "mobile390x844": true,
+    "footprintClickOpensCorrectApartment": true,
+    "footprintSwitchRemovesAndRestoresShapes": true,
+    "optionalCatchmentsSwitchIndependent": true,
+    "schoolDetailsAndClassAverage": true,
+    "area59And84": true,
+    "missingCentum2OutlineMessage": true,
+    "viewportReset": true,
+    "productionMapsLoaded": true
+  },
+  "finishedAt": "2026-11-16T11:53:43.445Z",
+  "github": {
+    "pullRequest": "https://github.com/cocoadang/k-housing/pull/4",
+    "sourceCommit": "13877cf9cb782511c0ffb335164e53a93682603c",
+    "mergeCommit": "5a235e6",
+    "validationRuns": [
+      43860442141,
+      43860526099
+    ],
+    "testsPassed": 38
+  },
+  "syntheticTelemetryWindow": {
+    "start": "2026-11-16T11:45:27.153Z",
+    "end": "2026-11-16T11:53:43.445Z",
+    "note": "Exclude baseline, staging and browser validation requests from organic usage/cost/cache comparisons."
+  },
+  "limitations": [
+    "30 of 31 apartment outlines: independent Centum Park 2 geometry unavailable; no substitute polygon used.",
+    "Apartment outlines are OSM reference footprints, not legal surveyed parcel boundaries.",
+    "Schools are nearby/officially linked campuses, not guaranteed address-level assignments."
+  ],
+  "passed": true
+}
