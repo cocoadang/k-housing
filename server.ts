@@ -1,3 +1,4 @@
+import {costHttpTelemetry} from './src/server/costTelemetry';
 import { getReaderDb } from './src/server/firestoreReader';
 import express from 'express';
 import { requireOperator } from './src/server/apiSecurity';
@@ -19,6 +20,7 @@ dotenv.config();
 
 const app = express();
 app.disable('x-powered-by');
+app.use(costHttpTelemetry());
 app.use(express.json({ limit: '100kb' }));
 const operatorOnly = requireOperator(() => process.env.OPERATOR_API_SECRET);
 const PORT = Number(process.env.PORT) || 3000;

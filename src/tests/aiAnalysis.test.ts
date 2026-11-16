@@ -31,11 +31,13 @@ async function serve(router:ReturnType<typeof createAiAnalysisRouter>, run:(post
   const address=server.address() as any;
   try{await run(async(body,origin)=>{const r=await fetch(`http://127.0.0.1:${address.port}/api/ai/analyze`,{method:'POST',headers:{'content-type':'application/json',...(origin?{origin}:{})},body:JSON.stringify(body)});return {status:r.status,data:await r.json()};});}finally{await new Promise<void>(r=>server.close(()=>r()));}
 }
-test('identical concurrent AI requests generate once and use cache; changed source invalidates report',async()=>{
+test('identical concurrent AI requests generate once and use cache; changed source invalidates report',async(t)=>{
+  const lines:string[]=[];t.mock.method(console,'log',(...args:any[])=>lines.push(args.join(' ')));
   let count=0,revision='r1';
   await serve(createAiAnalysisRouter({load:async()=>({...facts(),source:{...facts().source,revision}}),generate:async()=>{count++;await new Promise(r=>setTimeout(r,15));return '원자료 진단';}}),async post=>{
     const results=await Promise.all([post(selection),post(selection)]);assert.ok(results.every(r=>r.status===200));assert.equal(count,1);assert.equal((await post(selection)).data.cached,true);
     revision='r2';await post(selection);assert.equal(count,2);
+    assert.deepEqual(lines.filter(l=>l.startsWith('[COST_AI_CACHE_V1]')).map(l=>JSON.parse(l.slice(l.indexOf('{'))).outcome).sort(),['coalesced','memory_hit','miss','miss']);
   });
 });
 test('generation limit returns 429; cached reports remain usable',async()=>{

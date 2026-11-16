@@ -62,7 +62,9 @@ const systemInstruction=`한국어로 부동산 거래 통계를 설명하세요
 async function generateAnalysis(facts:AnalysisFacts) {
   if(!process.env.GEMINI_API_KEY)throw new AnalysisError(503,'AI_UNAVAILABLE','AI 진단을 준비 중입니다. 잠시 후 다시 시도해주세요.');
   const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY,httpOptions:{timeout:35000}});
+  console.log('[COST_AI_ATTEMPT_V1]',JSON.stringify({v:1,scope:'housing_report',count:1}));
   const response=await ai.models.generateContent({model:process.env.GEMINI_MODEL || 'gemini-3.8-flash',contents:JSON.stringify(facts),config:{systemInstruction,temperature:0.2,maxOutputTokens:1800,thinkingConfig:{thinkingLevel:ThinkingLevel.LOW}}});
+  const u=response.usageMetadata;console.log('[COST_AI_USAGE_V1]',JSON.stringify({v:1,scope:'housing_report',provider:'gemini',model:process.env.GEMINI_MODEL||'gemini-3.8-flash',inputTokens:u?.promptTokenCount??0,outputTokens:u?.candidatesTokenCount??0,thinkingTokens:u?.thoughtsTokenCount??0,cachedInputTokens:u?.cachedContentTokenCount??0,usagePresent:!!u}));
   if(!response.text?.trim())throw new Error('EMPTY_ANALYSIS');
   return response.text.trim().replace(/\*\*(.*?)\*\*/g,'$1').slice(0,7000);
 }
@@ -74,26 +76,29 @@ export function createAiAnalysisRouter(deps:{load?:typeof loadAnalysisFacts;gene
   let windowStart=now(),generated=0;
   router.post('/analyze',async(req,res)=>{
     res.setHeader('Cache-Control','no-store');
+    let outcome='not_eligible';
     try {
       const origin=req.get('origin');
       if(origin && !['https://k-housing-5he2zcaska-du.a.run.app','https://k-housing-9298525505.asia-northeast3.run.app',...(process.env.NODE_ENV==='production'?[]:['http://localhost:3000'])].includes(origin))
         throw new AnalysisError(403,'INVALID_ORIGIN','앱 화면에서 AI 진단을 실행해주세요.');
       const selection=parseAnalysisSelection(req.body);
       const facts=await load(selection),key=createHash('sha256').update(JSON.stringify([process.env.GEMINI_MODEL||'gemini-3.8-flash',systemInstruction,facts])).digest('hex');
-      const saved=cache.get(key);if(saved && saved.until>now())return res.json({...saved.value,cached:true});
-      if(inflight.has(key))return res.json({...(await inflight.get(key)).value,cached:true});
+      outcome='lookup';
+      const saved=cache.get(key);if(saved && saved.until>now()){outcome='memory_hit';return res.json({...saved.value,cached:true});}
+      if(inflight.has(key)){outcome='coalesced';return res.json({...(await inflight.get(key)).value,cached:true});}
       if(now()-windowStart>=3600000){windowStart=now();generated=0;}
       if(inflight.size>=2){res.setHeader('Retry-After','60');throw new AnalysisError(429,'AI_BUSY','AI 진단 요청이 많습니다. 잠시 후 다시 시도해주세요.');}
-      const task=(async()=>{const make=async()=>{if(generated>=(deps.hourlyLimit??30))throw new AnalysisError(429,'AI_BUSY','AI 진단 요청이 많습니다. 잠시 후 다시 시도해주세요.');generated++;return {analysis:await generate(facts),facts,generatedAt:new Date(now()).toISOString()};};const durable=deps.persistent??productionAnalysisCache();const result=durable?await durable.getOrCreate(key,make):{value:await make(),cached:false};cache.set(key,{until:now()+6*3600000,value:result.value});while(cache.size>128)cache.delete(cache.keys().next().value!);return result;})();
+      const task=(async()=>{const make=async()=>{if(generated>=(deps.hourlyLimit??30))throw new AnalysisError(429,'AI_BUSY','AI 진단 요청이 많습니다. 잠시 후 다시 시도해주세요.');generated++;outcome='miss';return {analysis:await generate(facts),facts,generatedAt:new Date(now()).toISOString()};};const durable=deps.persistent??productionAnalysisCache();const result=durable?await durable.getOrCreate(key,make):{value:await make(),cached:false};cache.set(key,{until:now()+6*3600000,value:result.value});while(cache.size>128)cache.delete(cache.keys().next().value!);return result;})();
       inflight.set(key,task);
-      try{const result=await task;return res.json({...result.value,cached:result.cached});}finally{inflight.delete(key);}
+      try{const result=await task;if(result.cached)outcome='durable_hit';return res.json({...result.value,cached:result.cached});}finally{inflight.delete(key);}
     }catch(error){
+      if(outcome!=='miss'&&outcome!=='coalesced')outcome=error instanceof CacheBusy?'busy':error instanceof AnalysisError&&error.code==='AI_BUSY'?'rate_limited':outcome==='not_eligible'?'not_eligible':'error';
       if(error instanceof CacheBusy)return res.status(429).json({error:{code:'AI_BUSY',message:'같은 진단을 준비 중입니다. 잠시 후 다시 확인해주세요.'}});
       if(error instanceof AnalysisError)return res.status(error.status).json({error:{code:error.code,message:error.message}});
       // Never return provider payloads, credentials or arbitrary upstream error text to browsers/logs.
       console.warn('[AI] Analysis unavailable');
       return res.status(503).json({error:{code:'AI_UNAVAILABLE',message:'AI 진단을 생성하지 못했습니다. 잠시 후 다시 시도해주세요.'}});
-    }
+    }finally{try{console.log('[COST_AI_CACHE_V1]',JSON.stringify({v:1,scope:'housing_report',outcome,status:res.statusCode}));}catch{}}
   });
   return router;
 }
