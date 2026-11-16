@@ -1,5 +1,7 @@
 # Registered-region schools and apartment footprints — 2026-11-16
 
+**Current footprint source:** all 31 complexes now use 62 reviewed official reference parcels. See [OFFICIAL_PARCEL_AUDIT.md](OFFICIAL_PARCEL_AUDIT.md). OSM footprint sections below describe earlier releases and their source history. School data is unchanged.
+
 This supersedes the initial Gwacheon-only presentation in GWACHEON_SCHOOLS.md. The user's clarified request is apartment complex outlines rather than large school catchments as the default coloured areas. Apartment outlines are green and enabled by default. Official school catchments remain an optional layer, off by default; they are never substituted for apartment outlines.
 
 ## Scope and sources

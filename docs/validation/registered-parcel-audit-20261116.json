@@ -1,0 +1,528 @@
+{
+  "checkedAt": "2026-11-16",
+  "complexes": 31,
+  "newlyCompared": 30,
+  "previouslyVerified": "busan_centum_park_2",
+  "parcelCount": 62,
+  "sourceFile": "registered-parcel-source-20261116.json",
+  "sourceSha256": "1cdab303181925765e8a00b681cb2d271c94a8f8031b279a270485dde287ff13",
+  "sourceVersion": "20261014",
+  "method": "Manually reviewed membership; original complete parcel rings transformed EPSG:5179 to EPSG:4326, selected same-complex parcels unioned only. No simplify, hull, buffer, clipping to old footprint, or straight-line bridges. K-apt corroboration and OSM building positions retained with explicit limits.",
+  "notes": [
+    "Gaepo Forest excludes neighbouring Gaepo Xi Rene parcel 1283; includes Forest 1282/1282-1.",
+    "Grandmaison retains all six K-apt subcomplex parcels 1001/1003/1008/1016/1020/1009. Old outline already covered all six; intervening roads/open areas are removed, not claimed as missing buildings.",
+    "Acro includes main 2-12 and related 2-13; querying one representative point alone misses a parcel.",
+    "Hangaram has six occupied parcels, not only its representative lot.",
+    "K-apt occasionally retains old representative numbers; current returned cadastral PNU is retained independently.",
+    "OSM building positions are corroboration, not a complete official tower inventory.",
+    "Public parcel map reference material is not a legal surveyed-boundary certification."
+  ],
+  "reviews": {
+    "banpo_acro": {
+      "name": "아크로리버파크",
+      "pnus": [
+        "1165010700100020012",
+        "1165010700100020013"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 71011.5,
+      "officialReferenceAreaSqm": 68788.06,
+      "intersectionOverUnion": 0.857167,
+      "removedAreaSqm": 6487.65,
+      "addedAreaSqm": 4264.21,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 1,
+      "excludedBuildingPositions": []
+    },
+    "banpo_xi": {
+      "name": "반포자이",
+      "pnus": [
+        "1165010700100200043"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 199059.6,
+      "officialReferenceAreaSqm": 194308.74,
+      "intersectionOverUnion": 0.864457,
+      "removedAreaSqm": 16674.07,
+      "addedAreaSqm": 11923.21,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 59,
+      "excludedBuildingPositions": []
+    },
+    "banpo_raemian": {
+      "name": "래미안퍼스티지",
+      "pnus": [
+        "1165010700100180001",
+        "1165010700100180002"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 142914.28,
+      "officialReferenceAreaSqm": 132957.44,
+      "intersectionOverUnion": 0.843218,
+      "removedAreaSqm": 16711.09,
+      "addedAreaSqm": 6754.26,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 25,
+      "excludedBuildingPositions": []
+    },
+    "mapo_raemian_prugio": {
+      "name": "마포래미안푸르지오 (마래푸)",
+      "pnus": [
+        "1144010100107670000",
+        "1144010100107740000",
+        "1144010100107770000",
+        "1144010100107790000"
+      ],
+      "parcels": 4,
+      "oldAreaSqm": 137792.16,
+      "officialReferenceAreaSqm": 146225.46,
+      "intersectionOverUnion": 0.92871,
+      "removedAreaSqm": 1032.39,
+      "addedAreaSqm": 9465.69,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 50,
+      "excludedBuildingPositions": []
+    },
+    "mapo_prestige_xi": {
+      "name": "마포프레스티지자이 (마프자)",
+      "pnus": [
+        "1144010900105320000",
+        "1144010900105320001",
+        "1144010900105320007"
+      ],
+      "parcels": 3,
+      "oldAreaSqm": 61040.59,
+      "officialReferenceAreaSqm": 63181.63,
+      "intersectionOverUnion": 0.904808,
+      "removedAreaSqm": 2033.47,
+      "addedAreaSqm": 4174.5,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 18,
+      "excludedBuildingPositions": []
+    },
+    "seongdong_oxu_riverzen": {
+      "name": "옥수리버젠",
+      "pnus": [
+        "1120011300105610000",
+        "1120011300105620000"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 80410.19,
+      "officialReferenceAreaSqm": 73723.45,
+      "intersectionOverUnion": 0.847768,
+      "removedAreaSqm": 9692.66,
+      "addedAreaSqm": 3005.93,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 18,
+      "excludedBuildingPositions": []
+    },
+    "seongdong_seoulforest_riverview_xi": {
+      "name": "서울숲리버뷰자이",
+      "pnus": [
+        "1120010700103800000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 39176.68,
+      "officialReferenceAreaSqm": 38321.26,
+      "intersectionOverUnion": 0.940364,
+      "removedAreaSqm": 1618.63,
+      "addedAreaSqm": 763.22,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 7,
+      "excludedBuildingPositions": []
+    },
+    "yongsan_ichon_hangaram": {
+      "name": "이촌 한가람",
+      "pnus": [
+        "1117012900104040000",
+        "1117012900104050000",
+        "1117012900104060000",
+        "1117012900104070000",
+        "1117012900104090000",
+        "1117012900104100000"
+      ],
+      "parcels": 6,
+      "oldAreaSqm": 59951.43,
+      "officialReferenceAreaSqm": 54866.46,
+      "intersectionOverUnion": 0.795354,
+      "removedAreaSqm": 9086.32,
+      "addedAreaSqm": 4001.35,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 19,
+      "excludedBuildingPositions": []
+    },
+    "gwacheon_wieverfield": {
+      "name": "과천위버필드",
+      "pnus": [
+        "4129010800100100000",
+        "4129010900100910000"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 112151.8,
+      "officialReferenceAreaSqm": 100549.44,
+      "intersectionOverUnion": 0.882177,
+      "removedAreaSqm": 12458.68,
+      "addedAreaSqm": 856.32,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 21,
+      "excludedBuildingPositions": []
+    },
+    "gwacheon_xi": {
+      "name": "과천자이",
+      "pnus": [
+        "4129010900100930000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 121984.77,
+      "officialReferenceAreaSqm": 105419.07,
+      "intersectionOverUnion": 0.854271,
+      "removedAreaSqm": 17218.83,
+      "addedAreaSqm": 653.12,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 27,
+      "excludedBuildingPositions": []
+    },
+    "gwacheon_raemian_sur": {
+      "name": "래미안슈르 (과천3단지)",
+      "pnus": [
+        "4129010800100040000",
+        "4129010900100170000"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 200292.37,
+      "officialReferenceAreaSqm": 190376.09,
+      "intersectionOverUnion": 0.937153,
+      "removedAreaSqm": 11295.37,
+      "addedAreaSqm": 1379.09,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 48,
+      "excludedBuildingPositions": []
+    },
+    "sanseong_foreastia": {
+      "name": "산성역 포레스티아",
+      "pnus": [
+        "4113110100169510000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 165485.54,
+      "officialReferenceAreaSqm": 158383.1,
+      "intersectionOverUnion": 0.899003,
+      "removedAreaSqm": 12163.55,
+      "addedAreaSqm": 5061.11,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 38,
+      "excludedBuildingPositions": []
+    },
+    "sanseong_xi_prugio": {
+      "name": "산성역 자이푸르지오",
+      "pnus": [
+        "4113110100169610000",
+        "4113110100169630000",
+        "4113110100169700000",
+        "4113110100169710000"
+      ],
+      "parcels": 4,
+      "oldAreaSqm": 196895.27,
+      "officialReferenceAreaSqm": 154577.83,
+      "intersectionOverUnion": 0.777218,
+      "removedAreaSqm": 43188.1,
+      "addedAreaSqm": 870.66,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 29,
+      "excludedBuildingPositions": []
+    },
+    "e_pyeonhansesang_grandmaison": {
+      "name": "e편한세상 금빛 그랑메종",
+      "pnus": [
+        "4113310300110010000",
+        "4113310300110030000",
+        "4113310300110080000",
+        "4113310300110090000",
+        "4113310300110160000",
+        "4113310300110200000"
+      ],
+      "parcels": 6,
+      "oldAreaSqm": 220947.48,
+      "officialReferenceAreaSqm": 169557.97,
+      "intersectionOverUnion": 0.761533,
+      "removedAreaSqm": 52127.03,
+      "addedAreaSqm": 737.51,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 22,
+      "excludedBuildingPositions": []
+    },
+    "gireum_centerpiece": {
+      "name": "래미안길음센터피스",
+      "pnus": [
+        "1129013400112880000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 77411.65,
+      "officialReferenceAreaSqm": 71256.0,
+      "intersectionOverUnion": 0.901899,
+      "removedAreaSqm": 6911.99,
+      "addedAreaSqm": 756.35,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 24,
+      "excludedBuildingPositions": []
+    },
+    "gireum_newtown_6": {
+      "name": "길음뉴타운 6단지 (래미안)",
+      "pnus": [
+        "1129013400112830000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 45194.01,
+      "officialReferenceAreaSqm": 43180.9,
+      "intersectionOverUnion": 0.872563,
+      "removedAreaSqm": 4013.71,
+      "addedAreaSqm": 2000.61,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 12,
+      "excludedBuildingPositions": []
+    },
+    "gangdong_olympic_park": {
+      "name": "올림픽파크포레온",
+      "pnus": [
+        "1174010600106330000",
+        "1174010600106430000",
+        "1174010600106510000"
+      ],
+      "parcels": 3,
+      "oldAreaSqm": 460070.79,
+      "officialReferenceAreaSqm": 462378.93,
+      "intersectionOverUnion": 0.957473,
+      "removedAreaSqm": 8866.34,
+      "addedAreaSqm": 11174.49,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 85,
+      "excludedBuildingPositions": []
+    },
+    "gangdong_gracium": {
+      "name": "고덕그라시움",
+      "pnus": [
+        "1174010200106930000",
+        "1174010200106940000"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 203489.02,
+      "officialReferenceAreaSqm": 207700.42,
+      "intersectionOverUnion": 0.951617,
+      "removedAreaSqm": 2991.23,
+      "addedAreaSqm": 7202.63,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 53,
+      "excludedBuildingPositions": []
+    },
+    "gangdong_arteon": {
+      "name": "고덕아르테온",
+      "pnus": [
+        "1174010300105190000",
+        "1174010300105200000"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 182435.6,
+      "officialReferenceAreaSqm": 174683.41,
+      "intersectionOverUnion": 0.936856,
+      "removedAreaSqm": 9697.39,
+      "addedAreaSqm": 1945.21,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 20,
+      "excludedBuildingPositions": []
+    },
+    "busan_samick_beach": {
+      "name": "삼익비치 (남천삼익타운)",
+      "pnus": [
+        "2650010500101480004",
+        "2650010500101480009",
+        "2650010500101480010"
+      ],
+      "parcels": 3,
+      "oldAreaSqm": 186304.27,
+      "officialReferenceAreaSqm": 173926.56,
+      "intersectionOverUnion": 0.868401,
+      "removedAreaSqm": 18875.08,
+      "addedAreaSqm": 6497.37,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 33,
+      "excludedBuildingPositions": []
+    },
+    "busan_namcheon_xi": {
+      "name": "남천자이",
+      "pnus": [
+        "2650010500106130000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 40459.01,
+      "officialReferenceAreaSqm": 36216.6,
+      "intersectionOverUnion": 0.873814,
+      "removedAreaSqm": 4702.95,
+      "addedAreaSqm": 460.53,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 7,
+      "excludedBuildingPositions": []
+    },
+    "busan_centum_park_1": {
+      "name": "센텀파크 1차",
+      "pnus": [
+        "2635010400112000000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 76614.41,
+      "officialReferenceAreaSqm": 77371.72,
+      "intersectionOverUnion": 0.967799,
+      "removedAreaSqm": 881.26,
+      "addedAreaSqm": 1638.57,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 14,
+      "excludedBuildingPositions": []
+    },
+    "jamsil_els": {
+      "name": "잠실엘스",
+      "pnus": [
+        "1171010100100190000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 222587.33,
+      "officialReferenceAreaSqm": 224113.31,
+      "intersectionOverUnion": 0.937784,
+      "removedAreaSqm": 6408.01,
+      "addedAreaSqm": 7933.99,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 70,
+      "excludedBuildingPositions": []
+    },
+    "jamsil_ricenz": {
+      "name": "리센츠",
+      "pnus": [
+        "1171010100100220000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 223374.38,
+      "officialReferenceAreaSqm": 210990.4,
+      "intersectionOverUnion": 0.871213,
+      "removedAreaSqm": 21139.67,
+      "addedAreaSqm": 8755.69,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 65,
+      "excludedBuildingPositions": []
+    },
+    "jamsil_trizium": {
+      "name": "트리지움",
+      "pnus": [
+        "1171010100100350000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 153906.27,
+      "officialReferenceAreaSqm": 150666.37,
+      "intersectionOverUnion": 0.875154,
+      "removedAreaSqm": 11759.01,
+      "addedAreaSqm": 8519.1,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 46,
+      "excludedBuildingPositions": []
+    },
+    "gaepo_raemian_forest": {
+      "name": "개포래미안포레스트",
+      "pnus": [
+        "1168010300112820000",
+        "1168010300112820001"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 113462.85,
+      "officialReferenceAreaSqm": 98480.36,
+      "intersectionOverUnion": 0.836807,
+      "removedAreaSqm": 16906.41,
+      "addedAreaSqm": 1923.92,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 32,
+      "excludedBuildingPositions": [
+        {
+          "id": 1431563234,
+          "point": [
+            127.05543264270796,
+            37.4784563
+          ],
+          "name": "개포 자이르네",
+          "included": false
+        }
+      ]
+    },
+    "gaepo_xi_presidence": {
+      "name": "개포자이프레지던스",
+      "pnus": [
+        "1168010300112840000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 155186.07,
+      "officialReferenceAreaSqm": 142524.45,
+      "intersectionOverUnion": 0.906099,
+      "removedAreaSqm": 13663.91,
+      "addedAreaSqm": 1002.3,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 27,
+      "excludedBuildingPositions": []
+    },
+    "gaepo_raemian_blessige": {
+      "name": "래미안블레스티지",
+      "pnus": [
+        "1168010300112800000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 92014.27,
+      "officialReferenceAreaSqm": 86394.11,
+      "intersectionOverUnion": 0.849486,
+      "removedAreaSqm": 10069.63,
+      "addedAreaSqm": 4449.47,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 23,
+      "excludedBuildingPositions": []
+    },
+    "daechi_raemian_palace": {
+      "name": "래미안대치팰리스",
+      "pnus": [
+        "1168010600110270000",
+        "1168010600110280000"
+      ],
+      "parcels": 2,
+      "oldAreaSqm": 88488.62,
+      "officialReferenceAreaSqm": 78717.13,
+      "intersectionOverUnion": 0.878557,
+      "removedAreaSqm": 10290.44,
+      "addedAreaSqm": 518.95,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 17,
+      "excludedBuildingPositions": []
+    },
+    "daechi_ipark": {
+      "name": "대치아이파크",
+      "pnus": [
+        "1168010600108880000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 38737.31,
+      "officialReferenceAreaSqm": 36201.0,
+      "intersectionOverUnion": 0.906944,
+      "removedAreaSqm": 3096.6,
+      "addedAreaSqm": 560.29,
+      "geometryChanged": true,
+      "checkedBuildingPositions": 11,
+      "excludedBuildingPositions": []
+    },
+    "busan_centum_park_2": {
+      "name": "센텀파크2차",
+      "pnus": [
+        "2635010400111970000"
+      ],
+      "parcels": 1,
+      "oldAreaSqm": 23993.43,
+      "officialReferenceAreaSqm": 23993.43,
+      "intersectionOverUnion": 1.0,
+      "removedAreaSqm": 0.0,
+      "addedAreaSqm": 0.0,
+      "geometryChanged": false,
+      "checkedBuildingPositions": 8,
+      "excludedBuildingPositions": []
+    }
+  }
+}
