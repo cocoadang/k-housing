@@ -79,25 +79,51 @@ function ringContains(r: number[][], x: number, y: number) {
   return yes;
 }
 
-test('30 apartment outlines are distinct from school boundaries; missing 2nd Centum outline is never fabricated', () => {
-  assert.equal(footprints.collection.features.length, 30);
-  assert.deepEqual(Object.keys(footprints.unavailable), ['busan_centum_park_2']);
+test('31 apartment outlines are distinct from school boundaries and retain provider-specific evidence', () => {
+  assert.equal(footprints.collection.features.length, 31);
+  assert.deepEqual(Object.keys(footprints.unavailable), []);
   assert.equal(Object.keys(footprints.anchors).length, TARGET_COMPLEXES.length);
-  assert.equal(footprints.license, 'ODbL-1.0');
-  assert.ok(!footprints.collection.features.some(f => f.properties.complexId === 'busan_centum_park_2'));
+  assert.equal(footprints.license, 'ODbL-1.0; KOGL-Type-1 (Centum Park 2)');
   for (const f of footprints.collection.features) {
     const a = footprints.anchors[f.properties.complexId];
     const polygons = f.geometry.type === 'Polygon' ? [f.geometry.coordinates as number[][][]] : f.geometry.coordinates as number[][][][];
     assert.ok(polygons.some(p => ringContains(p[0], a.longitude, a.latitude) && !p.slice(1).some(h => ringContains(h, a.longitude, a.latitude))), f.properties.name);
     for (const p of polygons) for (const r of p) assert.deepEqual(r[0], r.at(-1));
     for (const ref of f.properties.sourceObjects) {
-      assert.ok(ref.url.startsWith('https://www.openstreetmap.org/'));
-      assert.ok(ref.version > 0);
+      if (ref.type === 'official-parcel') {
+        assert.equal(f.properties.complexId, 'busan_centum_park_2');
+        assert.equal(ref.pnu, '2635010400111970000');
+        assert.equal(ref.provider, '국토교통부 토지이음');
+        assert.equal(ref.license, 'KOGL-Type-1');
+        assert.equal(ref.url, 'https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?pnu=2635010400111970000');
+      } else {
+        assert.ok(ref.url.startsWith('https://www.openstreetmap.org/'));
+        assert.ok(ref.version > 0);
+      }
     }
   }
   const els = footprints.collection.features.find(f => f.properties.complexId === 'jamsil_els')!;
   const elsPolygons = els.geometry.type === 'Polygon' ? [els.geometry.coordinates] : els.geometry.coordinates;
   assert.ok(elsPolygons.some(p => p.length > 1), 'the school hole inside ELS must remain a hole');
+});
+
+test('Centum Park 2 exact parcel contains all six towers and excludes Centum Star and Park 1', () => {
+  const proof = JSON.parse(readFileSync(new URL('../../docs/validation/centum-park-2-evidence.json', import.meta.url), 'utf8'));
+  const raw = JSON.parse(readFileSync(new URL('../../docs/validation/centum-park-2-parcel-5179.json', import.meta.url), 'utf8'));
+  const f = footprints.collection.features.find(f => f.properties.complexId === 'busan_centum_park_2')!;
+  assert.equal(f.geometry.type, 'Polygon');
+  const ring = (f.geometry.coordinates as number[][][])[0];
+  assert.equal(ring.length, raw.features[0].geometry.coordinates[0].length);
+  assert.equal(ring.length, 13);
+  assert.equal(raw.features[0].properties.pnu, '2635010400111970000');
+  assert.deepEqual(Object.keys(proof.buildingChecks.contained).sort(), ['201','202','203','204','205','206']);
+  for (const [name, xy] of Object.entries(proof.buildingChecks.contained)) {
+    const [lng, lat] = xy as number[]; assert.ok(ringContains(ring, lng, lat), name);
+  }
+  for (const [name, xy] of Object.entries(proof.buildingChecks.excluded)) {
+    const [lng, lat] = xy as number[]; assert.ok(!ringContains(ring, lng, lat), name);
+  }
+  assert.ok(!f.properties.sourceObjects.some(s => s.id === 784126265), 'merged Star polygon must never substitute');
 });
 
 test('generic school card labels current region, limited scope, official dates and missing counts honestly', () => {
