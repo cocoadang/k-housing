@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
+import { request } from 'node:http';
 import { effectiveDealCount, registeredAreaMatches, weightedDealStats } from '../utils/transactionStatistics';
 import { aggregateTradesByMonth } from '../utils/calculations';
 import { parseHousingRoute, APT_PROJECT_LINKS } from '../utils/housingRoute';
@@ -57,13 +58,24 @@ test('operator endpoint rejects missing/wrong secrets and permits authenticated 
   await new Promise<void>(resolve => server.once('listening', resolve));
   const address = server.address() as { port: number };
   const url = `http://127.0.0.1:${address.port}/protected`;
+  // OS-assigned local ports may be in Fetch's browser-unsafe port list.
+  // Use Node's transport for this backend-only authentication test.
+  const post = (authorization?: string) => new Promise<number>((resolve, reject) => {
+    const req = request(url, { method: 'POST', headers: authorization ? { authorization } : {} }, res => {
+      res.resume();
+      res.once('end', () => resolve(res.statusCode!));
+    });
+    req.once('error', reject);
+    req.setTimeout(5000, () => req.destroy(new Error('Local authentication test timed out')));
+    req.end();
+  });
   try {
-    assert.equal((await fetch(url, { method: 'POST' })).status, 503);
+    assert.equal(await post(), 503);
     secret = 'test-server-secret';
-    assert.equal((await fetch(url, { method: 'POST' })).status, 401);
-    assert.equal((await fetch(url, { method: 'POST', headers: { authorization: 'Bearer incorrect' } })).status, 401);
+    assert.equal(await post(), 401);
+    assert.equal(await post('Bearer incorrect'), 401);
     assert.equal(calls, 0);
-    assert.equal((await fetch(url, { method: 'POST', headers: { authorization: `Bearer ${secret}` } })).status, 200);
+    assert.equal(await post(`Bearer ${secret}`), 200);
     assert.equal(calls, 1);
   } finally { await new Promise<void>((resolve, reject) => server.close(e => e ? reject(e) : resolve())); }
 });
