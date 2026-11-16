@@ -1,0 +1,20 @@
+{
+  "startedAt": "2026-11-16T07:17:32.744Z",
+  "image": "asia-northeast3-docker.pkg.dev/gen-lang-client-0064554427/cloud-run-source-deploy/k-housing:fe05b15bd53d",
+  "previousRevision": "k-housing-00004-dh8",
+  "checks": {
+    "firstGeneration": true,
+    "memoryReuse": true,
+    "crossRevisionReuse": true,
+    "sameReport": true,
+    "promoted": true,
+    "requestBased": true,
+    "readerIdentityUnchanged": true,
+    "minInstancesZero": true,
+    "publicHealth": true
+  },
+  "revision": "k-housing-cache-fe05b15-b",
+  "generatedAt": "2026-11-16T07:18:08.818Z",
+  "checkedAt": "2026-11-16T07:18:26.791Z",
+  "passed": true
+}
