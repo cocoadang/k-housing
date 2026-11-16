@@ -1,3 +1,4 @@
+import {productionAnalysisCache, CacheBusy} from './aiPersistentCache';
 import { Router } from 'express';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { createHash } from 'node:crypto';
@@ -67,7 +68,7 @@ async function generateAnalysis(facts:AnalysisFacts) {
 }
 
 /** Public diagnostic surface has no arbitrary prompt, tools, writes or upstream collection. */
-export function createAiAnalysisRouter(deps:{load?:typeof loadAnalysisFacts;generate?:(facts:AnalysisFacts)=>Promise<string>;now?:()=>number;hourlyLimit?:number}={}) {
+export function createAiAnalysisRouter(deps:{load?:typeof loadAnalysisFacts;generate?:(facts:AnalysisFacts)=>Promise<string>;now?:()=>number;hourlyLimit?:number;persistent?:ReturnType<typeof productionAnalysisCache>}={}) {
   const router=Router(),load=deps.load || loadAnalysisFacts,generate=deps.generate || generateAnalysis,now=deps.now || Date.now;
   const cache=new Map<string,{until:number;value:any}>(),inflight=new Map<string,Promise<any>>();
   let windowStart=now(),generated=0;
@@ -78,16 +79,16 @@ export function createAiAnalysisRouter(deps:{load?:typeof loadAnalysisFacts;gene
       if(origin && !['https://k-housing-5he2zcaska-du.a.run.app','https://k-housing-9298525505.asia-northeast3.run.app',...(process.env.NODE_ENV==='production'?[]:['http://localhost:3000'])].includes(origin))
         throw new AnalysisError(403,'INVALID_ORIGIN','앱 화면에서 AI 진단을 실행해주세요.');
       const selection=parseAnalysisSelection(req.body);
-      const facts=await load(selection),key=createHash('sha256').update(JSON.stringify(facts)).digest('hex');
+      const facts=await load(selection),key=createHash('sha256').update(JSON.stringify([process.env.GEMINI_MODEL||'gemini-3.8-flash',systemInstruction,facts])).digest('hex');
       const saved=cache.get(key);if(saved && saved.until>now())return res.json({...saved.value,cached:true});
-      if(inflight.has(key))return res.json({...await inflight.get(key),cached:true});
+      if(inflight.has(key))return res.json({...(await inflight.get(key)).value,cached:true});
       if(now()-windowStart>=3600000){windowStart=now();generated=0;}
-      if(generated>=(deps.hourlyLimit ?? 30)||inflight.size>=2){res.setHeader('Retry-After','60');throw new AnalysisError(429,'AI_BUSY','AI 진단 요청이 많습니다. 잠시 후 다시 시도해주세요.');}
-      generated++;
-      const task=(async()=>{const analysis=await generate(facts);const value={analysis,facts,generatedAt:new Date(now()).toISOString()};cache.set(key,{until:now()+6*3600000,value});while(cache.size>128)cache.delete(cache.keys().next().value!);return value;})();
+      if(inflight.size>=2){res.setHeader('Retry-After','60');throw new AnalysisError(429,'AI_BUSY','AI 진단 요청이 많습니다. 잠시 후 다시 시도해주세요.');}
+      const task=(async()=>{const make=async()=>{if(generated>=(deps.hourlyLimit??30))throw new AnalysisError(429,'AI_BUSY','AI 진단 요청이 많습니다. 잠시 후 다시 시도해주세요.');generated++;return {analysis:await generate(facts),facts,generatedAt:new Date(now()).toISOString()};};const durable=deps.persistent??productionAnalysisCache();const result=durable?await durable.getOrCreate(key,make):{value:await make(),cached:false};cache.set(key,{until:now()+6*3600000,value:result.value});while(cache.size>128)cache.delete(cache.keys().next().value!);return result;})();
       inflight.set(key,task);
-      try{return res.json({...await task,cached:false});}finally{inflight.delete(key);}
+      try{const result=await task;return res.json({...result.value,cached:result.cached});}finally{inflight.delete(key);}
     }catch(error){
+      if(error instanceof CacheBusy)return res.status(429).json({error:{code:'AI_BUSY',message:'같은 진단을 준비 중입니다. 잠시 후 다시 확인해주세요.'}});
       if(error instanceof AnalysisError)return res.status(error.status).json({error:{code:error.code,message:error.message}});
       // Never return provider payloads, credentials or arbitrary upstream error text to browsers/logs.
       console.warn('[AI] Analysis unavailable');
