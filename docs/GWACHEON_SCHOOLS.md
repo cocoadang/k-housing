@@ -1,0 +1,28 @@
+# Gwacheon school map — 2026-11-16
+
+Map entry: `/?view=MAP&region=gwacheon`. Existing region chips also enable it by selecting 과천. Six elementary schools share the map with the three registered apartment assets. School and catchment layers have independent switches. The school card exposes grade-level students/classes, total counts, special/itinerant counts, a general-class average, source dates and original links. The existing apartment figure is explicitly identified as the selected area's latest observed monthly median, not the last individual transaction or an asking price.
+
+## Official evidence
+
+`src/data/gwacheonSchools.json` is a 31 KB versioned snapshot, dynamically imported only when Gwacheon is selected. It requires no external API key, collection job, database query, model call or new server. The seven polygon/multipolygon features come from the actual EMAC public SHP, including the joint Munwon/Galhyeon zone; no boundary was invented or simplified.
+
+- Student counts: Schoolinfo public-data page, APITYPE 09, DEPTHNO 0, elementary 02, Gyeonggi 10, disclosure year 2026. As-of 2026-04-01 per the official disclosure description. The public website's own `/openData.do` display request was used once for basic information and once for student counts. No private account/API credential was required or stored. Displayed totals: Gwacheon 649, Gwanmun 367, Munwon 1,630, Cheonggye 810, Gwacheon Galhyeon 1,266, Gwacheon Yulmok 532. Total 5,254.
+- Location: EMAC school position CSV, actual internal base date 2026-10-01 (listing title says 2026-09-20). Exact school name AND road address establish the reviewed Schoolinfo/EMAC identifier mapping; different namespaces are retained.
+- Boundaries and school-zone relations: EMAC public download, base date 2026-09-20. Source CRS is the supplied PRJ (EPSG:5186); transformed to WGS84 with explicit longitude/latitude order. All rings and holes are preserved with 7 decimal places.
+- The official 2026 notice listing was confirmed on the school/education-office site, but its attachments returned HTTP 404 from direct download. Therefore the polygon layer is labelled by the verified EMAC snapshot date, not claimed to be redrawn from that notice or guaranteed current for 2027. The notice URL is retained as provenance only, not the primary geometry proof.
+
+`docs/validation/gwacheon-school-evidence.json` retains the six public source rows, school-zone relations, checksums, URLs and conversion details. Original national ZIPs and API responses remain in the operator's local private review directory; they are not shipped to browsers or the repository. `scripts/build_gwacheon_schools.py INPUT_DIR` reproduces the snapshot from these inputs (Python `pyshp`, `pyproj` required only for this offline maintenance script). Download links are recorded in evidence `sources`. Review updated official data before rerunning and committing a new version; no automatic live collection was introduced.
+
+## Interpretation and map coordinates
+
+The general-class average excludes both special/itinerant students and classes. The total includes them. No achievement score/ranking or inferred school quality is generated. A nearby school is not automatically labelled as an assigned school; apartment representative points do not determine a child's assignment. The card explicitly requires address-level education-office/notice confirmation. Later-year proposed catchments are not silently substituted for the current snapshot.
+
+During map preparation, the three old apartment points were found 0.6–1.5 km away from their actual complexes. Both `latitude/longitude` and `location` pairs were corrected, without modifying asset IDs or transaction classification:
+
+- Xi: representative residential area point 37.4288973, 126.9989003, OpenStreetMap way 382848589 (`https://www.openstreetmap.org/way/382848589`), consistent with the user's KB map location and the city's Byeoryang-ro 110 address.
+- Sur: main Wonmun-dong residential area point 37.4208454, 126.9919769, OpenStreetMap way 382451313 (`https://www.openstreetmap.org/way/382451313`). OSM attribution: © OpenStreetMap contributors, ODbL. This is a marker point, not redistribution of OSM polygons.
+- Wieverfield: representative interior point 37.4231801, 126.9906074, reviewed road-address point for Byeoryang-ro 11 (`https://findby.co.kr/details/13839-412903195020-st-652b20fd8c641f9e38949c58`). City address reference: `https://www.gccity.go.kr/csc/contents.do?mId=0301020000`. This is approximate placement, not a surveyed parcel/entrance or catchment assignment.
+
+## Verification and release
+
+Run type checking, the full Node suite and production build. School tests independently compare the original public rows, all student/class reconciliations, joint members, ring closure, coordinate ranges and each school's inclusion in its own supplied boundary. Rendering verifies the proper denominator and explicit source-date/assignment caveats. Browser verification covers switches, school selection, region changes, real price markers and mobile layout. Production release preserves the current Cloud Run template, CPU-on-request billing, max instances, identity, secrets, collector and schedules, changing only the runtime image/revision. No Telegram endpoint, ingestion task or paid AI diagnosis is invoked during verification. Roll back traffic to the previously ready revision if required.
