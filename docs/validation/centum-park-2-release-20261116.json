@@ -1,0 +1,75 @@
+{
+  "startedAt": "2026-11-16T12:19:11.471Z",
+  "checkedAt": "2026-11-16T12:19:43.205Z",
+  "revision": "k-housing-centum2-d78a216",
+  "previousRevision": "k-housing-regions-13877cf",
+  "url": "https://centum2-check---k-housing-5he2zcaska-du.a.run.app",
+  "productionUrl": "https://k-housing-5he2zcaska-du.a.run.app",
+  "image": "asia-northeast3-docker.pkg.dev/gen-lang-client-0064554427/cloud-run-source-deploy/k-housing@sha256:aecaeda08e17efa3425e984244392e78ecb62796b826e5dcb1959615b2986413",
+  "buildId": "cf8ce0c1-fa7e-4c55-a5c7-a0298876415a",
+  "checks": {
+    "health": true,
+    "all31PricesUnchanged_59": true,
+    "all31PricesUnchanged_84": true,
+    "sourceRevisionUnchanged": true,
+    "runtimePreserved": true,
+    "cpuIdle": true,
+    "staticDataFiles": true,
+    "allRegionalAssetsMatchBuild": true
+  },
+  "data": {
+    "regions": 13,
+    "schools": 158,
+    "zones": 168,
+    "footprints": 31,
+    "unavailable": []
+  },
+  "sourceRevision": "r20261115233017_f3ebd916",
+  "syntheticStart": "2026-11-16T12:15:48.817Z",
+  "noNotifications": "No Telegram, collection, scheduler or AI endpoints invoked; public GET checks only.",
+  "promotedAt": "2026-11-16T12:20:02.458Z",
+  "productionChecks": {
+    "promoted": true,
+    "runtimePreserved": true,
+    "health": true,
+    "finalTraffic": true,
+    "sourceRevisionUnchanged": true,
+    "all31PricesUnchanged_59": true,
+    "all31PricesUnchanged_84": true
+  },
+  "browserVerification": {
+    "productionMapsLoaded": true,
+    "officialSourceLinkVisible": true,
+    "missingOutlineWarningRemoved": true,
+    "distinctPark2OutlineVisible": true,
+    "starBuildingsOutside": true,
+    "footprintClickOpensPark2Card": true,
+    "footprintSwitchRemovesAndRestoresShapes": true,
+    "schoolCount8": true,
+    "catchmentsDefaultOff": true,
+    "desktop": true,
+    "mobile390x844": true,
+    "viewportReset": true
+  },
+  "finishedAt": "2026-11-16T12:22:07.881784+00:00",
+  "github": {
+    "pullRequest": "https://github.com/cocoadang/k-housing/pull/5",
+    "sourceCommit": "d78a216d10dfa0c7a7a9c722e3625641a74d1757",
+    "mergeCommit": "65e5d55",
+    "validationRuns": [
+      43865079782,
+      43865094729
+    ],
+    "testsPassed": 39
+  },
+  "syntheticTelemetryWindow": {
+    "start": "2026-11-16T12:15:48.817Z",
+    "end": "2026-11-16T12:22:07.881784+00:00",
+    "note": "Exclude baseline, staging and browser validation requests from organic usage/cost/cache comparisons."
+  },
+  "limitations": [
+    "Officially displayed parcel geometry is reference material, not a certified survey/legal boundary determination.",
+    "Existing 30 OSM features and school snapshots retained; Centum Park 2 is separately sourced/attributed to MOLIT Eum."
+  ],
+  "passed": true
+}
