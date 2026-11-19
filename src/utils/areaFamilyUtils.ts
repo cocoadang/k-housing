@@ -66,6 +66,11 @@ export function getDefaultAreaFamily(
 /**
  * Format AreaFamily display label for UI buttons, chips, and headers
  */
+export function getLinkedAreaFamily(families: AreaFamilyMetadata[], category: AreaCategory | string): AreaFamilyMetadata | null {
+  if (category !== '59' && category !== '84') return null;
+  return getDefaultAreaFamily(families.filter(f => f.standardAreaCategory === category), category);
+}
+
 export function formatAreaFamilyButtonLabel(family: AreaFamilyMetadata): string {
   // Prioritize "XX㎡형" format (e.g. "61㎡형", "59㎡형", "84㎡형")
   const m = family.label.match(/(\d+)㎡?형?/);
