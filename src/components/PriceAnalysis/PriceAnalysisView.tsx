@@ -19,6 +19,7 @@ import { RefreshCw, ServerCrash, Info, ArrowRight } from 'lucide-react';
 import { dataService } from '../../services/dataService';
 import {
   getDefaultAreaFamily,
+  getLinkedAreaFamily,
   convertAreaFamilyPointToMonthlyAggregate,
   isTransactionMatchingAreaFamily,
   formatAreaFamilySubtext,
@@ -29,6 +30,7 @@ interface PriceAnalysisViewProps {
   complex: ComplexInfo;
   onSelectComplex: (id: string) => void;
   initialPreferredCategory?: AreaCategory;
+  requirePreferredCategory?: boolean;
   allAreaTrades?: TradeRecord[];
   onNavigateToMap: () => void;
   onOpenAiDrawer: (selection:{areaFamilyId?:string;startYmd:string;endYmd:string}) => void;
@@ -45,6 +47,7 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
   complex,
   onSelectComplex,
   initialPreferredCategory = '59',
+  requirePreferredCategory = false,
   allAreaTrades = [],
   onNavigateToMap,
   onOpenAiDrawer,
@@ -123,7 +126,9 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
         if (isCancelled) return;
         if (res && res.success && res.families) {
           setAreaFamilies(res.families);
-          const defaultFamily = getDefaultAreaFamily(res.families, initialPreferredCategory);
+          const defaultFamily = requirePreferredCategory
+            ? getLinkedAreaFamily(res.families, initialPreferredCategory)
+            : getDefaultAreaFamily(res.families, initialPreferredCategory);
           if (defaultFamily) {
             setSelectedAreaFamilyId(defaultFamily.areaFamilyId);
           }
@@ -144,7 +149,7 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
     return () => {
       isCancelled = true;
     };
-  }, [complex.id, initialPreferredCategory]);
+  }, [complex.id, initialPreferredCategory, requirePreferredCategory]);
 
   // Load V2 Monthly prices for selected AreaFamily within analysisPeriod
   const fetchMonthlyData = useCallback(() => {
@@ -341,10 +346,7 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
   const isGlobalLoading = isLoadingFamilies || isLoadingMonthly || isLoadingTrades;
   const activeError = familyError || monthlyError || (apiError ? apiError.message : null);
 
-  return (
-    <div className="space-y-6 max-w-7xl w-full mx-auto pb-12">
-      {/* A. 단지 / AreaFamily / 기간 선택 Top Bar */}
-      <PriceAnalysisHeader
+  const analysisHeader = <PriceAnalysisHeader
         complex={complex}
         onSelectComplex={onSelectComplex}
         areaFamilies={areaFamilies}
@@ -355,7 +357,17 @@ export const PriceAnalysisView: React.FC<PriceAnalysisViewProps> = ({
         onChangePeriod={(p) => setAnalysisPeriod(p)}
         onNavigateToMap={onNavigateToMap}
         onOpenAiDrawer={() => onOpenAiDrawer({areaFamilyId:selectedAreaFamilyId || undefined,startYmd:analysisPeriod.startYmd,endYmd:analysisPeriod.endYmd})}
-      />
+      />;
+  if (requirePreferredCategory && !isLoadingFamilies && !activeError && !selectedAreaFamilyId) {
+    return <div className="space-y-6 max-w-7xl w-full mx-auto pb-12">{analysisHeader}
+      <div role="status" className="rounded-xl border border-amber-700 bg-amber-950/30 p-4 text-sm leading-6 text-amber-100">
+        요청한 {initialPreferredCategory}㎡급에 해당하는 등록 주택형이 없습니다. 다른 면적으로 자동 변경하지 않았습니다. 위에서 다른 주택형을 선택해 주세요.
+      </div>
+    </div>;
+  }
+  return (
+    <div className="space-y-6 max-w-7xl w-full mx-auto pb-12">
+      {analysisHeader}
 
       {/* Loading state indicator banner */}
       {isGlobalLoading && (

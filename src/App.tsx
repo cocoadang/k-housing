@@ -42,6 +42,7 @@ const getInitialDates = (yearsBack = 5) => {
 
 export default function App() {
   const initialDates = useMemo(() => getInitialDates(5), []);
+  const launchRoute = useMemo(() => parseHousingRoute(window.location.search), []);
 
   // 1. Navigation View State: 'MAP' | 'ANALYSIS' | 'COMPARE'
   const [activeView, setActiveView] = useState<MainNavTab>(() => parseHousingRoute(window.location.search).view);
@@ -49,7 +50,7 @@ export default function App() {
   // 2. Sidebar & Filter States (Default: Banpo Xi, 59㎡, 5Y)
   const [selectedRegion, setSelectedRegion] = useState<'ALL' | 'SEOUL_METRO' | 'BUSAN'>('SEOUL_METRO');
   const [selectedComplexId, setSelectedComplexId] = useState<string>(() => parseHousingRoute(window.location.search).complexId);
-  const [selectedArea, setSelectedArea] = useState<AreaCategory>('59');
+  const [selectedArea, setSelectedArea] = useState<AreaCategory>(launchRoute.areaCategory || '59');
   const [selectedPeriod, setSelectedPeriod] = useState<'1Y' | '3Y' | '5Y' | '10Y' | 'ALL'>('5Y');
   const [startDate, setStartDate] = useState<string>(initialDates.startStr);
   const [endDate, setEndDate] = useState<string>(initialDates.endStr);
@@ -87,6 +88,7 @@ export default function App() {
 
   // Auto-switch to defaultArea if currentComplex does not support selectedArea
   useEffect(() => {
+    if (activeView === 'ANALYSIS' && launchRoute.areaCategory && selectedComplexId === launchRoute.complexId) return;
     if (currentComplex?.areaCapabilities) {
       if (selectedArea === '59' && !currentComplex.areaCapabilities.has59) {
         setSelectedArea(currentComplex.areaCapabilities.defaultArea);
@@ -94,7 +96,7 @@ export default function App() {
         setSelectedArea(currentComplex.areaCapabilities.defaultArea);
       }
     }
-  }, [selectedComplexId, currentComplex, selectedArea]);
+  }, [selectedComplexId, currentComplex, selectedArea, activeView, launchRoute]);
 
   // Derive startYmd & endYmd for API queries (e.g. "202509", "202608")
   const startYmd = useMemo(() => startDate.replace(/[^0-9]/g, '').slice(0, 6), [startDate]);
@@ -425,6 +427,7 @@ export default function App() {
             }}
             onAnalysisSelectionChange={setAiSelection}
             initialPreferredCategory={selectedArea}
+            requirePreferredCategory={Boolean(launchRoute.areaCategory && selectedComplexId === launchRoute.complexId)}
             allAreaTrades={rawTrades}
             onNavigateToMap={() => setActiveView('MAP')}
             onOpenAiDrawer={(selection) => { setAiSelection({complexId:currentComplex.id,...selection}); setIsAiDrawerOpen(true); }}

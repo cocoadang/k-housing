@@ -6,9 +6,11 @@ export function parseHousingRoute(search: string) {
   const complexId = params.get('complex');
   const lineageId = params.get('lineage');
   const view = params.get('view');
+  const area = params.get('areaCategory');
   return {
     view: (['MAP', 'ANALYSIS', 'COMPARE', 'REDEVELOPMENT'].includes(view || '') ? view : 'MAP') as 'MAP' | 'ANALYSIS' | 'COMPARE' | 'REDEVELOPMENT',
     complexId: TARGET_COMPLEXES.some(c => c.id === complexId) ? complexId! : 'banpo_xi',
+    areaCategory: area === '59' || area === '84' ? area : undefined,
     lineageId: REDEVELOPMENT_LINEAGES_REGISTRY.some(l => l.lineageId === lineageId) ? lineageId! : 'dunchon_redevelopment',
   };
 }
