@@ -6,6 +6,13 @@ import { Storage } from '@google-cloud/storage';
 import { Firestore } from '@google-cloud/firestore';
 import { buildSourceRevision, publishSourceRevision } from '../src/server/sourceRevision';
 import { mergeRetainedRefresh } from '../src/server/refreshRetention';
+import { aptRecommendationRegistry } from '../src/server/aptRecommendationRegistry';
+
+function currentKoreaMonths() {
+  const today = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  return [0, 1, 2].map(offset => new Date(Date.UTC(today.getUTCFullYear(),
+    today.getUTCMonth() - offset, 1)).toISOString().slice(0, 7).replace('-', ''));
+}
 
 async function main() {
   const validateOnly = process.env.COLLECTOR_VALIDATE_ONLY === 'true';
@@ -35,6 +42,7 @@ async function main() {
       throw Error('BASELINE_TRANSACTION_SET_MISMATCH');
     }
 
+    const requiredMonths = currentKoreaMonths();
     process.env.COLLECTOR_LIBRARY_MODE = 'true';
     process.env.COLLECTOR_OUTPUT ||= fs.mkdtempSync('/tmp/khousing-source-');
     const { collectCurrentSource } = await import('./collect_molit_readonly');
@@ -51,11 +59,17 @@ async function main() {
       { rows: stored.docs.map(doc => doc.data() as typeof freshRows[number]), manifest: baseline as typeof manifest },
       { rows: freshRows, manifest: { ...manifest, snapshots: manifest.snapshots.map(snapshot => ({ ...snapshot, archiveUri })) } },
     );
+    if (currentKoreaMonths().join(',') !== requiredMonths.join(',')) throw Error('REFRESH_CONTRACT_WINDOW_CHANGED');
+    const freshAptCells = new Set<string>(manifest.snapshots.flatMap(snapshot =>
+      (snapshot.aptBudget?.identities ?? []).map(identity => `${identity.id}/${snapshot.month}`)));
+    const missingAptCells = aptRecommendationRegistry.flatMap(identity => requiredMonths.map(month =>
+      `${identity.id}/${month}`)).filter(cell => !freshAptCells.has(cell));
+    const requiresAptReceiptRefresh = retained.requiresAptReceiptRefresh || missingAptCells.length > 0;
     const plan = buildSourceRevision(retained.rows, {
       ...manifest,
       snapshots: retained.snapshots,
       months: [...new Set(retained.snapshots.map(snapshot => snapshot.month))].sort(),
-      covered: baseline.covered,
+      covered: [...new Set<string>([...(baseline.covered ?? []), ...freshAptCells])],
       canonicalCount: retained.rows.length,
       unmappedAreaCount: retained.rows.filter(row => !row.areaFamilyId).length,
       ...(archiveUri ? { archiveUri } : {}),
@@ -67,13 +81,15 @@ async function main() {
       retainedMissingGroups: retained.retainedMissingGroups,
       groups: retained.rows.length,
       protectedGroupsHeld: retained.protectedGroupsHeld,
-      requiresAptReceiptRefresh: retained.requiresAptReceiptRefresh,
+      requiresAptReceiptRefresh,
+      missingAptCells,
+      incompleteAttestations: retained.incompleteAttestations,
     };
     if (validateOnly) {
       console.log(JSON.stringify({ ...report, databaseWrites: 0 }));
       return;
     }
-    if (retained.requiresAptReceiptRefresh) throw Error('APT_RECEIPT_REFRESH_REQUIRED');
+    if (requiresAptReceiptRefresh) throw Error('APT_RECEIPT_REFRESH_REQUIRED');
     if (!bucket) throw Error('SOURCE_ARCHIVE_BUCKET_REQUIRED');
 
     const files = Object.fromEntries(fs.readdirSync(directory)
