@@ -4,6 +4,7 @@ import json
 import re
 import shutil
 import subprocess
+import tarfile
 import tempfile
 import time
 from pathlib import Path
@@ -114,8 +115,30 @@ def checkout(name, commit, root):
 
 
 def build(path, project, region, image):
-    cloud("builds", "submit", str(path), "--project", project, "--region", region,
-          "--tag", image, "--timeout", "1200s")
+    # Use the pinned Git tree as the build context. Cloud SDK's default
+    # .gcloudignore imports .gitignore, which can drop tracked source data.
+    archive = path.parent / f"{path.name}-build-source.tar.gz"
+    run("git", "archive", "--format=tar.gz", f"--output={archive}", "HEAD", cwd=path)
+    required = {"Dockerfile", "package.json", "package-lock.json"}
+    if project == KH_PROJECT:
+        required.update({"src/data/complexFootprints.json", "src/data/gwacheonSchools.json"})
+    if project == APT_PROJECT:
+        required.update({"src/tests/fixtures/documents/compat-sample-5017.hwp",
+                         "src/tests/fixtures/documents/association-1.pdf"})
+    context = path.parent / f"{path.name}-build-context"
+    context.mkdir(mode=0o700)
+    with tarfile.open(archive) as source:
+        source.extractall(context, filter="data")
+    missing = sorted(name for name in required if not (context / name).is_file())
+    require(not missing, f"Build context for {path.name} is missing: {', '.join(missing)}")
+
+    # A custom ignore file prevents gcloud from importing .gitignore.
+    # The context already consists of tracked files from the pinned commit.
+    ignore = path.parent / "cloud-build.ignore"
+    ignore.write_text("# Build context generated from the pinned Git commit.\n")
+    print(f"Verified {path.name} build context contains required source files", flush=True)
+    cloud("builds", "submit", str(context), "--ignore-file", str(ignore),
+          "--project", project, "--region", region, "--tag", image, "--timeout", "1200s")
 
 
 def traffic_of(service):
