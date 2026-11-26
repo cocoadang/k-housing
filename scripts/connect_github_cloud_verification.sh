@@ -38,9 +38,20 @@ if ! gcloud iam workload-identity-pools providers describe "$provider" --project
 fi
 
 # Bind only to the exact provider policy expected by the GitHub workflow.
-gcloud iam workload-identity-pools providers describe "$provider" --project="$project" \
-  --location=global --workload-identity-pool="$pool" --format=json |
-  python3 -c '
+provider_description=''
+for attempt in {1..13}; do
+  if provider_description="$(gcloud iam workload-identity-pools providers describe "$provider" \
+      --project="$project" --location=global --workload-identity-pool="$pool" --format=json 2>&1)"; then
+    break
+  fi
+  if [[ "$provider_description" != *NOT_FOUND* || "$attempt" == 13 ]]; then
+    printf '%s\n' "$provider_description" >&2
+    exit 1
+  fi
+  printf '%s\n' 'Waiting for the Cloud identity provider to become visible…' >&2
+  sleep 10
+done
+python3 -c '
 import json, sys
 provider = json.load(sys.stdin)
 expected_mapping = {"google.subject": "assertion.sub", "attribute.repository_id": "assertion.repository_id"}
@@ -48,7 +59,7 @@ if (provider.get("oidc", {}).get("issuerUri") != sys.argv[1] or provider.get("at
         or provider.get("attributeMapping") != expected_mapping or provider.get("state") != "ACTIVE"
         or provider.get("disabled", False)):
     raise SystemExit("Existing provider does not match the restricted verification workflow")
-' "$issuer" "$condition"
+' "$issuer" "$condition" <<<"$provider_description"
 
 principal="principalSet://iam.googleapis.com/projects/$project_number/locations/global/workloadIdentityPools/$pool/attribute.repository_id/$repository_id"
 gcloud iam service-accounts add-iam-policy-binding "$service_account" --project="$project" \
