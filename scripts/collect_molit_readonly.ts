@@ -68,6 +68,17 @@ export async function collectCurrentSource() {
   const districts = process.env.COLLECTOR_DISTRICTS?.split(',') || allowed;
   if (districts.some(d => !allowed.includes(d))) throw Error('UNREGISTERED_DISTRICT');
   const jobs = districts.flatMap(district => months.map(month => ({ district, month })));
+  const queued = new Set(jobs.map(job => `${job.district}/${job.month}`));
+  const extraBuckets = process.env.COLLECTOR_EXTRA_BUCKETS?.split(',') ?? [];
+  if (extraBuckets.length > 24) throw Error('TOO_MANY_EXTRA_SOURCE_BUCKETS');
+  for (const bucket of extraBuckets) {
+    const match = /^(\d{5})\/(20\d{2}(?:0[1-9]|1[0-2]))$/.exec(bucket);
+    if (!match || !allowed.includes(match[1])) throw Error('INVALID_EXTRA_SOURCE_BUCKET');
+    if (!queued.has(bucket)) {
+      jobs.push({ district: match[1], month: match[2] });
+      queued.add(bucket);
+    }
+  }
   const snapshots: any[] = [];
   const transactions: any[] = [];
   for (const job of jobs) {
@@ -126,7 +137,7 @@ export async function collectCurrentSource() {
     console.log(`${job.district}/${job.month}: raw=${raw.length}, matched groups=${grouped.size}`);
   }
   fs.writeFileSync(path.join(output,'transactions.json'),JSON.stringify(transactions));
-  fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify({fetchedAt:new Date().toISOString(),months,snapshots,canonicalCount:transactions.length,unmappedAreaCount:transactions.filter(t=>!t.areaFamilyId).length,writeCount:0},null,2));
+  fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify({fetchedAt:new Date().toISOString(),months:[...new Set(jobs.map(job => job.month))],snapshots,canonicalCount:transactions.length,unmappedAreaCount:transactions.filter(t=>!t.areaFamilyId).length,writeCount:0},null,2));
 }
 if (!process.env.COLLECTOR_LIBRARY_MODE) collectCurrentSource().catch(e=>{console.error(e.message);process.exitCode=1;});
 

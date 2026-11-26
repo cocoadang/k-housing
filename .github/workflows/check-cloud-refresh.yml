@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/check-cloud-refresh.yml'
       - 'scripts/collector_job.ts'
+      - 'scripts/collect_molit_readonly.ts'
       - 'src/server/refreshRetention.ts'
   workflow_dispatch:
 
@@ -28,6 +29,7 @@ jobs:
       GOOGLE_CLOUD_PROJECT: gen-lang-client-0064554427
       FIRESTORE_DATABASE_ID: ai-studio-khousing-38852770-f782-474c-b219-956fbb846237
       COLLECTOR_VALIDATE_ONLY: 'true'
+      COLLECTOR_EXTRA_BUCKETS: '11440/202601'
       COLLECTOR_EXPECTED_PREVIEW_REVISION: r20261125084348_907cfe39
       SOURCE_ARCHIVE_BUCKET: run-sources-gen-lang-client-0064554427-asia-northeast3
     steps:
