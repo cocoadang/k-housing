@@ -25,6 +25,8 @@ jobs:
       GOOGLE_CLOUD_PROJECT: gen-lang-client-0064554427
       FIRESTORE_DATABASE_ID: ai-studio-khousing-38852770-f782-474c-b219-956fbb846237
       COLLECTOR_VALIDATE_ONLY: 'true'
+      COLLECTOR_EXPECTED_PREVIEW_REVISION: r20261125084348_907cfe39
+      SOURCE_ARCHIVE_BUCKET: run-sources-gen-lang-client-0064554427-asia-northeast3
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -56,4 +58,6 @@ jobs:
           assert.equal(report.databaseWrites, 0);
           assert(report.baselineGroups > 0 && report.groups >= report.baselineGroups, 'Stored trades were lost');
           assert.equal(report.requiresAptReceiptRefresh, false, 'Apt source receipts are incomplete');
+          assert.equal(report.verifiedPreviewGroups, 1018, 'Prior verified trades were not preserved');
+          assert(report.candidateRecommendationRows > 0, 'Candidate recommendation projection is empty');
           JS

@@ -7,6 +7,10 @@ import { Firestore } from '@google-cloud/firestore';
 import { buildSourceRevision, publishSourceRevision } from '../src/server/sourceRevision';
 import { mergeRetainedRefresh } from '../src/server/refreshRetention';
 import { aptRecommendationRegistry } from '../src/server/aptRecommendationRegistry';
+import { projectFromAptWriter } from '../src/server/aptBudgetCanonicalProjection';
+
+const revisionPattern = /^r\d{14}(?:_[a-f0-9]{8})?$/;
+const verificationIdentity = ['complexId', 'dealDate', 'price', 'floor', 'exclusiveArea'] as const;
 
 function currentKoreaMonths() {
   const today = new Date(Date.now() + 9 * 60 * 60 * 1000);
@@ -74,10 +78,57 @@ async function main() {
       unmappedAreaCount: retained.rows.filter(row => !row.areaFamilyId).length,
       ...(archiveUri ? { archiveUri } : {}),
     });
+    const priorPreview = process.env.COLLECTOR_EXPECTED_PREVIEW_REVISION;
+    let verifiedPreviewGroups = 0;
+    let candidateRecommendationRows: number | undefined;
+    if (priorPreview !== undefined) {
+      if (!validateOnly || !revisionPattern.test(priorPreview)) throw Error('INVALID_PRIOR_PREVIEW_CHECK');
+      const previewCollection = `transactions_${priorPreview}`;
+      const preview = (await db.collection('priceRevisions').doc(priorPreview).get()).data();
+      if (preview?.status !== 'READY' || preview.revision !== priorPreview ||
+          preview.collections?.transactions !== previewCollection) throw Error('PRIOR_PREVIEW_UNAVAILABLE');
+      const snapshot = await db.collection(previewCollection).get();
+      if (!snapshot.size || snapshot.size !== preview.counts?.transactions) {
+        throw Error('PRIOR_PREVIEW_TRANSACTION_SET_MISMATCH');
+      }
+      const kept = new Map(retained.rows.map(row => [row.id, row]));
+      const missingGroups = snapshot.docs.filter(doc => !kept.has(doc.id)).length;
+      const changedGroups = snapshot.docs.filter(doc => {
+        const existing = doc.data();
+        const refreshed = kept.get(doc.id);
+        return existing.id !== doc.id || (refreshed && verificationIdentity.some(
+          field => refreshed[field] !== existing[field]));
+      }).length;
+      if (missingGroups || changedGroups) {
+        throw Error(`PRIOR_PREVIEW_MISMATCH: missing=${missingGroups}, changed=${changedGroups}`);
+      }
+      verifiedPreviewGroups = snapshot.size;
+      if (!archiveUri) throw Error('VERIFICATION_ARCHIVE_LOCATION_REQUIRED');
+      const collection = `transactions_${revision}`;
+      const candidate = { ...plan.manifest, revision, status: 'READY', collections: { transactions: collection } };
+      const complexIds = aptRecommendationRegistry.map(identity => identity.id);
+      const complexScope = new Set(complexIds);
+      const monthScope = new Set(requiredMonths);
+      const projection = projectFromAptWriter({
+        active: candidate,
+        immutable: candidate,
+        registry: aptRecommendationRegistry,
+        request: { complexIds, months: requiredMonths },
+        query: { revision, collection, groups: retained.rows.filter(row =>
+          complexScope.has(row.complexId) && monthScope.has(row.dealYmd)) },
+      });
+      if (projection.incomplete || !projection.results.length) {
+        const problemCells = projection.coverage.filter(cell => cell.state !== 'complete');
+        throw Error(`CANDIDATE_RECOMMENDATION_INCOMPLETE: ${JSON.stringify(problemCells)}`);
+      }
+      candidateRecommendationRows = projection.results.length;
+    }
     if (!(await activeRef.get()).updateTime?.isEqual(active.updateTime)) throw Error('ACTIVE_REVISION_CHANGED');
     const report = {
       baselineRevision: baseline.revision,
       baselineGroups: retained.baselineGroups,
+      verifiedPreviewGroups,
+      candidateRecommendationRows,
       retainedMissingGroups: retained.retainedMissingGroups,
       groups: retained.rows.length,
       protectedGroupsHeld: retained.protectedGroupsHeld,
