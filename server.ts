@@ -1,3 +1,5 @@
+import { createAptRecommendationHandler } from './src/server/aptRecommendationApi';
+import { readPinnedTradeHistory } from './src/server/aptTradeHistoryPreview';
 import {costHttpTelemetry} from './src/server/costTelemetry';
 import { getReaderDb } from './src/server/firestoreReader';
 import express from 'express';
@@ -45,6 +47,8 @@ let totalCacheHits = 0;
 let totalApiRequests = 0;
 
 let molitApiVerified = false;
+
+app.get('/api/apt/recommendation-sales/v1', createAptRecommendationHandler());
 
 // Keep chart/ledger caches aligned with the same immutable source revision used by AI.
 app.use('/api', async (_req,res,next)=>{
@@ -859,6 +863,27 @@ app.get('/api/complex-trades/:complexId', async (req, res) => {
       hasMore,
     };
   };
+
+  const pin = process.env.APT_RECOMMENDATION_PREVIEW_REVISION;
+  if (pin !== undefined) {
+    res.setHeader('Cache-Control', 'no-store');
+    try {
+      if (process.env.USE_SERVER_IAM !== 'true' || !targetComplex ||
+          effectiveLawdCd !== targetComplex.lawdCd ||
+          typeof effectiveStartYmd !== 'string' || typeof effectiveEndYmd !== 'string') {
+        throw Error('PINNED_HISTORY_CONFIGURATION_INVALID');
+      }
+      const stored = await readPinnedTradeHistory(getReaderDb(), pin, complexId, effectiveStartYmd, effectiveEndYmd);
+      const scoped = effectiveArea === 'ALL' ? stored : stored.filter(row => row.areaCategory === effectiveArea);
+      return res.json({
+        success: true, source: 'FIRESTORE', revision: pin, complexId,
+        lawdCd: effectiveLawdCd, startYmd: effectiveStartYmd, endYmd: effectiveEndYmd,
+        areaCategory: effectiveArea, ...processTradesResponse(scoped),
+      });
+    } catch {
+      return res.status(503).json({ success: false, error: { code: 'PINNED_HISTORY_UNAVAILABLE' } });
+    }
+  }
 
   // 1. Try reading from Firestore if available
   if (isFirestoreAvailable()) {
