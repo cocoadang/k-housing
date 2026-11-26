@@ -1,0 +1,83 @@
+type TransactionGroup = {
+  id: string;
+  complexId: string;
+  dealYmd: string;
+  dealDate: string;
+  price: number;
+  floor: number;
+  exclusiveArea: number;
+  areaFamilyId?: string | null;
+};
+
+type Snapshot = {
+  district: string;
+  month: string;
+  archiveUri?: string;
+  aptBudget?: { identities: { id: string }[] };
+};
+
+type Manifest = {
+  snapshots: Snapshot[];
+  covered?: string[];
+  archiveUri?: string;
+};
+
+function index<T, K>(values: T[], key: (value: T) => K, error: string) {
+  const indexed = new Map<K, T>();
+  for (const value of values) {
+    const id = key(value);
+    if (indexed.has(id)) throw Error(error);
+    indexed.set(id, value);
+  }
+  return indexed;
+}
+
+const bucketKey = (snapshot: Snapshot) => `${snapshot.district}/${snapshot.month}`;
+const cellKey = (row: TransactionGroup) => `${row.complexId}/${row.dealYmd}`;
+const tradeIdentity = ['complexId', 'dealYmd', 'dealDate', 'price', 'floor', 'exclusiveArea'] as const;
+
+export function mergeRetainedRefresh<T extends TransactionGroup>(
+  baseline: { rows: T[]; manifest: Manifest },
+  fresh: { rows: T[]; manifest: Manifest },
+) {
+  const stored = index(baseline.rows, row => row.id, 'DUPLICATE_STORED_TRANSACTION_ID');
+  const incoming = index(fresh.rows, row => row.id, 'DUPLICATE_FRESH_TRANSACTION_ID');
+  const previousSnapshots = index(baseline.manifest.snapshots, bucketKey, 'DUPLICATE_STORED_SNAPSHOT');
+  const freshSnapshots = index(fresh.manifest.snapshots, bucketKey, 'DUPLICATE_FRESH_SNAPSHOT');
+  const protectedCells = new Set<string>();
+  const protectedBuckets = new Set<string>();
+  for (const snapshot of previousSnapshots.values()) {
+    if (!snapshot.aptBudget) continue;
+    protectedBuckets.add(bucketKey(snapshot));
+    for (const identity of snapshot.aptBudget.identities) {
+      protectedCells.add(`${identity.id}/${snapshot.month}`);
+    }
+  }
+  const merged = new Map(stored);
+  let protectedGroupsHeld = 0;
+  for (const [id, row] of incoming) {
+    const prior = stored.get(id);
+    if (prior && tradeIdentity.some(field => prior[field] !== row[field])) {
+      throw Error('REFRESH_TRANSACTION_IDENTITY_CHANGED');
+    }
+    if (protectedCells.has(cellKey(row))) {
+      protectedGroupsHeld++;
+      continue;
+    }
+    merged.set(id, prior ? { ...prior, ...row } : row);
+  }
+  const snapshots = new Map(previousSnapshots);
+  for (const [key, snapshot] of freshSnapshots) {
+    if (!protectedBuckets.has(key)) snapshots.set(key, snapshot);
+  }
+  return {
+    rows: [...merged.values()],
+    snapshots: [...snapshots.values()],
+    baselineGroups: stored.size,
+    retainedMissingGroups: [...stored.keys()].filter(id => !incoming.has(id)).length,
+    protectedGroupsHeld,
+    // The legacy collector has no exact Apt receipt generation. Its rehearsals
+    // may retain Apt evidence, but cannot promote a refreshed Apt revision.
+    requiresAptReceiptRefresh: protectedBuckets.size > 0,
+  };
+}
