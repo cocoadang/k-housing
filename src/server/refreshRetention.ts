@@ -105,6 +105,7 @@ export function comparePriorPreview<T extends TransactionGroup>(rows: T[], prior
   }
   let equivalentMatches = 0;
   let missing = 0;
+  const missingDetails: { id: string; complexId: string; month: string; area: number; alternateAreas: number[] }[] = [];
   let changed = 0;
   let ambiguous = 0;
   const matchedAliases = new Set<string>();
@@ -117,6 +118,13 @@ export function comparePriorPreview<T extends TransactionGroup>(rows: T[], prior
     const equivalent = byTrade.get(tradeKey(prior)) ?? [];
     if (!equivalent.length) {
       missing++;
+      if (missingDetails.length < 5) {
+        const alternateAreas = [...new Set(rows.filter(row => row.complexId === prior.complexId &&
+          row.dealDate === prior.dealDate && row.price === prior.price && row.floor === prior.floor)
+          .map(row => row.exclusiveArea))];
+        missingDetails.push({ id: prior.id, complexId: prior.complexId, month: prior.dealYmd,
+          area: prior.exclusiveArea, alternateAreas });
+      }
       continue;
     }
     if (equivalent.length !== 1 || priorIds.has(equivalent[0].id) || matchedAliases.has(equivalent[0].id)) {
@@ -126,5 +134,5 @@ export function comparePriorPreview<T extends TransactionGroup>(rows: T[], prior
     matchedAliases.add(equivalent[0].id);
     equivalentMatches++;
   }
-  return { equivalentMatches, missing, changed, ambiguous };
+  return { equivalentMatches, missing, changed, ambiguous, missingDetails };
 }

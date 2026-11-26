@@ -87,10 +87,10 @@ async function main() {
         throw Error('PRIOR_PREVIEW_TRANSACTION_SET_MISMATCH');
       }
       if (snapshot.docs.some(doc => doc.data().id !== doc.id)) throw Error('PRIOR_PREVIEW_ID_MISMATCH');
-      const { equivalentMatches, missing, changed, ambiguous } = comparePriorPreview(
+      const { equivalentMatches, missing, changed, ambiguous, missingDetails } = comparePriorPreview(
         retained.rows, snapshot.docs.map(doc => doc.data() as typeof freshRows[number]));
       if (missing || changed || ambiguous) {
-        throw Error(`PRIOR_PREVIEW_MISMATCH: aliasMatches=${equivalentMatches}, missing=${missing}, changed=${changed}, ambiguous=${ambiguous}`);
+        throw Error(`PRIOR_PREVIEW_MISMATCH: aliasMatches=${equivalentMatches}, missing=${missing}, changed=${changed}, ambiguous=${ambiguous}, missingDetails=${JSON.stringify(missingDetails)}`);
       }
       equivalentPreviewGroups = equivalentMatches;
       verifiedPreviewGroups = snapshot.size;

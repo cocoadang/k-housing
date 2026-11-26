@@ -65,7 +65,7 @@ test('a prior preview alias needs one exact trade and cannot reuse an exact matc
   const candidate = row('fresh', 'apt', 1);
   const alias = row('old-format', 'apt', 1);
   assert.deepEqual(comparePriorPreview([candidate], [alias]),
-    { equivalentMatches: 1, missing: 0, changed: 0, ambiguous: 0 });
+    { equivalentMatches: 1, missing: 0, changed: 0, ambiguous: 0, missingDetails: [] });
   assert.equal(comparePriorPreview([candidate], [candidate, alias]).ambiguous, 1);
   assert.equal(comparePriorPreview([candidate], [{ ...alias, price: 101 }]).missing, 1);
 });
