@@ -13,13 +13,11 @@ type Snapshot = {
   district: string;
   month: string;
   archiveUri?: string;
-  aptBudget?: { identities: { id: string }[] };
+  aptBudget?: { identities: { id: string; groupedCount: number }[] };
 };
 
 type Manifest = {
   snapshots: Snapshot[];
-  covered?: string[];
-  archiveUri?: string;
 };
 
 function index<T, K>(values: T[], key: (value: T) => K, error: string) {
@@ -47,7 +45,7 @@ export function mergeRetainedRefresh<T extends TransactionGroup>(
   const protectedCells = new Set<string>();
   const protectedBuckets = new Set<string>();
   for (const snapshot of previousSnapshots.values()) {
-    if (!snapshot.aptBudget) continue;
+    if (!snapshot.aptBudget || freshSnapshots.get(bucketKey(snapshot))?.aptBudget) continue;
     protectedBuckets.add(bucketKey(snapshot));
     for (const identity of snapshot.aptBudget.identities) {
       protectedCells.add(`${identity.id}/${snapshot.month}`);
@@ -70,14 +68,25 @@ export function mergeRetainedRefresh<T extends TransactionGroup>(
   for (const [key, snapshot] of freshSnapshots) {
     if (!protectedBuckets.has(key)) snapshots.set(key, snapshot);
   }
+  const mergedCellCounts = new Map<string, number>();
+  for (const row of merged.values()) {
+    const key = cellKey(row);
+    mergedCellCounts.set(key, (mergedCellCounts.get(key) ?? 0) + 1);
+  }
+  const incompleteAttestations = [...freshSnapshots.values()].flatMap(snapshot =>
+    (snapshot.aptBudget?.identities ?? []).flatMap(identity => {
+      const key = `${identity.id}/${snapshot.month}`;
+      return (mergedCellCounts.get(key) ?? 0) === identity.groupedCount ? [] : [key];
+    }),
+  );
   return {
+    incompleteAttestations,
     rows: [...merged.values()],
     snapshots: [...snapshots.values()],
     baselineGroups: stored.size,
     retainedMissingGroups: [...stored.keys()].filter(id => !incoming.has(id)).length,
     protectedGroupsHeld,
-    // The legacy collector has no exact Apt receipt generation. Its rehearsals
-    // may retain Apt evidence, but cannot promote a refreshed Apt revision.
-    requiresAptReceiptRefresh: protectedBuckets.size > 0,
+    requiresAptReceiptRefresh: [...protectedBuckets].some(key => freshSnapshots.has(key)) ||
+      incompleteAttestations.length > 0,
   };
 }
