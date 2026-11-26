@@ -8,7 +8,7 @@ const row = (id: string, complexId: string, activeCount: number) => ({
 });
 const plainSnapshot = { district: '11680', month: '202611', archiveUri: 'fresh' };
 const protectedSnapshot = {
-  ...plainSnapshot, archiveUri: 'verified', aptBudget: { identities: [{ id: 'apt' }] },
+  ...plainSnapshot, archiveUri: 'verified', aptBudget: { identities: [{ id: 'apt', groupedCount: 1 }] },
 };
 
 test('refresh keeps live-only transactions and applies normal status updates', () => {
@@ -44,4 +44,18 @@ test('refresh rejects a reused ID with a different trade identity', () => {
   }, {
     rows: [{ ...stored, floor: 13 }], manifest: { snapshots: [plainSnapshot] },
   }), /REFRESH_TRANSACTION_IDENTITY_CHANGED/);
+});
+
+test('a fresh exact receipt can update status but cannot attest an omitted stored group', () => {
+  const old = row('old', 'apt', 1);
+  const same = row('same', 'apt', 1);
+  const fresh = row('same', 'apt', 0);
+  const result = mergeRetainedRefresh({
+    rows: [old, same], manifest: { snapshots: [protectedSnapshot] },
+  }, {
+    rows: [fresh], manifest: { snapshots: [protectedSnapshot] },
+  });
+  assert.deepEqual(result.rows, [old, fresh]);
+  assert.deepEqual(result.incompleteAttestations, ['apt/202611']);
+  assert.equal(result.requiresAptReceiptRefresh, true);
 });
