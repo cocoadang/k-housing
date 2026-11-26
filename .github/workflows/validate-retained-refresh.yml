@@ -1,0 +1,32 @@
+name: Validate retained price refresh
+
+on:
+  push:
+    branches: ['codex/retain-source-refresh']
+  pull_request:
+    paths:
+      - 'scripts/collector_job.ts'
+      - 'src/server/sourceRevision.ts'
+      - 'src/server/refreshRetention.ts'
+      - 'src/tests/refreshRetention.test.ts'
+      - '.github/workflows/validate-retained-refresh.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run lint
+      - run: node --import tsx --test src/tests/refreshRetention.test.ts src/tests/sourceRevision.test.ts
+      - run: ./node_modules/.bin/esbuild scripts/collector_job.ts --bundle --platform=node --format=cjs --packages=external --outfile=dist/collector.cjs
