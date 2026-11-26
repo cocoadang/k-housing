@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mergeRetainedRefresh } from '../server/refreshRetention.ts';
+import { mergeRetainedRefresh, comparePriorPreview } from '../server/refreshRetention.ts';
 
 const row = (id: string, complexId: string, activeCount: number) => ({
   id, complexId, dealYmd: '202611', dealDate: '2026-11-25', price: 100,
@@ -58,4 +58,14 @@ test('a fresh exact receipt can update status but cannot attest an omitted store
   assert.deepEqual(result.rows, [old, fresh]);
   assert.deepEqual(result.incompleteAttestations, ['apt/202611']);
   assert.equal(result.requiresAptReceiptRefresh, true);
+});
+
+
+test('a prior preview alias needs one exact trade and cannot reuse an exact match', () => {
+  const candidate = row('fresh', 'apt', 1);
+  const alias = row('old-format', 'apt', 1);
+  assert.deepEqual(comparePriorPreview([candidate], [alias]),
+    { equivalentMatches: 1, missing: 0, changed: 0, ambiguous: 0 });
+  assert.equal(comparePriorPreview([candidate], [candidate, alias]).ambiguous, 1);
+  assert.equal(comparePriorPreview([candidate], [{ ...alias, price: 101 }]).missing, 1);
 });

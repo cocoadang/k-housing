@@ -40,3 +40,22 @@ test('preview history reads only the named immutable revision and covered months
   assert.deepEqual(calls, ['priceRevisions', collection]);
   await assert.rejects(readPinnedTradeHistory(db, revision, row.complexId, '202610', '202611'), /PINNED_HISTORY_SCOPE_UNAVAILABLE/);
 });
+
+test('staging seals an immutable revision while leaving the active pointer untouched', async () => {
+ const { stageSourceRevision } = await import('../server/sourceRevision');
+ const revision='r20261127000000';
+ const plan=buildSourceRevision([],{snapshots:[{district:'11710',month:'202611'}],fetchedAt:'2026-11-27T00:00:00Z',writeCount:0});
+ const creates:string[]=[];
+ let pointerReads=0;
+ const timestamp={isEqual:(value:unknown)=>value===timestamp};
+ const db={collection:(name:string)=>({
+   count:()=>({get:async()=>({data:()=>({count:0})})}),
+   doc:(id:string)=>({
+     get:async()=>{ assert.equal(id,'active'); pointerReads++; return {updateTime:timestamp}; },
+     create:async()=>{ creates.push(`${name}/${id}`); },
+   }),
+ })};
+ await stageSourceRevision(db,plan,revision,timestamp as any);
+ assert.deepEqual(creates,[`priceRevisions/${revision}`]);
+ assert.equal(pointerReads,2);
+});

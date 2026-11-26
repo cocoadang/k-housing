@@ -90,3 +90,41 @@ export function mergeRetainedRefresh<T extends TransactionGroup>(
       incompleteAttestations.length > 0,
   };
 }
+
+const tradeKey = (row: TransactionGroup) => JSON.stringify(tradeIdentity.map(field => row[field]));
+
+export function comparePriorPreview<T extends TransactionGroup>(rows: T[], priorPreview: T[]) {
+  const byId = index(rows, row => row.id, 'DUPLICATE_CANDIDATE_TRANSACTION_ID');
+  const priorIds = index(priorPreview, row => row.id, 'DUPLICATE_PRIOR_PREVIEW_ID');
+  const byTrade = new Map<string, T[]>();
+  for (const row of rows) {
+    const key = tradeKey(row);
+    const matched = byTrade.get(key) ?? [];
+    matched.push(row);
+    byTrade.set(key, matched);
+  }
+  let equivalentMatches = 0;
+  let missing = 0;
+  let changed = 0;
+  let ambiguous = 0;
+  const matchedAliases = new Set<string>();
+  for (const prior of priorPreview) {
+    const exact = byId.get(prior.id);
+    if (exact) {
+      if (tradeKey(exact) !== tradeKey(prior)) changed++;
+      continue;
+    }
+    const equivalent = byTrade.get(tradeKey(prior)) ?? [];
+    if (!equivalent.length) {
+      missing++;
+      continue;
+    }
+    if (equivalent.length !== 1 || priorIds.has(equivalent[0].id) || matchedAliases.has(equivalent[0].id)) {
+      ambiguous++;
+      continue;
+    }
+    matchedAliases.add(equivalent[0].id);
+    equivalentMatches++;
+  }
+  return { equivalentMatches, missing, changed, ambiguous };
+}

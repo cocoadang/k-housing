@@ -38,7 +38,7 @@ export function buildSourceRevision(transactions: any[], manifest: any) {
 }
 
 /** Immutable price collections are prepared first; only one pointer is changed after all writes succeed. */
-export async function publishSourceRevision(db: any, plan: ReturnType<typeof buildSourceRevision>, revision: string, expectedActiveUpdateTime?: Timestamp) {
+async function writeImmutableSourceRevision(db: any, plan: ReturnType<typeof buildSourceRevision>, revision: string) {
   if (!/^r\d{14}(?:_[a-f0-9]{8})?$/.test(revision)) throw Error('INVALID_REVISION');
   const names: Record<string,string> = {};
   for (const [name, rows] of Object.entries(plan.collections)) {
@@ -55,7 +55,22 @@ export async function publishSourceRevision(db: any, plan: ReturnType<typeof bui
   const revisions = db.collection('priceRevisions');
   const ready = { ...plan.manifest, revision, collections: names, status: 'READY' };
   await revisions.doc(revision).create(ready);
-  const active = revisions.doc('active');
+  return ready;
+}
+
+export async function stageSourceRevision(db: any, plan: ReturnType<typeof buildSourceRevision>,
+  revision: string, expectedActiveUpdateTime: Timestamp) {
+  const active = db.collection('priceRevisions').doc('active');
+  if (!(await active.get()).updateTime?.isEqual(expectedActiveUpdateTime)) throw Error('ACTIVE_REVISION_CHANGED');
+  await writeImmutableSourceRevision(db, plan, revision);
+  if (!(await active.get()).updateTime?.isEqual(expectedActiveUpdateTime)) throw Error('ACTIVE_REVISION_CHANGED');
+  return { revision, counts: plan.manifest.counts };
+}
+
+export async function publishSourceRevision(db: any, plan: ReturnType<typeof buildSourceRevision>,
+  revision: string, expectedActiveUpdateTime?: Timestamp) {
+  const ready = await writeImmutableSourceRevision(db, plan, revision);
+  const active = db.collection('priceRevisions').doc('active');
   if (expectedActiveUpdateTime) {
     await db.runTransaction(async transaction => {
       const current = await transaction.get(active);

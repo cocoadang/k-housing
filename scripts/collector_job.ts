@@ -4,13 +4,12 @@ import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { Storage } from '@google-cloud/storage';
 import { Firestore } from '@google-cloud/firestore';
-import { buildSourceRevision, publishSourceRevision } from '../src/server/sourceRevision';
-import { mergeRetainedRefresh } from '../src/server/refreshRetention';
+import { buildSourceRevision, publishSourceRevision, stageSourceRevision } from '../src/server/sourceRevision';
+import { mergeRetainedRefresh, comparePriorPreview } from '../src/server/refreshRetention';
 import { aptRecommendationRegistry } from '../src/server/aptRecommendationRegistry';
 import { projectFromAptWriter } from '../src/server/aptBudgetCanonicalProjection';
 
 const revisionPattern = /^r\d{14}(?:_[a-f0-9]{8})?$/;
-const verificationIdentity = ['complexId', 'dealDate', 'price', 'floor', 'exclusiveArea'] as const;
 
 function currentKoreaMonths() {
   const today = new Date(Date.now() + 9 * 60 * 60 * 1000);
@@ -20,6 +19,10 @@ function currentKoreaMonths() {
 
 async function main() {
   const validateOnly = process.env.COLLECTOR_VALIDATE_ONLY === 'true';
+  const stageOnly = process.env.COLLECTOR_STAGE_ONLY === 'true';
+  if (stageOnly && (validateOnly || !process.env.COLLECTOR_EXPECTED_PREVIEW_REVISION)) {
+    throw Error('STAGE_MODE_REQUIRES_PRIOR_PREVIEW_CHECK');
+  }
   const db = new Firestore({
     projectId: process.env.GOOGLE_CLOUD_PROJECT,
     databaseId: process.env.FIRESTORE_DATABASE_ID,
@@ -69,6 +72,30 @@ async function main() {
     const missingAptCells = aptRecommendationRegistry.flatMap(identity => requiredMonths.map(month =>
       `${identity.id}/${month}`)).filter(cell => !freshAptCells.has(cell));
     const requiresAptReceiptRefresh = retained.requiresAptReceiptRefresh || missingAptCells.length > 0;
+    const priorPreview = process.env.COLLECTOR_EXPECTED_PREVIEW_REVISION;
+    let verifiedPreviewGroups = 0;
+    let equivalentPreviewGroups = 0;
+    let candidateRecommendationRows: number | undefined;
+    if (priorPreview !== undefined) {
+      if (!(validateOnly || stageOnly) || !revisionPattern.test(priorPreview)) throw Error('INVALID_PRIOR_PREVIEW_CHECK');
+      const previewCollection = `transactions_${priorPreview}`;
+      const preview = (await db.collection('priceRevisions').doc(priorPreview).get()).data();
+      if (preview?.status !== 'READY' || preview.revision !== priorPreview ||
+          preview.collections?.transactions !== previewCollection) throw Error('PRIOR_PREVIEW_UNAVAILABLE');
+      const snapshot = await db.collection(previewCollection).get();
+      if (!snapshot.size || snapshot.size !== preview.counts?.transactions) {
+        throw Error('PRIOR_PREVIEW_TRANSACTION_SET_MISMATCH');
+      }
+      if (snapshot.docs.some(doc => doc.data().id !== doc.id)) throw Error('PRIOR_PREVIEW_ID_MISMATCH');
+      const { equivalentMatches, missing, changed, ambiguous } = comparePriorPreview(
+        retained.rows, snapshot.docs.map(doc => doc.data() as typeof freshRows[number]));
+      if (missing || changed || ambiguous) {
+        throw Error(`PRIOR_PREVIEW_MISMATCH: aliasMatches=${equivalentMatches}, missing=${missing}, changed=${changed}, ambiguous=${ambiguous}`);
+      }
+      equivalentPreviewGroups = equivalentMatches;
+      verifiedPreviewGroups = snapshot.size;
+    }
+
     const plan = buildSourceRevision(retained.rows, {
       ...manifest,
       snapshots: retained.snapshots,
@@ -78,31 +105,7 @@ async function main() {
       unmappedAreaCount: retained.rows.filter(row => !row.areaFamilyId).length,
       ...(archiveUri ? { archiveUri } : {}),
     });
-    const priorPreview = process.env.COLLECTOR_EXPECTED_PREVIEW_REVISION;
-    let verifiedPreviewGroups = 0;
-    let candidateRecommendationRows: number | undefined;
     if (priorPreview !== undefined) {
-      if (!validateOnly || !revisionPattern.test(priorPreview)) throw Error('INVALID_PRIOR_PREVIEW_CHECK');
-      const previewCollection = `transactions_${priorPreview}`;
-      const preview = (await db.collection('priceRevisions').doc(priorPreview).get()).data();
-      if (preview?.status !== 'READY' || preview.revision !== priorPreview ||
-          preview.collections?.transactions !== previewCollection) throw Error('PRIOR_PREVIEW_UNAVAILABLE');
-      const snapshot = await db.collection(previewCollection).get();
-      if (!snapshot.size || snapshot.size !== preview.counts?.transactions) {
-        throw Error('PRIOR_PREVIEW_TRANSACTION_SET_MISMATCH');
-      }
-      const kept = new Map(retained.rows.map(row => [row.id, row]));
-      const missingGroups = snapshot.docs.filter(doc => !kept.has(doc.id)).length;
-      const changedGroups = snapshot.docs.filter(doc => {
-        const existing = doc.data();
-        const refreshed = kept.get(doc.id);
-        return existing.id !== doc.id || (refreshed && verificationIdentity.some(
-          field => refreshed[field] !== existing[field]));
-      }).length;
-      if (missingGroups || changedGroups) {
-        throw Error(`PRIOR_PREVIEW_MISMATCH: missing=${missingGroups}, changed=${changedGroups}`);
-      }
-      verifiedPreviewGroups = snapshot.size;
       if (!archiveUri) throw Error('VERIFICATION_ARCHIVE_LOCATION_REQUIRED');
       const collection = `transactions_${revision}`;
       const candidate = { ...plan.manifest, revision, status: 'READY', collections: { transactions: collection } };
@@ -128,6 +131,7 @@ async function main() {
       baselineRevision: baseline.revision,
       baselineGroups: retained.baselineGroups,
       verifiedPreviewGroups,
+      equivalentPreviewGroups,
       candidateRecommendationRows,
       retainedMissingGroups: retained.retainedMissingGroups,
       groups: retained.rows.length,
@@ -151,6 +155,11 @@ async function main() {
     await new Storage().bucket(bucket).file(destination).save(gzipSync(JSON.stringify(files)), {
       resumable: false, contentType: 'application/gzip', preconditionOpts: { ifGenerationMatch: 0 },
     });
+    if (stageOnly) {
+      const staged = await stageSourceRevision(db, plan, revision, active.updateTime);
+      console.log(JSON.stringify({ ...report, ...staged, stageOnly: true }));
+      return;
+    }
     const published = await publishSourceRevision(db, plan, revision, active.updateTime);
     console.log(JSON.stringify({ ...report, ...published }));
   } finally {

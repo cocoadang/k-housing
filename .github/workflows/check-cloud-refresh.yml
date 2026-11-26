@@ -3,7 +3,10 @@ name: Verify K-Housing Cloud refresh
 on:
   push:
     branches: ['codex/retain-source-refresh']
-    paths: ['.github/workflows/check-cloud-refresh.yml']
+    paths:
+      - '.github/workflows/check-cloud-refresh.yml'
+      - 'scripts/collector_job.ts'
+      - 'src/server/refreshRetention.ts'
   workflow_dispatch:
 
 permissions:
