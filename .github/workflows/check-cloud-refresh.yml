@@ -1,0 +1,59 @@
+name: Verify K-Housing Cloud refresh
+
+on:
+  push:
+    branches: ['codex/retain-source-refresh']
+    paths: ['.github/workflows/check-cloud-refresh.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: khousing-cloud-refresh-verification
+  cancel-in-progress: false
+
+jobs:
+  read-only-refresh:
+    if: github.repository == 'cocoadang/k-housing' && github.ref == 'refs/heads/codex/retain-source-refresh'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GOOGLE_CLOUD_PROJECT: gen-lang-client-0064554427
+      FIRESTORE_DATABASE_ID: ai-studio-khousing-38852770-f782-474c-b219-956fbb846237
+      COLLECTOR_VALIDATE_ONLY: 'true'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: node --import tsx --test src/tests/refreshRetention.test.ts src/tests/sourceRevision.test.ts
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          project_id: gen-lang-client-0064554427
+          workload_identity_provider: projects/9298525505/locations/global/workloadIdentityPools/khousing-github-verify/providers/refresh-check
+          service_account: khousing-gh-verify@gen-lang-client-0064554427.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db
+      - name: Verify saved trades survive a real refresh without writing to Firestore
+        shell: bash
+        run: |
+          set -euo pipefail
+          export MOLIT_API_KEY
+          MOLIT_API_KEY="$(gcloud secrets versions access latest --secret=khousing-molit --project="$GOOGLE_CLOUD_PROJECT" --quiet)"
+          echo "::add-mask::$MOLIT_API_KEY"
+          node --import tsx scripts/collector_job.ts | tee "$RUNNER_TEMP/khousing-refresh.log"
+          node - "$RUNNER_TEMP/khousing-refresh.log" <<'JS'
+          const assert = require('node:assert/strict');
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8').trim().split('\n').at(-1));
+          assert.equal(report.databaseWrites, 0);
+          assert(report.baselineGroups > 0 && report.groups >= report.baselineGroups, 'Stored trades were lost');
+          assert.equal(report.requiresAptReceiptRefresh, false, 'Apt source receipts are incomplete');
+          JS
