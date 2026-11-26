@@ -73,7 +73,7 @@ export interface AptBudgetProjectionRow {
 }
 export type AptCoverageState = 'complete' | 'missing_registry_identity' | 'missing_bucket_receipt' |
   'invalid_bucket_receipt' | 'missing_identity_receipt' | 'identity_mismatch' |
-  'row_identity_or_status_invalid' | 'row_count_mismatch' | 'ambiguous_latest';
+  'row_identity_or_status_invalid' | 'row_count_mismatch';
 export interface AptCoverageCell {
   complexId: string;
   district: string | null;
@@ -245,14 +245,11 @@ export function projectAptBudget(input: {
     }
     const local: AptBudgetProjectionRow[] = [];
     for (const [areaCategory, sales] of areas) {
-      sales.sort((a,b) => b.dealDate.localeCompare(a.dealDate) || b.price-a.price);
+      // Same-day, same-price reports can differ by floor or exact area.
+      // Select a real row consistently and keep every report in the price summary.
+      sales.sort((a,b) => b.dealDate.localeCompare(a.dealDate) || b.price-a.price ||
+        a.exclusiveArea-b.exclusiveArea || a.floor-b.floor || a.id.localeCompare(b.id));
       const latest = sales[0];
-      if (sales.some(g => g.dealDate === latest.dealDate && g.price === latest.price &&
-                          (g.floor !== latest.floor || g.exclusiveArea !== latest.exclusiveArea))) {
-        const c = cells.find(x => x.month === latest.dealYmd)!;
-        c.state = 'ambiguous_latest';
-        continue;
-      }
       local.push({
         complexId:id, name:identity.name, region:identity.district, neighborhood:identity.legalDong,
         price:latest.price, date:latest.dealDate, floor:latest.floor, area:latest.exclusiveArea, areaCategory,

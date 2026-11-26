@@ -8,6 +8,7 @@ on:
       - 'scripts/collector_job.ts'
       - 'scripts/collect_molit_readonly.ts'
       - 'src/server/refreshRetention.ts'
+      - 'src/server/aptBudgetCanonicalProjection.ts'
   workflow_dispatch:
 
 permissions:

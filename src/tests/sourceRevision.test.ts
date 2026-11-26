@@ -59,3 +59,33 @@ test('staging seals an immutable revision while leaving the active pointer untou
  assert.deepEqual(creates,[`priceRevisions/${revision}`]);
  assert.equal(pointerReads,2);
 });
+
+test('same-day same-price sales preserve both reports and select a real row deterministically', async () => {
+ const { projectAptBudget } = await import('../server/aptBudgetCanonicalProjection');
+ const identity={id:'apt_complex', district:'11290', legalDong:'길음동', parcel:'1-0', name:'테스트 단지'};
+ const revision='r20261127000000';
+ const collection=`transactions_${revision}`;
+ const group= {
+   id:'high', complexId:identity.id, sourceDistrict:identity.district, sourceLegalDong:identity.legalDong,
+   sourceParcel:identity.parcel, sourceAptSeqs:['11290-1'], dataSource:'MOLIT_OPENAPI',
+   source:'MOLIT_APT_TRADE', schemaVersion:'SOURCE_STATUS_V2', dealYmd:'202610', dealDate:'2026-10-05',
+   price:180000, floor:17, exclusiveArea:84.998, normalRowCount:1, activeCount:1,
+   cancellationRowCount:0, isCancelled:false, cancelDates:[],
+ } as const;
+ const lower={...group, id:'low', floor:4, exclusiveArea:84.996};
+ const input={
+   request:{complexIds:[identity.id],months:['202610']},
+   registry:[identity],
+   receipt:{revision,collection,state:'READY' as const,buckets:[{
+     district:identity.district,month:'202610',sourceTotalCount:2,pageRowCounts:[2],
+     identities:[{...identity,groupedCount:2,activeCount:2,canceledCount:0}],
+   }]},
+   query:{revision,collection,groups:[group,lower]},
+ };
+ const result=projectAptBudget(input);
+ assert.equal(result.incomplete,false);
+ assert.equal(result.results[0].floor,lower.floor);
+ assert.equal(result.results[0].area,lower.exclusiveArea);
+ assert.deepEqual(result.results[0].tradeSummary,{count:2,min:180000,max:180000});
+ assert.deepEqual(projectAptBudget({...input,query:{...input.query,groups:[lower,group]}}),result);
+});
