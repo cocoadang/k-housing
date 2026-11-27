@@ -1,3 +1,4 @@
+import { createSharedApartmentCatalogHandler } from './src/server/sharedApartmentCatalog';
 import { createAptRecommendationHandler } from './src/server/aptRecommendationApi';
 import { readPinnedTradeHistory } from './src/server/aptTradeHistoryPreview';
 import {costHttpTelemetry} from './src/server/costTelemetry';
@@ -49,6 +50,7 @@ let totalApiRequests = 0;
 let molitApiVerified = false;
 
 app.get('/api/apt/recommendation-sales/v1', createAptRecommendationHandler());
+app.get('/api/apt/catalog/v1', createSharedApartmentCatalogHandler());
 
 // Keep chart/ledger caches aligned with the same immutable source revision used by AI.
 app.use('/api', async (_req,res,next)=>{
