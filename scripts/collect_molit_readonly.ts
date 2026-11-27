@@ -47,7 +47,10 @@ async function fetchMonth(district: string, month: string) {
     url.search = new URLSearchParams({ serviceKey: key, LAWD_CD: district, DEAL_YMD: month, pageNo: String(page), numOfRows: '1000' }).toString();
     const {response,xml} = await fetchMolitXml(url);
     const payload = parser.parse(xml)?.response;
-    if (!response.ok || !/^0+$/.test(String(payload?.header?.resultCode))) throw Error(`MOLIT_FETCH_FAILED: ${district}/${month}/${page}`);
+    if (!response.ok || !/^0+$/.test(String(payload?.header?.resultCode))) {
+      const code = /<(?:resultCode|returnReasonCode)>\s*(\d{1,3})\s*<\//i.exec(xml)?.[1] ?? 'UNKNOWN';
+      throw Error('MOLIT_FETCH_FAILED: ' + district + '/' + month + '/' + page + ' HTTP_' + response.status + ' CODE_' + code);
+    }
     fs.writeFileSync(path.join(output, `${district}-${month}-${page}.xml`), xml);
     const items = payload.body?.items?.item;
     const batch = items ? (Array.isArray(items) ? items : [items]) : [];
