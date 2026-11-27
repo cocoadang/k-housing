@@ -3,6 +3,7 @@ import type { RequestHandler } from 'express';
 import { getReaderDb } from './firestoreReader';
 
 const revision = 'kapt-20261127-fc274fd1312b';
+const salesRevision = 'molit-csv-20261128';
 
 export function createSharedApartmentCatalogHandler(): RequestHandler {
   let cache: Promise<unknown> | undefined;
@@ -19,7 +20,16 @@ export function createSharedApartmentCatalogHandler(): RequestHandler {
         const catalog = JSON.parse(source.catalogJson);
         if (!Array.isArray(catalog.complexes) || catalog.complexes.length !== Number(source.count) ||
             !catalog.complexes.length) throw Error('CATALOG_COUNT_MISMATCH');
-        return { revision, ...catalog };
+        const sales = (await db.collection('apartmentSearchSaleRevisions').doc(salesRevision).get()).data();
+        if (!sales || typeof sales.snapshotJson !== 'string' ||
+            createHash('sha256').update(sales.snapshotJson).digest('hex') !== sales.sha256) {
+          throw Error('OFFICIAL_SALES_HASH_MISMATCH');
+        }
+        const { through, prices } = JSON.parse(sales.snapshotJson);
+        if (Object.keys(prices).length !== Number(sales.count) || !through) {
+          throw Error('OFFICIAL_SALES_COUNT_MISMATCH');
+        }
+        return { revision, ...catalog, officialSales: { through, prices } };
       })();
       cache = lookup;
       void lookup.catch(() => { if (cache === lookup) cache = undefined; });
